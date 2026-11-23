@@ -7,10 +7,14 @@ on:
       - reopened
       - edited
       - synchronize
-      - ready_for_review
 
 permissions:
   contents: read
+
+# 연달아 push·수정하면 앞선 실행은 취소한다
+concurrency:
+  group: pr-rules-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
 
 jobs:
   check-pr:
