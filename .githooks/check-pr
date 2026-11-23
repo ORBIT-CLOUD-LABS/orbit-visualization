@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+#
+# PR 규칙 검사. 훅이 아니라 CI 에서 부르는 스크립트다.
+#   - 브랜치 이름: <브랜치 타입>/<이슈번호>-<짧은-설명>   (예: feature/12-campaign-list)
+#   - 제목: [<Issue Type>/#<이슈번호>] <요약>            (예: [Feature/#12] Campaign 목록 화면 추가)
+#   - 브랜치와 제목의 Issue Type·이슈 번호가 같아야 한다
+#
+# 본문은 검사하지 않는다. 이슈 번호는 브랜치 이름과 제목으로 이미 강제한다.
+#
+# 어떤 CI 에서든 값을 환경변수로 넘겨 부른다.
+#   BRANCH  PR 브랜치 이름  (필수)
+#   TITLE   PR 제목         (필수)
+#
+# 예: BRANCH=feature/12-campaign-list TITLE="[Feature/#12] Campaign 목록 화면 추가" .githooks/check-pr
+#
+# 형식의 원본은 Organization 공통 CONTRIBUTING.md 다.
+# 규칙: docs/git/git-conventions.md
+
+set -uo pipefail
+
+# Issue Type 목록. 브랜치는 이 소문자 그대로, PR 제목은 첫 글자만 대문자로 쓴다. (docs/git/git-conventions.md 2절)
+types='feature|bug|task'
+failed=0
+
+fail() {
+  echo "check-pr: $1" >&2
+  failed=1
+}
+
+if [ -z "${BRANCH:-}" ] || [ -z "${TITLE:-}" ]; then
+  echo "check-pr: BRANCH 와 TITLE 환경변수가 필요합니다" >&2
+  exit 2
+fi
+
+branch_type=''
+branch_issue=''
+if [[ "$BRANCH" =~ ^(${types})/([0-9]+)-[a-z0-9]+(-[a-z0-9]+)*$ ]]; then
+  branch_type="${BASH_REMATCH[1]}"
+  branch_issue="${BASH_REMATCH[2]}"
+else
+  fail "브랜치 이름이 '<feature|bug|task>/<이슈번호>-<짧은-설명>' 형식이 아닙니다: $BRANCH"
+fi
+
+title_type=''
+title_issue=''
+if [[ "$TITLE" =~ ^\[([A-Z][a-z]+)/#([0-9]+)\]\ .+ ]]; then
+  # 같은 목록으로 비교하려고 소문자로 바꾼다 (bash 3.2 에는 ${var,,} 가 없다)
+  title_type="$(printf '%s' "${BASH_REMATCH[1]}" | tr '[:upper:]' '[:lower:]')"
+  title_issue="${BASH_REMATCH[2]}"
+fi
+if ! [[ "$title_type" =~ ^(${types})$ ]]; then
+  fail "제목이 '[Issue Type/#이슈번호] 요약' 형식이 아닙니다 (예: [Feature/#12] Campaign 목록 화면 추가): $TITLE"
+  title_type=''
+fi
+
+if [ -n "$branch_type" ] && [ -n "$title_type" ]; then
+  if [ "$title_type" != "$branch_type" ]; then
+    fail "브랜치 타입($branch_type)과 제목의 Issue Type이 다릅니다: $TITLE"
+  fi
+  if [ "$branch_issue" != "$title_issue" ]; then
+    fail "브랜치 이슈 번호(#$branch_issue)와 제목 이슈 번호(#$title_issue)가 다릅니다"
+  fi
+fi
+
+exit $failed

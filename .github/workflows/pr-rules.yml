@@ -1,0 +1,32 @@
+name: PR Rules
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - edited
+      - synchronize
+
+permissions:
+  contents: read
+
+# 연달아 push·수정하면 앞선 실행은 취소한다
+concurrency:
+  group: pr-rules-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  check-pr:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # 제목은 PR 작성자가 쓴 값이라 스크립트에 직접 끼워 넣지 않고 환경변수로 넘긴다.
+      - name: Check branch name and PR title
+        env:
+          BRANCH: ${{ github.head_ref }}
+          TITLE: ${{ github.event.pull_request.title }}
+        run: bash .githooks/check-pr
