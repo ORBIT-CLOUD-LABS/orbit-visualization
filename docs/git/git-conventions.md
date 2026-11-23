@@ -126,6 +126,8 @@ git merge develop
 ### PR 규칙 검사를 CI에 연결
 
 로컬 훅은 각자 PC에서만 돌기 때문에, PR 규칙은 CI에서 한 번 더 검사하고 그 결과가 통과해야 머지되게 한다.
+이 레포는 `.github/workflows/pr-rules.yml`이 PR마다 실행하고, 브랜치 보호 규칙에서 `check-pr` 작업을 required check로 지정한다.
+auto-merge가 켜져 있어도 required check가 통과하기 전에는 머지되지 않는다.
 `.githooks/check-pr`는 어느 CI에서든 환경변수 두 개만 넘겨 부른다.
 
 ```sh

@@ -1,0 +1,28 @@
+name: PR Rules
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - edited
+      - synchronize
+      - ready_for_review
+
+permissions:
+  contents: read
+
+jobs:
+  check-pr:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # 제목은 PR 작성자가 쓴 값이라 스크립트에 직접 끼워 넣지 않고 환경변수로 넘긴다.
+      - name: Check branch name and PR title
+        env:
+          BRANCH: ${{ github.head_ref }}
+          TITLE: ${{ github.event.pull_request.title }}
+        run: bash .githooks/check-pr
