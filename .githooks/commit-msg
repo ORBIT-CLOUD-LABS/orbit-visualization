@@ -5,7 +5,7 @@
 #   - 제목 50자 이내, 마침표로 끝나지 않음
 #   - AI 서명 금지
 #
-# 타입 목록의 원본은 Organization 공통 CONTRIBUTING.md 다.
+# 형식의 원본은 Organization 공통 CONTRIBUTING.md 다.
 # 사용: .githooks/commit-msg <메시지 파일>
 # 규칙: docs/git/git-conventions.md
 
@@ -32,13 +32,14 @@ fail() {
   exit 1
 }
 
+# 커밋 타입. docs/git/git-conventions.md 3절의 표와 같게 유지한다.
+types='feat|fix|refactor|test|docs|chore|ci'
+pattern="^(${types}): .+"
+
 # git 이 자동 생성하는 메시지는 형식 검사 대상이 아니다. AI 서명 검사는 그래도 한다.
 auto_pattern='^(Merge (branch|branches|pull request|remote-tracking branch|tag|commit) |Revert "|(fixup|squash|amend)! )'
 
 if ! [[ "$subject" =~ $auto_pattern ]]; then
-  types='feat|fix|refactor|test|docs|chore|ci'
-  pattern="^(${types}): .+"
-
   if ! [[ "$subject" =~ $pattern ]]; then
     fail "형식이 '<타입>: <요약>' 이 아닙니다. 타입: ${types//|/, }"
   fi

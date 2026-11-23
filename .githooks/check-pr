@@ -18,9 +18,8 @@
 
 set -uo pipefail
 
-# 브랜치는 소문자 Issue Type, PR 제목은 대괄호 안에 Issue Type 과 이슈 번호를 쓴다
-branch_types='feature|bug|task'
-title_types='Feature|Bug|Task'
+# Issue Type 목록. 브랜치는 이 소문자 그대로, PR 제목은 첫 글자만 대문자로 쓴다. (docs/git/git-conventions.md 2절)
+types='feature|bug|task'
 failed=0
 
 fail() {
@@ -35,7 +34,7 @@ fi
 
 branch_type=''
 branch_issue=''
-if [[ "$BRANCH" =~ ^(${branch_types})/([0-9]+)-[a-z0-9]+(-[a-z0-9]+)*$ ]]; then
+if [[ "$BRANCH" =~ ^(${types})/([0-9]+)-[a-z0-9]+(-[a-z0-9]+)*$ ]]; then
   branch_type="${BASH_REMATCH[1]}"
   branch_issue="${BASH_REMATCH[2]}"
 else
@@ -44,17 +43,19 @@ fi
 
 title_type=''
 title_issue=''
-if [[ "$TITLE" =~ ^\[(${title_types})/#([0-9]+)\]\ .+ ]]; then
-  title_type="${BASH_REMATCH[1]}"
+if [[ "$TITLE" =~ ^\[([A-Z][a-z]+)/#([0-9]+)\]\ .+ ]]; then
+  # 같은 목록으로 비교하려고 소문자로 바꾼다 (bash 3.2 에는 ${var,,} 가 없다)
+  title_type="$(printf '%s' "${BASH_REMATCH[1]}" | tr '[:upper:]' '[:lower:]')"
   title_issue="${BASH_REMATCH[2]}"
-else
+fi
+if ! [[ "$title_type" =~ ^(${types})$ ]]; then
   fail "제목이 '[Issue Type/#이슈번호] 요약' 형식이 아닙니다 (예: [Feature/#12] Campaign 목록 화면 추가): $TITLE"
+  title_type=''
 fi
 
 if [ -n "$branch_type" ] && [ -n "$title_type" ]; then
-  # 소문자로 맞춰 비교한다 (bash 3.2 에는 ${var,,} 가 없다)
-  if [ "$(printf '%s' "$title_type" | tr '[:upper:]' '[:lower:]')" != "$branch_type" ]; then
-    fail "브랜치 타입($branch_type)과 제목의 Issue Type($title_type)이 다릅니다"
+  if [ "$title_type" != "$branch_type" ]; then
+    fail "브랜치 타입($branch_type)과 제목의 Issue Type이 다릅니다: $TITLE"
   fi
   if [ "$branch_issue" != "$title_issue" ]; then
     fail "브랜치 이슈 번호(#$branch_issue)와 제목 이슈 번호(#$title_issue)가 다릅니다"
