@@ -7,7 +7,7 @@
 - 커밋 계획을 목록으로 제시하고 승인을 받는다.
 
 ```
-1. campaignApi.ts, campaignApi.test.ts           — feat: Campaign 목록 조회 API 추가
+1. getCampaigns.ts, getCampaigns.test.ts         — feat: Campaign 목록 조회 API 추가
 2. CampaignList.tsx, CampaignList.test.tsx       — feat: Campaign 목록 화면 추가
 ```
 
@@ -22,7 +22,7 @@
 
 ```
 커밋: feat: Campaign 목록 조회 API 추가
-파일: src/campaign/campaignApi.ts, src/campaign/campaignApi.test.ts
+파일: src/features/campaign/api/getCampaigns.ts, src/features/campaign/api/getCampaigns.test.ts
 다음: Campaign 목록 화면 추가 (2/2)
 ```
 

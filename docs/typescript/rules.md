@@ -75,6 +75,7 @@ const menu = parseMenu(await res.json()) // 형식이 다르면 throw
 
 ## 타입 설계
 
+- 객체 타입은 `type` 으로 선언한다. `interface` 는 선언 병합(라이브러리 타입 확장 등)이 필요할 때만 쓴다.
 - 상태는 boolean 여러 개 대신 구별된 유니언으로 표현한다.
 
 ```ts
@@ -142,7 +143,7 @@ button.addEventListener('click', () => {
 
 | 대상 | 규칙 | 예 |
 | --- | --- | --- |
-| 타입, 클래스 | PascalCase | `PickMenuResponse`, `MenuService` |
+| 타입, 클래스 | PascalCase, `I`·`T` 접두사 금지 | `PickMenuResponse`, `MenuService` |
 | 함수, 변수 | camelCase | `parseMenu`, `pickedAt` |
 | boolean | `is/has/can` 으로 시작 | `isPicking` |
 | 상수 | UPPER_SNAKE_CASE | `MAX_HISTORY` |

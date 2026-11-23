@@ -4,24 +4,37 @@
 
 ## 폴더
 
-기술 종류가 아니라 기능 단위로 나눈다.
+기술 종류가 아니라 기능 단위로 나눈다. 가져오기 규칙(기능끼리 금지, `@/` alias)은 [structure.md](../typescript/structure.md#모듈).
 
 ```text
 src/
-  api/          서버 통신 함수, 응답 타입과 검증, 서버 상태 훅
-  components/   여러 기능이 함께 쓰는 화면 조각
-  <기능>/       한 기능의 훅·컴포넌트·로직 (예: history/, location/)
-  mocks/        MSW 핸들러 (테스트와 개발 서버가 같이 쓴다)
-  test/         테스트 공통 설정
+  app/                진입점, Provider 구성, 라우터, 전역 스타일
+  features/
+    campaign/
+      api/            서버 호출 함수, 요청·응답 타입과 검증, query key
+      hooks/          서버 상태 훅, SSE 구독 훅
+      components/     이 기능의 화면 컴포넌트
+      types.ts        도메인 타입
+    vehicle/
+  shared/
+    api/              httpClient, sseClient 등 공용 통신 계층
+    ui/               도메인을 모르는 공용 컴포넌트
+    lib/              순수 유틸 함수 (cn 등)
+  config.ts           환경변수를 읽고 검증하는 곳 → browser-security.md
+  mocks/              MSW 핸들러 (테스트와 개발 서버가 같이 쓴다)
+  test/               테스트 공통 설정
 ```
 
-- 한 기능 폴더에만 쓰던 컴포넌트를 다른 기능도 쓰게 되면 `components/` 로 옮긴다.
+- 한 기능에서만 쓰던 컴포넌트를 다른 기능도 쓰게 되면 `shared/ui/` 로 옮긴다. 이때 도메인 타입에 기대지 않게 props 를 바꾼다.
 
 ## 컴포넌트
 
 - 컴포넌트 하나 = 파일 하나. 파일 이름은 컴포넌트 이름과 같다.
+- `function` 선언으로 만든다. `React.FC` 는 쓰지 않는다.
+- named export 만 쓴다. default export 는 `React.lazy` 로 불러오는 라우트 컴포넌트에만 쓴다.
 - props 타입은 컴포넌트 바로 위에 `type <컴포넌트>Props` 로 둔다.
 - 데이터 가져오기와 상태 계산은 훅으로 뺀다. 컴포넌트는 받은 값을 그리는 데 집중한다.
+  컴포넌트 안에서 `fetch`, `EventSource`, `httpClient` 를 직접 쓰지 않는다. 통신은 기능의 `api/` 와 `hooks/` 를 거친다. → [data-fetching.md](../data-fetching.md)
 - 서버 데이터는 서버 상태 도구(TanStack Query 등)로 다룬다. `useEffect` + `useState` 로 직접 가져오지 않는다.
 - `useEffect` 는 외부 시스템(브라우저 API, 지도 SDK 등)과 맞출 때만 쓴다. props 나 state 로 계산할 수 있는 값은 렌더링 중에 계산한다.
 - 훅은 조건문·반복문 안에서 부르지 않는다. 의존성 배열을 비우거나 빼서 경고를 피하지 않는다. (린트가 검사한다)
