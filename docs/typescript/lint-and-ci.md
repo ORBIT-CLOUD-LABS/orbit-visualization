@@ -59,6 +59,28 @@ React 같은 프레임워크를 쓰면 그 프레임워크 프리셋 문서의 �
 
 - Prettier 에 맡긴다. 손으로 정렬하지 않는다. 설정은 저장소의 `.prettierrc` 를 따른다.
 - 고칠 때: `pnpm format` (`prettier --write .`)
+- orbit 의 `.prettierrc` 는 아래 값으로 만든다. Tailwind 클래스 순서는 `prettier-plugin-tailwindcss` 가 정렬한다.
+  이 문서들의 코드 예시는 세미콜론 없이 쓰였지만, 실제 코드는 이 설정을 따른다.
+
+```json
+{
+  "semi": true,
+  "singleQuote": true,
+  "trailingComma": "all",
+  "printWidth": 100,
+  "tabWidth": 2,
+  "plugins": ["prettier-plugin-tailwindcss"],
+  "tailwindStylesheet": "./src/app/styles/index.css"
+}
+```
+
+### import 순서
+
+그룹을 나누고 그룹 사이에 빈 줄을 둔다.
+
+1. 외부 라이브러리 (`react`, `@tanstack/react-query` 등)
+2. `@/` alias (`@/shared/...`, `@/features/...`)
+3. 상대 경로 (`./`, `../`)
 
 ## CI
 
