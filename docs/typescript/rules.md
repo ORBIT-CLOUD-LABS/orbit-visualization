@@ -71,7 +71,7 @@ const menu = (await res.json()) as Menu
 const menu = parseMenu(await res.json()) // 형식이 다르면 throw
 ```
 
-- 검증 라이브러리(zod 등)를 쓸지는 프로젝트 방향 문서(`docs/project/direction.md`)의 기술 스택 표 "외부 값 검증" 행에 적는다.
+- 검증 라이브러리(zod 등)를 쓸지는 새 의존성과 같이 사용자에게 묻고 정한다. orbit 은 방향 문서(`docs/project/direction.md`)를 두지 않는다. → [AGENTS.md](../../AGENTS.md)
 
 ## 타입 설계
 
