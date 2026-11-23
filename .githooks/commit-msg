@@ -20,8 +20,9 @@ if [ -n "$utf8_locale" ]; then
   export LC_ALL="$utf8_locale"
 fi
 
-# git 이 넣는 주석(#) 줄은 실제 메시지가 아니므로 제외한다.
-message="$(grep -v '^#' "$msg_file" || true)"
+# git 이 넣는 주석(#) 줄과, git commit -v 가 scissors 줄(>8) 아래에 붙이는 diff 는 실제 메시지가 아니므로 제외한다.
+# diff 를 남겨 두면 writing-style.md 처럼 AI 서명 예시가 든 파일을 고친 커밋이 거부된다.
+message="$(awk '/^# -+ >8 -+$/ { exit } !/^#/' "$msg_file")"
 subject="$(printf '%s\n' "$message" | head -n 1)"
 
 fail() {
@@ -31,24 +32,24 @@ fail() {
   exit 1
 }
 
-# git 이 자동 생성하는 메시지는 형식 검사 대상이 아니다.
-if [[ "$subject" =~ ^(Merge|Revert|fixup!|squash!|amend!) ]]; then
-  exit 0
-fi
+# git 이 자동 생성하는 메시지는 형식 검사 대상이 아니다. AI 서명 검사는 그래도 한다.
+auto_pattern='^(Merge (branch|branches|pull request|remote-tracking branch|tag|commit) |Revert "|(fixup|squash|amend)! )'
 
-types='feat|fix|refactor|test|docs|chore|ci'
-pattern="^(${types}): .+"
+if ! [[ "$subject" =~ $auto_pattern ]]; then
+  types='feat|fix|refactor|test|docs|chore|ci'
+  pattern="^(${types}): .+"
 
-if ! [[ "$subject" =~ $pattern ]]; then
-  fail "형식이 '<타입>: <요약>' 이 아닙니다. 타입: ${types//|/, }"
-fi
+  if ! [[ "$subject" =~ $pattern ]]; then
+    fail "형식이 '<타입>: <요약>' 이 아닙니다. 타입: ${types//|/, }"
+  fi
 
-if [ "${#subject}" -gt 50 ]; then
-  fail "제목이 50자를 넘습니다. (${#subject}자)"
-fi
+  if [ "${#subject}" -gt 50 ]; then
+    fail "제목이 50자를 넘습니다. (${#subject}자)"
+  fi
 
-if [[ "$subject" == *. ]]; then
-  fail "제목을 마침표로 끝내지 않습니다."
+  if [[ "$subject" == *. ]]; then
+    fail "제목을 마침표로 끝내지 않습니다."
+  fi
 fi
 
 # 사람이 쓴 커밋처럼 보이도록 AI 도구 서명을 막는다. (docs/git/writing-style.md)
