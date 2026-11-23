@@ -7,8 +7,8 @@
 - 커밋 계획을 목록으로 제시하고 승인을 받는다.
 
 ```
-1. Order.java, OrderTest.java          — feat: 주문 취소 사유 필드 추가
-2. OrderService.java, OrderServiceTest.java — feat: 주문 취소 로직 추가
+1. campaignApi.ts, campaignApi.test.ts           — feat: Campaign 목록 조회 API 추가
+2. CampaignList.tsx, CampaignList.test.tsx       — feat: Campaign 목록 화면 추가
 ```
 
 ## 2. 커밋 루프
@@ -21,9 +21,9 @@
 보고 형식:
 
 ```
-커밋: feat: 주문 취소 사유 필드 추가
-파일: src/main/java/.../Order.java, src/test/java/.../OrderTest.java
-다음: OrderService 에 취소 로직 추가 (2/2)
+커밋: feat: Campaign 목록 조회 API 추가
+파일: src/campaign/campaignApi.ts, src/campaign/campaignApi.test.ts
+다음: Campaign 목록 화면 추가 (2/2)
 ```
 
 - 사용자가 진행 또는 피드백을 주기 전까지 다음 커밋을 하지 않는다.
@@ -47,4 +47,4 @@
 - 멈추지 않고 커밋 여러 개 연속 실행
 - 요청 없는 리팩터링·정리 작업 끼워 넣기
 - `--no-verify` 등 훅 우회
-- main 직접 커밋·push
+- `main`, `develop` 직접 커밋·push

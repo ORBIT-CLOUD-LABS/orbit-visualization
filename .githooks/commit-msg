@@ -5,7 +5,7 @@
 #   - 제목 50자 이내, 마침표로 끝나지 않음
 #   - AI 서명 금지
 #
-# 타입 목록은 .githooks/check-pr 의 types 와 같게 유지한다.
+# 타입 목록의 원본은 Organization 공통 CONTRIBUTING.md 다.
 # 사용: .githooks/commit-msg <메시지 파일>
 # 규칙: docs/git/git-conventions.md
 
@@ -36,7 +36,7 @@ if [[ "$subject" =~ ^(Merge|Revert|fixup!|squash!|amend!) ]]; then
   exit 0
 fi
 
-types='feat|fix|refactor|test|docs|chore|ci|build'
+types='feat|fix|refactor|test|docs|chore|ci'
 pattern="^(${types}): .+"
 
 if ! [[ "$subject" =~ $pattern ]]; then
