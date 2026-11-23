@@ -34,7 +34,7 @@ src/
 - named export 만 쓴다. default export 는 `React.lazy` 로 불러오는 라우트 컴포넌트에만 쓴다.
 - props 타입은 컴포넌트 바로 위에 `type <컴포넌트>Props` 로 둔다.
 - 데이터 가져오기와 상태 계산은 훅으로 뺀다. 컴포넌트는 받은 값을 그리는 데 집중한다.
-  컴포넌트 안에서 `fetch`, `EventSource`, `httpClient` 를 직접 쓰지 않는다. 통신은 기능의 `api/` 와 `hooks/` 를 거친다.
+  컴포넌트 안에서 `fetch`, `EventSource`, `httpClient` 를 직접 쓰지 않는다. 통신은 기능의 `api/` 와 `hooks/` 를 거친다. → [data-fetching.md](../data-fetching.md)
 - 서버 데이터는 서버 상태 도구(TanStack Query 등)로 다룬다. `useEffect` + `useState` 로 직접 가져오지 않는다.
 - `useEffect` 는 외부 시스템(브라우저 API, 지도 SDK 등)과 맞출 때만 쓴다. props 나 state 로 계산할 수 있는 값은 렌더링 중에 계산한다.
 - 훅은 조건문·반복문 안에서 부르지 않는다. 의존성 배열을 비우거나 빼서 경고를 피하지 않는다. (린트가 검사한다)
