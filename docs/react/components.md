@@ -4,18 +4,28 @@
 
 ## 폴더
 
-기술 종류가 아니라 기능 단위로 나눈다.
+기술 종류가 아니라 기능 단위로 나눈다. 가져오기 규칙(기능끼리 금지, `@/` alias)은 [structure.md](../typescript/structure.md#모듈).
 
 ```text
 src/
-  api/          서버 통신 함수, 응답 타입과 검증, 서버 상태 훅
-  components/   여러 기능이 함께 쓰는 화면 조각
-  <기능>/       한 기능의 훅·컴포넌트·로직 (예: history/, location/)
-  mocks/        MSW 핸들러 (테스트와 개발 서버가 같이 쓴다)
-  test/         테스트 공통 설정
+  app/                진입점, Provider 구성, 라우터, 전역 스타일
+  features/
+    campaign/
+      api/            서버 호출 함수, 요청·응답 타입과 검증, query key
+      hooks/          서버 상태 훅, SSE 구독 훅
+      components/     이 기능의 화면 컴포넌트
+      types.ts        도메인 타입
+    vehicle/
+  shared/
+    api/              httpClient, sseClient 등 공용 통신 계층
+    ui/               도메인을 모르는 공용 컴포넌트
+    lib/              순수 유틸 함수 (cn 등)
+  config.ts           환경변수를 읽고 검증하는 곳 → browser-security.md
+  mocks/              MSW 핸들러 (테스트와 개발 서버가 같이 쓴다)
+  test/               테스트 공통 설정
 ```
 
-- 한 기능 폴더에만 쓰던 컴포넌트를 다른 기능도 쓰게 되면 `components/` 로 옮긴다.
+- 한 기능에서만 쓰던 컴포넌트를 다른 기능도 쓰게 되면 `shared/ui/` 로 옮긴다. 이때 도메인 타입에 기대지 않게 props 를 바꾼다.
 
 ## 컴포넌트
 
