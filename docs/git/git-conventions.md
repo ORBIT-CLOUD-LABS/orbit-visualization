@@ -41,15 +41,15 @@ git switch -c feature/12-campaign-list
 
 형식: `<타입>: <한국어 요약>`
 
-| 타입       | 용도                           |
-| ---------- | ------------------------------ |
-| `feat`     | 새로운 기능이나 동작           |
-| `fix`      | 잘못된 동작 수정               |
-| `docs`     | 문서 변경                      |
-| `refactor` | 외부 동작 변경 없는 구조 개선  |
-| `chore`    | 설정, 의존성 및 도구 유지보수  |
-| `test`     | 테스트 추가 또는 수정          |
-| `ci`       | CI/CD 워크플로 변경            |
+| 타입       | 용도                          |
+| ---------- | ----------------------------- |
+| `feat`     | 새로운 기능이나 동작          |
+| `fix`      | 잘못된 동작 수정              |
+| `docs`     | 문서 변경                     |
+| `refactor` | 외부 동작 변경 없는 구조 개선 |
+| `chore`    | 설정, 의존성 및 도구 유지보수 |
+| `test`     | 테스트 추가 또는 수정         |
+| `ci`       | CI/CD 워크플로 변경           |
 
 - 제목은 50자 이내, 마침표로 끝내지 않는다.
 - 무엇을 왜 바꿨는지 드러나게 쓴다. "~ 추가", "~ 수정", "~ 제거"로 끝낸다.
@@ -93,7 +93,7 @@ push 후 `develop` 대상 PR을 만든다. 이슈 하나에 PR 하나를 만든�
 - 변경 내용은 3줄 이내 불릿. 변경 파일을 나열하지 않는다. 빈 섹션은 지운다.
 - 커밋 10개, 변경 300줄 이하를 권장한다. 넘으면 PR을 나눈다.
 - Secret, Credential, 개인정보를 커밋과 PR에 넣지 않는다.
-- CI와 PR 규칙 검사(`.githooks/check-pr`)가 통과해야 머지한다. 리뷰 반영 기준은 [code-review.md](code-review.md).
+- CI와 [PR 규칙 검사](#pr-규칙-검사)가 통과해야 머지한다. 리뷰 반영 기준은 [code-review.md](code-review.md).
 
 ## 5. 리뷰와 머지
 
@@ -111,48 +111,30 @@ git switch feature/12-campaign-list
 git merge develop
 ```
 
-- `--force` push와 훅 우회(`--no-verify`)는 하지 않는다. 에이전트 설정(`.claude/settings.json`)에서도 막는다.
+- `--force` push와 훅 우회(`--no-verify`)는 하지 않는다.
+  `develop`·`main`의 직접 push와 force push는 레포 ruleset(`protect-default`)이 막고, 에이전트 설정(`.claude/settings.json`)은 흔한 명령만 한 번 더 막는다.
 
 ## 자동 검사
 
-| 위치                   | 검사                                               |
-| ---------------------- | -------------------------------------------------- |
-| `.githooks/commit-msg` | 커밋 형식, 제목 50자, 마침표, AI 서명              |
-| `.githooks/check-pr`   | 브랜치 이름, PR 제목, 둘의 이슈 번호 일치. 훅이 아니라 CI가 PR마다 실행 |
+| 위치                             | 검사                                                   |
+| -------------------------------- | ------------------------------------------------------ |
+| `.githooks/commit-msg`           | 커밋 형식, 제목 50자, 마침표, AI 서명                  |
+| `.github/workflows/pr-rules.yml` | PR마다 `.githooks/check-pr` 실행: 브랜치 이름, PR 제목 |
 
 훅은 `agentsmd init`이 연결한다. 이미 다른 훅 디렉터리를 쓰고 있으면 바꾸지 않고, 직접 연결하는 명령을 알려 준다.
 직접 연결하려면 `git config core.hooksPath .githooks`. 경로는 저장소 최상위 기준으로 적는다.
 
-### PR 규칙 검사를 CI에 연결
+### PR 규칙 검사
 
-로컬 훅은 각자 PC에서만 돌기 때문에, PR 규칙은 CI에서 한 번 더 검사하고 그 결과가 통과해야 머지되게 한다.
-이 레포는 `.github/workflows/pr-rules.yml`이 PR마다 실행하고, 브랜치 보호 규칙에서 `check-pr` 작업을 required check로 지정한다.
-auto-merge가 켜져 있어도 required check가 통과하기 전에는 머지되지 않는다.
-`.githooks/check-pr`는 어느 CI에서든 환경변수 두 개만 넘겨 부른다.
+로컬 훅은 각자 PC에서만 돌기 때문에, PR 규칙은 CI에서 한 번 더 검사한다.
+`check-pr`는 브랜치 이름과 PR 제목의 형식, 둘의 Issue Type·이슈 번호가 같은지를 본다.
 
-```sh
-BRANCH=feature/12-campaign-list TITLE="[Feature/#12] Campaign 목록 화면 추가" .githooks/check-pr
-```
-
-| CI                    | BRANCH                                 | TITLE                                    |
-| --------------------- | -------------------------------------- | ---------------------------------------- |
-| GitHub Actions        | `${{ github.head_ref }}`               | `${{ github.event.pull_request.title }}` |
-| GitLab CI             | `$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME` | `$CI_MERGE_REQUEST_TITLE`                |
-| Jenkins (Multibranch) | `$CHANGE_BRANCH`                       | `$CHANGE_TITLE`                          |
-
-- 제목은 PR 작성자가 쓴 값이다. CI 스크립트 본문에 직접 끼워 넣지 말고 환경변수로 넘긴다.
-- 검사가 실패하면 종료 코드 1, `BRANCH`·`TITLE`이 없으면 2를 돌려준다.
+- 검사가 머지를 막으려면 레포 ruleset의 required status check에 `check-pr` 작업을 넣어야 한다.
+  넣지 않으면 실패해도 auto-merge로 머지될 수 있다.
+- 로컬에서는 `BRANCH=<브랜치> TITLE="<PR 제목>" .githooks/check-pr`로 돌린다. 실패하면 종료 코드 1, 값이 없으면 2.
+- 제목은 PR 작성자가 쓴 값이다. 워크플로 스크립트에 직접 끼워 넣지 말고 환경변수로 넘긴다.
 
 ### 문서 지도 검사를 CI에 연결
 
-문서를 손으로 더하거나 빼거나 옮기면 `AGENTS.md`의 문서 지도가 어긋난다. `agentsmd check`를 PR마다 돌려 어긋난 변경은 머지 전에 실패하게 한다.
-Node 없이 돌릴 수 있게 cli를 담은 이미지 `ghcr.io/xoruddl/agentsmd`가 있다. 저장소를 작업 디렉터리로 마운트하면 기본값으로 검사한다.
-
-| CI             | 설정                                                                        |
-| -------------- | --------------------------------------------------------------------------- |
-| GitHub Actions | `uses: xoruddl/agentsmd-kit@v0` (같은 이미지를 쓰는 Action)                 |
-| GitLab CI      | `image: ghcr.io/xoruddl/agentsmd:0` + `script: [agentsmd check]`            |
-| Jenkins        | `docker.image('ghcr.io/xoruddl/agentsmd:0').inside { sh 'agentsmd check' }` |
-
-- 문서 지도 파일이나 문서 디렉터리 위치가 기본값과 다르면 `agentsmd check --docs guides`처럼 옵션으로 넘긴다. Action은 `with:`의 같은 이름으로 받는다.
-- 검사가 실패하면 종료 코드 1, 옵션이 잘못됐거나 문서 지도가 없으면 2를 돌려준다.
+문서를 손으로 더하거나 빼거나 옮기면 `AGENTS.md`의 문서 지도가 어긋난다.
+`agentsmd check`를 PR마다 돌리려면 워크플로에 `uses: xoruddl/agentsmd-kit@v0` 한 단계를 넣는다. 지금은 연결돼 있지 않다.
