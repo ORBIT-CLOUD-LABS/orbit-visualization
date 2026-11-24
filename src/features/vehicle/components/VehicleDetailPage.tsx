@@ -7,6 +7,7 @@ import { toQueryState } from '@/shared/lib/toQueryState';
 import { Alert } from '@/shared/ui/Alert';
 import { Button } from '@/shared/ui/Button';
 import { buttonClassName } from '@/shared/ui/buttonClassName';
+import { Card } from '@/shared/ui/Card';
 import { EmptyState } from '@/shared/ui/EmptyState';
 import { Topbar } from '@/shared/ui/Topbar';
 
@@ -14,7 +15,6 @@ import { useVehicleDetail } from '../hooks/useVehicleDetail';
 import { useVehicleUpdateHistory } from '../hooks/useVehicleUpdateHistory';
 import { parseVehicleId } from '../lib/parseVehicleId';
 
-import { Card } from './Card';
 import { LastUpdateCard } from './LastUpdateCard';
 import { QueryFallback } from './QueryFallback';
 import { UpdateHistoryCard } from './UpdateHistoryCard';
@@ -80,7 +80,7 @@ export function VehicleDetailPage() {
           />
         )}
         {vehicle === undefined ? (
-          <Card title="차량 정보">
+          <Card className="p-6" title="차량 정보">
             <QueryFallback
               isPending={detail.isPending}
               errorTitle="차량 정보를 불러오지 못했습니다"

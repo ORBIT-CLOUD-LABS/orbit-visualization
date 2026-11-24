@@ -1,11 +1,12 @@
+import { cn } from '@/shared/lib/cn';
 import { Alert } from '@/shared/ui/Alert';
+import { Card } from '@/shared/ui/Card';
 import { EmptyState } from '@/shared/ui/EmptyState';
 
 import type { VehicleLastUpdate } from '../api/vehicleSchemas';
 import { failureReasonLabel } from '../lib/failureReasonLabel';
 import { formatTimestamp } from '../lib/formatTimestamp';
 
-import { Card } from './Card';
 import { KeyValue } from './KeyValue';
 
 type LastUpdateCardProps = {
@@ -22,7 +23,7 @@ function failureCode({ failureReason, failureDetail }: VehicleLastUpdate): strin
 /** 마지막 업데이트 결과. 실패면 사유를 맨 위에 알린다 */
 export function LastUpdateCard({ lastUpdate, className }: LastUpdateCardProps) {
   return (
-    <Card title="마지막 업데이트 결과" className={className}>
+    <Card title="마지막 업데이트 결과" className={cn('p-6', className)}>
       {lastUpdate === null ? (
         <EmptyState
           title="업데이트 결과가 없습니다"

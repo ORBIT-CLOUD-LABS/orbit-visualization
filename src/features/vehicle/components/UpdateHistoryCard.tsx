@@ -1,10 +1,10 @@
 import { usePagination } from '@/shared/lib/usePagination';
+import { Card } from '@/shared/ui/Card';
 import { EmptyState } from '@/shared/ui/EmptyState';
 import { Pagination } from '@/shared/ui/Pagination';
 
 import type { VehicleUpdateEvent } from '../api/vehicleSchemas';
 
-import { Card } from './Card';
 import { QueryFallback } from './QueryFallback';
 import { UpdateHistoryTable } from './UpdateHistoryTable';
 
@@ -60,7 +60,7 @@ export function UpdateHistoryCard({
   }
 
   return (
-    <Card title="업데이트 이력" description="최근 50건 · 완료 시각 늦은 순">
+    <Card className="p-6" title="업데이트 이력" description="최근 50건 · 완료 시각 늦은 순">
       {renderBody()}
     </Card>
   );

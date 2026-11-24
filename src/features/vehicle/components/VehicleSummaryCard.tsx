@@ -3,12 +3,12 @@ import { Link } from 'react-router';
 import { routePaths } from '@/shared/config/routes';
 import { Button } from '@/shared/ui/Button';
 import { buttonClassName } from '@/shared/ui/buttonClassName';
+import { Card } from '@/shared/ui/Card';
 import { VehicleResultBadge } from '@/shared/vehicle/VehicleResultBadge';
 
 import type { VehicleDetail } from '../api/vehicleSchemas';
 import { formatTimestamp } from '../lib/formatTimestamp';
 
-import { Card } from './Card';
 import { KeyValue } from './KeyValue';
 
 type VehicleSummaryCardProps = {
@@ -23,6 +23,7 @@ export function VehicleSummaryCard({ vehicle, isRefreshing, onRefresh }: Vehicle
 
   return (
     <Card
+      className="p-6"
       title={<span className="font-mono text-2xl font-medium">{vehicle.vehicleId}</span>}
       badge={
         <span className="flex items-center gap-1.5 text-xs text-fg-muted">
