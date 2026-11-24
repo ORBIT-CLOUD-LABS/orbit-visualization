@@ -37,9 +37,8 @@ export function VehicleListCard({ state }: VehicleListCardProps) {
 
   const options = useMemo(() => collectFilterOptions(vehicles), [vehicles]);
   const filtered = useMemo(() => filterVehicles(vehicles, filter), [vehicles, filter]);
-  const pagination = usePagination(filtered, {
-    resetDeps: [filter.model, filter.result, filter.edgeId, filter.query],
-  });
+  // 필터를 바꿀 때마다 새 객체로 바꾸므로 filter 하나로 1페이지 복귀를 판단한다
+  const pagination = usePagination(filtered, { resetDeps: [filter] });
 
   function renderBody() {
     if (state.status === 'pending') {
