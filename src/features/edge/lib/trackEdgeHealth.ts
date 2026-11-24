@@ -10,7 +10,7 @@ export type EdgeHealthChange = {
   edgeId: string;
   /** 바뀐 뒤의 정상 여부 */
   healthy: boolean;
-  /** 확정한 조회의 시각 (epoch ms) */
+  /** 바뀐 값을 처음 본 조회의 시각 (epoch ms) */
   detectedAt: number;
 };
 
@@ -18,13 +18,15 @@ export type EdgeHealthChange = {
 export type EdgeHealthCandidate = {
   edgeId: string;
   healthy: boolean;
+  /** 이 값을 처음 본 조회의 시각. 확정되면 기록 시각이 된다 */
+  firstSeenAt: number;
 };
 
 export type EdgeHealthTracker = {
   /** Edge 마다 마지막으로 확정한 정상 여부 */
   confirmed: ReadonlyMap<string, boolean>;
   /** 확정 값과 다르게 한 번 조회된 값. 다음 조회에서도 같으면 확정한다 */
-  candidates: ReadonlyMap<string, boolean>;
+  candidates: ReadonlyMap<string, EdgeHealthCandidate>;
   /** 최신순, 최대 MAX_EDGE_HEALTH_CHANGES 개 */
   changes: readonly EdgeHealthChange[];
 };
@@ -32,7 +34,7 @@ export type EdgeHealthTracker = {
 /**
  * 새로 조회한 Edge 상태를 반영한다.
  * 정상 여부는 요청을 받은 서버 Pod 의 헬스체크 결과라 Pod 마다 잠깐 다를 수 있으므로,
- * 확정 값과 다른 값이 두 번 연속 조회되어야 변화로 기록한다.
+ * 확정 값과 다른 값이 두 번 연속 조회되어야 변화로 기록한다. 기록 시각은 그 값을 처음 본 조회 시각이다.
  * 첫 조회와 새로 생긴 Edge 의 값은 기준값이라 기록하지 않는다
  */
 export function trackEdgeHealth(
@@ -41,7 +43,7 @@ export function trackEdgeHealth(
   observedAt: number,
 ): EdgeHealthTracker {
   const confirmed = new Map<string, boolean>();
-  const candidates = new Map<string, boolean>();
+  const candidates = new Map<string, EdgeHealthCandidate>();
   const detected: EdgeHealthChange[] = [];
 
   for (const { edgeId, healthy } of edges) {
@@ -50,13 +52,16 @@ export function trackEdgeHealth(
       confirmed.set(edgeId, healthy);
       continue;
     }
-    if (previous?.candidates.get(edgeId) === healthy) {
+    // 확정 값과 다른 값은 하나뿐이라, 후보가 있으면 이번 값과 같다
+    const candidate = previous?.candidates.get(edgeId);
+    if (candidate !== undefined) {
+      const detectedAt = candidate.firstSeenAt;
       confirmed.set(edgeId, healthy);
-      detected.push({ id: `${edgeId}@${observedAt}`, edgeId, healthy, detectedAt: observedAt });
+      detected.push({ id: `${edgeId}@${detectedAt}`, edgeId, healthy, detectedAt });
       continue;
     }
     confirmed.set(edgeId, known);
-    candidates.set(edgeId, healthy);
+    candidates.set(edgeId, { edgeId, healthy, firstSeenAt: observedAt });
   }
 
   return {
@@ -68,5 +73,5 @@ export function trackEdgeHealth(
 
 /** 확인 중인 변화 목록 (Edge 목록 순서) */
 export function listEdgeHealthCandidates(tracker: EdgeHealthTracker): EdgeHealthCandidate[] {
-  return Array.from(tracker.candidates, ([edgeId, healthy]) => ({ edgeId, healthy }));
+  return [...tracker.candidates.values()];
 }

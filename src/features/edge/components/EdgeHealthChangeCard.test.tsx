@@ -34,18 +34,13 @@ describe('EdgeHealthChangeCard', () => {
 
   it('확정한 장애·복구를 시각과 함께 최신순으로 보여 준다', () => {
     let tracker = trackEdgeHealth(null, [edge('edge-busan', true), edge('edge-daejeon', false)], 0);
-    tracker = trackEdgeHealth(tracker, [edge('edge-busan', true), edge('edge-daejeon', true)], 1);
-    tracker = trackEdgeHealth(
-      tracker,
-      [edge('edge-busan', true), edge('edge-daejeon', true)],
-      UP_AT,
-    );
-    tracker = trackEdgeHealth(tracker, [edge('edge-busan', false), edge('edge-daejeon', true)], 2);
-    tracker = trackEdgeHealth(
-      tracker,
-      [edge('edge-busan', false), edge('edge-daejeon', true)],
-      DOWN_AT,
-    );
+    // 기록 시각은 바뀐 값을 처음 본 조회 시각이다
+    const recovered = [edge('edge-busan', true), edge('edge-daejeon', true)];
+    const failed = [edge('edge-busan', false), edge('edge-daejeon', true)];
+    tracker = trackEdgeHealth(tracker, recovered, UP_AT);
+    tracker = trackEdgeHealth(tracker, recovered, UP_AT + 30_000);
+    tracker = trackEdgeHealth(tracker, failed, DOWN_AT);
+    tracker = trackEdgeHealth(tracker, failed, DOWN_AT + 30_000);
     renderCard(tracker);
 
     const items = within(screen.getByRole('list', { name: '감지한 변화' })).getAllByRole(

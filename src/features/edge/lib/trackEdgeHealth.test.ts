@@ -38,14 +38,16 @@ describe('trackEdgeHealth', () => {
     const tracker = observe([busan(true)], [busan(false)]);
 
     expect(tracker.changes).toEqual([]);
-    expect(listEdgeHealthCandidates(tracker)).toEqual([{ edgeId: 'edge-busan', healthy: false }]);
+    expect(listEdgeHealthCandidates(tracker)).toEqual([
+      { edgeId: 'edge-busan', healthy: false, firstSeenAt: 1000 },
+    ]);
   });
 
-  it('바뀐 값이 두 번 연속 조회되면 두 번째 조회 시각으로 기록한다', () => {
+  it('바뀐 값이 두 번 연속 조회되면 처음 본 조회 시각으로 기록한다', () => {
     const tracker = observe([busan(true)], [busan(false)], [busan(false)]);
 
     expect(tracker.changes).toEqual([
-      { id: 'edge-busan@2000', edgeId: 'edge-busan', healthy: false, detectedAt: 2000 },
+      { id: 'edge-busan@1000', edgeId: 'edge-busan', healthy: false, detectedAt: 1000 },
     ]);
     expect(listEdgeHealthCandidates(tracker)).toEqual([]);
   });
@@ -88,6 +90,6 @@ describe('trackEdgeHealth', () => {
     const tracker = observe([busan(true)], ...rest);
 
     expect(tracker.changes).toHaveLength(MAX_EDGE_HEALTH_CHANGES);
-    expect(tracker.changes[0]?.detectedAt).toBe(rest.length * 1000);
+    expect(tracker.changes[0]?.detectedAt).toBe((rest.length - 1) * 1000);
   });
 });
