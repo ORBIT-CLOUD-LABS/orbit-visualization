@@ -7,10 +7,16 @@ import { computeMapBounds } from '@/shared/map/computeMapBounds';
 import { FitBoundsOnce } from '@/shared/map/FitBoundsOnce';
 import type { LatLng } from '@/shared/map/latLng';
 import { MapEmptyNotice } from '@/shared/map/MapEmptyNotice';
+import { MapLegend, type MapLegendItem } from '@/shared/map/MapLegend';
 import { useMapPathStyles } from '@/shared/map/useMapPathStyles';
+import { TONE_CLASS } from '@/shared/ui/toneClass';
 
-import { EdgeMapLegend } from './EdgeMapLegend';
 import { EdgeMarkerPopup } from './EdgeMarkerPopup';
+
+const LEGEND_ITEMS: readonly MapLegendItem[] = [
+  { label: 'Edge(정상)', shape: 'dot', colorClass: 'bg-primary' },
+  { label: 'Edge(장애)', shape: 'dot', colorClass: TONE_CLASS.danger.dot },
+];
 
 function renderEdgePopup(edge: CdnEdgeStatus) {
   return <EdgeMarkerPopup edge={edge} />;
@@ -35,7 +41,7 @@ export function EdgeMap({ edges }: EdgeMapProps) {
       overlay={
         <>
           {edges.length === 0 && <MapEmptyNotice>등록된 CDN Edge가 없습니다</MapEmptyNotice>}
-          <EdgeMapLegend className="absolute bottom-3 left-3 z-1000" />
+          <MapLegend items={LEGEND_ITEMS} className="absolute bottom-3 left-3 z-1000" />
         </>
       }
     >

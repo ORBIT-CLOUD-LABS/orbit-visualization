@@ -36,7 +36,7 @@ export function VehicleMapCard({ vehicleState, edgeState }: VehicleMapCardProps)
 
   function renderBody() {
     if (vehicleState.status === 'pending') {
-      return <MapSkeleton label="차량 위치를 불러오는 중입니다" className="min-h-52.5 flex-1" />;
+      return <MapSkeleton label="차량 위치를 불러오는 중입니다" />;
     }
     if (vehicleState.status === 'error') {
       return (

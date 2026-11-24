@@ -8,14 +8,24 @@ import { computeMapBounds } from '@/shared/map/computeMapBounds';
 import { FitBoundsOnce } from '@/shared/map/FitBoundsOnce';
 import type { LatLng } from '@/shared/map/latLng';
 import { MapEmptyNotice } from '@/shared/map/MapEmptyNotice';
+import { MapLegend, type MapLegendItem } from '@/shared/map/MapLegend';
 import { MapPane } from '@/shared/map/MapPane';
 import { useMapPathStyles } from '@/shared/map/useMapPathStyles';
+import { TONE_CLASS } from '@/shared/ui/toneClass';
 
 import { buildEdgeLinks } from '../lib/buildEdgeLinks';
 import type { VehicleMarker } from '../lib/toVehicleMarkers';
 
-import { VehicleMapLegend } from './VehicleMapLegend';
 import { VehicleMarkerPopup } from './VehicleMarkerPopup';
+
+const LEGEND_ITEMS: readonly MapLegendItem[] = [
+  { label: 'Edge', shape: 'dot', colorClass: 'bg-primary' },
+  { label: '차량(정상)', shape: 'dot', colorClass: TONE_CLASS.success.dot },
+  { label: '차량(실패)', shape: 'dot', colorClass: TONE_CLASS.danger.dot },
+  { label: '차량(결과 없음)', shape: 'dot', colorClass: TONE_CLASS.neutral.dot },
+  { label: '배정 Edge', shape: 'line', colorClass: 'border-primary' },
+  { label: '재배정', shape: 'line', colorClass: 'border-dashed border-warning' },
+];
 
 type VehicleMapProps = {
   markers: readonly VehicleMarker[];
@@ -44,7 +54,7 @@ export function VehicleMap({ markers, edges, isReadyToFit }: VehicleMapProps) {
       overlay={
         <>
           {markers.length === 0 && <MapEmptyNotice>위치를 보낸 차량이 없습니다</MapEmptyNotice>}
-          <VehicleMapLegend className="absolute bottom-3 left-3 z-1000" />
+          <MapLegend items={LEGEND_ITEMS} className="absolute bottom-3 left-3 z-1000" />
         </>
       }
     >

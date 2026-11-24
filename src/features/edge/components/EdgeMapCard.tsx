@@ -16,7 +16,7 @@ type EdgeMapCardProps = {
 export function EdgeMapCard({ edgeState, className }: EdgeMapCardProps) {
   function renderBody() {
     if (edgeState.status === 'pending') {
-      return <MapSkeleton label="Edge 위치를 불러오는 중입니다" className="min-h-52.5 flex-1" />;
+      return <MapSkeleton label="Edge 위치를 불러오는 중입니다" />;
     }
     if (edgeState.status === 'error') {
       return (
