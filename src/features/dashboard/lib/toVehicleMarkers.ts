@@ -1,11 +1,9 @@
+import type { LatLng } from '@/shared/map/latLng';
 import type { UpdateResult } from '@/shared/vehicle/updateResult';
 
 import type { VehicleStatus } from '../api/vehicleStatusSchema';
 
 import { vehicleMarkerTone, type VehicleMarkerTone } from './vehicleMarkerTone';
-
-/** [위도, 경도]. Leaflet 의 LatLngTuple 에 그대로 넘길 수 있다 */
-export type LatLng = [latitude: number, longitude: number];
 
 export type VehicleMarker = {
   vehicleId: string;

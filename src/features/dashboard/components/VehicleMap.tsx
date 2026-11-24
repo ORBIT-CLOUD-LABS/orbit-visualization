@@ -13,15 +13,16 @@ import {
 
 import { config } from '@/config';
 import type { CdnEdgeStatus } from '@/shared/cdnEdge/cdnEdgeSchema';
+import { computeMapBounds } from '@/shared/map/computeMapBounds';
+import { FitBoundsOnce } from '@/shared/map/FitBoundsOnce';
+import { InvalidateSizeOnResize } from '@/shared/map/InvalidateSizeOnResize';
+import type { LatLng } from '@/shared/map/latLng';
 import { Alert } from '@/shared/ui/Alert';
 
 import { buildEdgeLinks } from '../lib/buildEdgeLinks';
-import { computeMapBounds } from '../lib/computeMapBounds';
 import { createMapPathStyles, readDocumentTokenColor } from '../lib/createMapPathStyles';
-import type { LatLng, VehicleMarker } from '../lib/toVehicleMarkers';
+import type { VehicleMarker } from '../lib/toVehicleMarkers';
 
-import { FitBoundsOnce } from './FitBoundsOnce';
-import { InvalidateSizeOnResize } from './InvalidateSizeOnResize';
 import { VehicleMapLegend } from './VehicleMapLegend';
 import { VehicleMarkerPopup } from './VehicleMarkerPopup';
 

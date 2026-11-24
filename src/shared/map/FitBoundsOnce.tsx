@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useMap } from 'react-leaflet';
 
-import type { MapBounds } from '../lib/computeMapBounds';
+import type { MapBounds } from './computeMapBounds';
 
 const FIT_PADDING: [number, number] = [24, 24];
 // 점이 하나뿐이어도 주변이 보이도록 너무 가까이 확대하지 않는다

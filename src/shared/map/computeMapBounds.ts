@@ -1,4 +1,4 @@
-import type { LatLng } from './toVehicleMarkers';
+import type { LatLng } from './latLng';
 
 /** 남서쪽·북동쪽 모서리. Leaflet 의 LatLngBoundsLiteral 에 그대로 넘길 수 있다 */
 export type MapBounds = [southWest: LatLng, northEast: LatLng];
