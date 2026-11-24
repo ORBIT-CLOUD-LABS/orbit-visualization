@@ -12,6 +12,7 @@ import { Breadcrumb } from './Breadcrumb';
 import { CampaignInfoCard } from './CampaignInfoCard';
 import { CampaignStatsSection } from './CampaignStatsSection';
 import { Card } from './Card';
+import { DeactivateCampaignButton } from './DeactivateCampaignButton';
 import { QueryFallback } from './QueryFallback';
 
 const NOT_FOUND = 404;
@@ -42,7 +43,14 @@ export function CampaignDetailPage() {
       return (
         <>
           <Breadcrumb current={`#${campaign.campaignId} ${campaign.name}`} />
-          <CampaignInfoCard campaign={campaign} />
+          <CampaignInfoCard
+            campaign={campaign}
+            action={
+              campaign.status === 'ACTIVE' && (
+                <DeactivateCampaignButton campaignId={campaign.campaignId} />
+              )
+            }
+          />
           <CampaignStatsSection campaignId={campaign.campaignId} />
         </>
       );

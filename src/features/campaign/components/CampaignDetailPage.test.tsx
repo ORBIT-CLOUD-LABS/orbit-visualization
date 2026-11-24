@@ -1,7 +1,7 @@
 import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { failure, success } from '@/mocks/apiEnvelope';
 import { campaignDetailFixture, campaignStatsFixture } from '@/mocks/campaignHandlers';
@@ -146,6 +146,68 @@ describe('CampaignDetailPage', () => {
     await user.click(within(progress).getByRole('button', { name: '다시 시도' }));
 
     expect(await within(progress).findByText('성공 80%')).toBeInTheDocument();
+  });
+
+  it('확인하면 비활성화하고 상태를 INACTIVE 로 바꾼다', async () => {
+    const user = userEvent.setup();
+    const confirm = vi.spyOn(window, 'confirm').mockReturnValue(true);
+    let body: unknown;
+    server.use(
+      http.patch(DETAIL_PATH, async ({ request }) => {
+        body = await request.json();
+        return HttpResponse.json(success({ ...campaignDetailFixture, status: 'INACTIVE' }));
+      }),
+    );
+    renderPage();
+
+    await user.click(await screen.findByRole('button', { name: '비활성화' }));
+
+    const info = screen.getByRole('region', { name: '캠페인 정보' });
+    expect(await within(info).findByText('INACTIVE')).toBeInTheDocument();
+    expect(confirm).toHaveBeenCalledOnce();
+    expect(body).toEqual({ status: 'INACTIVE' });
+    expect(within(info).queryByRole('button', { name: '비활성화' })).not.toBeInTheDocument();
+  });
+
+  it('확인을 취소하면 비활성화하지 않는다', async () => {
+    const user = userEvent.setup();
+    vi.spyOn(window, 'confirm').mockReturnValue(false);
+    let requested = false;
+    server.use(
+      http.patch(DETAIL_PATH, () => {
+        requested = true;
+        return HttpResponse.json(success(campaignDetailFixture));
+      }),
+    );
+    renderPage();
+
+    await user.click(await screen.findByRole('button', { name: '비활성화' }));
+
+    expect(requested).toBe(false);
+    expect(screen.getByRole('button', { name: '비활성화' })).toBeEnabled();
+  });
+
+  it('비활성화에 실패하면 알려 준다', async () => {
+    const user = userEvent.setup();
+    vi.spyOn(window, 'confirm').mockReturnValue(true);
+    server.use(http.patch(DETAIL_PATH, serverError));
+    renderPage();
+
+    await user.click(await screen.findByRole('button', { name: '비활성화' }));
+
+    expect(await screen.findByRole('alert')).toHaveTextContent('비활성화하지 못했습니다');
+  });
+
+  it('비활성 캠페인에는 비활성화 버튼이 없다', async () => {
+    server.use(
+      http.get(DETAIL_PATH, () =>
+        HttpResponse.json(success({ ...campaignDetailFixture, status: 'INACTIVE' })),
+      ),
+    );
+    renderPage();
+
+    await screen.findByRole('heading', { name: 'MODEL-A 1.1.0 배포' });
+    expect(screen.queryByRole('button', { name: '비활성화' })).not.toBeInTheDocument();
   });
 
   it('없는 캠페인이면 본문 전체를 빈 상태로 바꾸고 목록으로 돌아가게 한다', async () => {
