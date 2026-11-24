@@ -2,12 +2,12 @@ import { Link } from 'react-router';
 
 import { buttonClassName } from '@/shared/ui/buttonClassName';
 import { Card } from '@/shared/ui/Card';
+import { KeyValue } from '@/shared/ui/KeyValue';
 
 import type { ArtifactRegistration } from '../api/artifactSchemas';
 import { campaignNewPath } from '../lib/campaignNewPath';
 import { formatFileSize } from '../lib/formatFileSize';
 import { shortenSha256 } from '../lib/shortenSha256';
-import { KeyValue } from './KeyValue';
 
 type RegistrationResultCardProps = {
   result: ArtifactRegistration;
