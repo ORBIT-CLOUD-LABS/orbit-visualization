@@ -43,7 +43,7 @@ export function EdgeMap({ edges }: EdgeMapProps) {
       }
     >
       {/* Edge 가 처음 생겼을 때 한 번만 맞춘다. 이후 잠깐 비었다 돌아와도 사용자가 옮긴 화면을 유지한다 */}
-      <FitBoundsOnce getBounds={edges.length === 0 ? null : getBounds} />
+      <FitBoundsOnce getBounds={getBounds} />
       <CdnEdgeLayer edges={edges} pathStyles={styles.edge} renderPopup={renderEdgePopup} />
     </BaseMap>
   );
