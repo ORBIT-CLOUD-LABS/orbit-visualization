@@ -16,8 +16,10 @@ type ArtifactListCardProps = {
 };
 
 export function ArtifactListCard({ artifacts }: ArtifactListCardProps) {
-  const [model, setModel] = useState(ALL_MODELS);
+  const [selectedModel, setModel] = useState(ALL_MODELS);
   const models = [...new Set(artifacts.map((artifact) => artifact.model))].toSorted();
+  // 다시 불러온 목록에 고른 차종이 없으면 전체로 본다
+  const model = models.includes(selectedModel) ? selectedModel : ALL_MODELS;
   const filtered =
     model === ALL_MODELS ? artifacts : artifacts.filter((artifact) => artifact.model === model);
   const pagination = usePagination(filtered, { resetDeps: [model] });

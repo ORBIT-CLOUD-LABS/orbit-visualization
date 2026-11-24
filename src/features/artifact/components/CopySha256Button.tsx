@@ -19,6 +19,8 @@ export function CopySha256Button({ sha256 }: CopySha256ButtonProps) {
 
   // 보안 연결이 아니면 navigator.clipboard 가 없어 여기서도 실패로 처리한다
   async function copy(): Promise<void> {
+    // 다시 눌러도 알림이 바뀌도록 지난 문구를 먼저 지운다
+    setState('idle');
     try {
       await navigator.clipboard.writeText(sha256);
       setState('copied');

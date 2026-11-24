@@ -8,12 +8,12 @@ import { formatDate } from '../lib/formatDateTime';
 import { formatFileSize } from '../lib/formatFileSize';
 import { shortenSha256 } from '../lib/shortenSha256';
 
+const HEAD_CELL = 'h-10 px-4 text-left text-xs font-medium whitespace-nowrap text-fg-muted';
+const CELL = 'h-12 px-4 font-mono text-xs whitespace-nowrap text-fg';
+
 type ArtifactTableProps = {
   artifacts: readonly Artifact[];
 };
-
-const HEAD_CELL = 'h-10 px-4 text-left text-xs font-medium whitespace-nowrap text-fg-muted';
-const CELL = 'h-12 px-4 font-mono text-xs whitespace-nowrap text-fg';
 
 export function ArtifactTable({ artifacts }: ArtifactTableProps) {
   return (
