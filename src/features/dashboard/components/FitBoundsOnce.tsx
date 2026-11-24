@@ -22,6 +22,8 @@ export function FitBoundsOnce({ bounds }: FitBoundsOnceProps) {
       return;
     }
     hasFittedRef.current = true;
+    // 같은 렌더에서 카드 높이가 바뀌었을 수 있어 크기를 먼저 다시 잰다
+    map.invalidateSize();
     map.fitBounds(bounds, { padding: FIT_PADDING, maxZoom: FIT_MAX_ZOOM });
   }, [map, bounds]);
 

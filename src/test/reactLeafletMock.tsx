@@ -9,6 +9,8 @@ type ChildrenProps = { children?: ReactNode };
 /** useMap 이 돌려주는 가짜 지도. fitBounds 호출을 확인할 수 있다 */
 export const mockLeafletMap = {
   fitBounds: vi.fn(),
+  invalidateSize: vi.fn(),
+  getContainer: () => document.createElement('div'),
 };
 
 export function useMap() {

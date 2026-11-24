@@ -52,7 +52,8 @@ export function DashboardPage() {
           <VehicleMapCard
             vehicleState={vehicleState}
             edges={cdnEdgesQuery.data ?? NO_EDGES}
-            isEdgesSettled={!cdnEdgesQuery.isPending}
+            // 재시도를 기다리지 않도록 첫 실패에서도 차량만으로 범위를 맞춘다
+            isEdgesSettled={cdnEdgesQuery.data !== undefined || cdnEdgesQuery.failureCount > 0}
           />
           <div className="xl:w-75 xl:shrink-0">
             <CdnEdgeStatusCard state={edgeState} />

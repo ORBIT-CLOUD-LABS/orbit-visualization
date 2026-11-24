@@ -17,7 +17,8 @@ export function VehicleMarkerPopup({ marker }: VehicleMarkerPopupProps) {
     <div className="flex flex-col gap-2 font-sans text-xs text-fg">
       <Link
         to={routePaths.vehicleDetail(marker.vehicleId)}
-        className="font-mono text-sm text-primary hover:underline"
+        // leaflet.css 의 `.leaflet-container a` 색이 유틸리티보다 우선해 ! 로 덮는다
+        className="font-mono text-sm text-primary! hover:underline"
       >
         {marker.vehicleId}
       </Link>

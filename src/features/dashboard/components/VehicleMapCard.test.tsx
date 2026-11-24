@@ -143,6 +143,23 @@ describe('VehicleMapCard', () => {
     });
 
     expect(screen.getByRole('alert')).toHaveTextContent('지도를 불러오지 못했습니다');
+
+    act(() => {
+      mockTileLayer.eventHandlers?.tileload?.();
+    });
+
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+  });
+
+  it('타일이 한 번 뜬 뒤의 일부 실패는 알리지 않는다', () => {
+    render(card({ vehicleState: { status: 'success', data: [] } }));
+
+    act(() => {
+      mockTileLayer.eventHandlers?.tileload?.();
+      mockTileLayer.eventHandlers?.tileerror?.();
+    });
+
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
   });
 
   it('불러오는 중이면 로딩 상태를 보여 준다', () => {
