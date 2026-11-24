@@ -65,9 +65,7 @@ export function VehicleTable({ vehicles, labelledBy }: VehicleTableProps) {
               <td className="px-4 py-3 font-mono">{orEmpty(vehicle.assignedEdgeId)}</td>
               <td className="px-4 py-3 font-mono">{orEmpty(vehicle.downloadedEdgeId)}</td>
               <td className="px-4 py-3 font-mono">
-                {vehicle.lastSeenAt === null
-                  ? EMPTY_VALUE
-                  : orEmpty(formatClockTime(vehicle.lastSeenAt))}
+                {orEmpty(formatClockTime(vehicle.lastSeenAt))}
               </td>
             </tr>
           ))}

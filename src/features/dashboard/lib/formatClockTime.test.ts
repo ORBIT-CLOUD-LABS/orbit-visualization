@@ -14,7 +14,8 @@ describe('formatClockTime', () => {
     expect(formatClockTime(iso)).toBe('10:00:30');
   });
 
-  it('날짜 형식이 아니면 null 을 돌려준다', () => {
+  it('값이 없거나 날짜 형식이 아니면 null 을 돌려준다', () => {
+    expect(formatClockTime(null)).toBeNull();
     expect(formatClockTime('not-a-date')).toBeNull();
   });
 });

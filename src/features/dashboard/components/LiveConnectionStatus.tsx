@@ -19,7 +19,7 @@ type LiveConnectionStatusProps = {
 /** Topbar 오른쪽의 실시간 연결 배지와 마지막 갱신 시각 */
 export function LiveConnectionStatus({ status, lastUpdatedAt }: LiveConnectionStatusProps) {
   const badge = STATUS_BADGE[status];
-  const lastUpdated = lastUpdatedAt === null ? null : formatClockTime(lastUpdatedAt);
+  const lastUpdated = formatClockTime(lastUpdatedAt);
 
   return (
     <>
