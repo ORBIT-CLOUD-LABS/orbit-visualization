@@ -8,6 +8,6 @@ describe('maskToken', () => {
   });
 
   it('짧은 토큰은 모두 가린다', () => {
-    expect(maskToken('abcd1234')).toBe('Bearer ••••••••');
+    expect(maskToken('abcdefgh-1234-5')).toBe('Bearer ••••••••');
   });
 });
