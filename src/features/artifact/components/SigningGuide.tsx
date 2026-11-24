@@ -1,12 +1,13 @@
 import { Card } from './Card';
 
-// 서버 FirmwareSignaturePayload 와 같은 다섯 줄(형식·차종·버전·SHA-256·크기)에 서명한다
+// 서버 FirmwareSignaturePayload 와 같은 다섯 줄(형식·차종·버전·SHA-256·크기)에 서명한다.
+// GNU base64 는 76자마다 줄을 바꿔 vault 인자가 갈라지므로 줄바꿈을 지우고 따옴표로 감싼다
 const SIGNING_COMMAND = `payload=$(printf \\
   'orbit-firmware-v1\\n%s\\n%s\\n%s\\n%s' \\
   "$MODEL" "$VERSION" "$SHA256" "$SIZE")
 vault write -field=signature \\
   transit/sign/firmware-signing \\
-  input=$(printf %s "$payload" | base64)
+  input="$(printf %s "$payload" | base64 | tr -d '\\n')"
 # → vault:v1:<base64>  ⇒ keyId=v1`;
 
 export function SigningGuide() {
