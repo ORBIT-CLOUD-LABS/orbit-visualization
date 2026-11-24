@@ -38,9 +38,10 @@ const MESSAGE_BY_CODE: Record<string, ErrorMessage> = {
   },
 };
 
+// 업로드 중에 연결이 끊기면 서버는 등록을 마쳤을 수 있다
 const NETWORK_MESSAGE: ErrorMessage = {
   title: '서버에 연결하지 못했습니다',
-  description: '네트워크 상태를 확인하고 다시 시도해 주세요',
+  description: '파일 목록에서 등록됐는지 확인한 뒤 다시 시도해 주세요',
 };
 
 const UNKNOWN_MESSAGE: ErrorMessage = {
