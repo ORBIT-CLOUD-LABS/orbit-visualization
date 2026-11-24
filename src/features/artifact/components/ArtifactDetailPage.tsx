@@ -12,8 +12,7 @@ import { ArtifactCampaignsCard } from './ArtifactCampaignsCard';
 import { ArtifactDetailCard } from './ArtifactDetailCard';
 import { Breadcrumb } from './Breadcrumb';
 import { Card } from './Card';
-import { LoadErrorAlert } from './LoadErrorAlert';
-import { LoadingRows } from './LoadingRows';
+import { QueryFallback } from './QueryFallback';
 
 const NOT_FOUND = 404;
 
@@ -52,7 +51,7 @@ export function ArtifactDetailPage() {
       <>
         <Breadcrumb current="파일 상세" />
         <Card title="파일 정보">
-          {isPending ? <LoadingRows /> : <LoadErrorAlert onRetry={() => void refetch()} />}
+          <QueryFallback isPending={isPending} onRetry={() => void refetch()} />
         </Card>
       </>
     );

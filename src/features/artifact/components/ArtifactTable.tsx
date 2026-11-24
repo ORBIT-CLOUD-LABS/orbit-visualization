@@ -8,8 +8,11 @@ import { formatDate } from '../lib/formatDateTime';
 import { formatFileSize } from '../lib/formatFileSize';
 import { shortenSha256 } from '../lib/shortenSha256';
 
-const HEAD_CELL = 'h-10 px-4 text-left text-xs font-medium whitespace-nowrap text-fg-muted';
-const CELL = 'h-12 px-4 font-mono text-xs whitespace-nowrap text-fg';
+import {
+  TABLE_CELL as CELL,
+  TABLE_HEAD_CELL as HEAD_CELL,
+  TABLE_TEXT_CELL as TEXT_CELL,
+} from './tableClassNames';
 
 type ArtifactTableProps = {
   artifacts: readonly Artifact[];
@@ -54,7 +57,7 @@ export function ArtifactTable({ artifacts }: ArtifactTableProps) {
           {artifacts.map((artifact) => (
             <tr key={artifact.artifactId} className="border-t border-line bg-surface">
               <td className={CELL}>{artifact.artifactId}</td>
-              <td className="h-12 px-4 text-sm whitespace-nowrap text-fg">{artifact.model}</td>
+              <td className={TEXT_CELL}>{artifact.model}</td>
               <td className={CELL}>{artifact.version}</td>
               <td className={CELL}>{formatFileSize(artifact.fileSize)}</td>
               <td className={CELL}>

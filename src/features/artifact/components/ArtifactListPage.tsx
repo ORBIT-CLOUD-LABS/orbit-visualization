@@ -5,8 +5,7 @@ import { useArtifacts } from '../hooks/useArtifacts';
 import { ArtifactListCard } from './ArtifactListCard';
 import { ArtifactStats } from './ArtifactStats';
 import { Card } from './Card';
-import { LoadErrorAlert } from './LoadErrorAlert';
-import { LoadingRows } from './LoadingRows';
+import { QueryFallback } from './QueryFallback';
 import { RegisterArtifactLink } from './RegisterArtifactLink';
 
 const LIST_TITLE = '파일 목록';
@@ -42,7 +41,7 @@ export function ArtifactListPage() {
         description={LIST_DESCRIPTION}
         action={<RegisterArtifactLink>+ 파일 등록</RegisterArtifactLink>}
       >
-        {isPending ? <LoadingRows /> : <LoadErrorAlert onRetry={() => void refetch()} />}
+        <QueryFallback isPending={isPending} onRetry={() => void refetch()} />
       </Card>
     );
   }

@@ -9,16 +9,17 @@ import type { ArtifactCampaign } from '../api/getModelCampaigns';
 import { useArtifactCampaigns } from '../hooks/useArtifactCampaigns';
 import { formatDate } from '../lib/formatDateTime';
 import { Card } from './Card';
-import { LoadErrorAlert } from './LoadErrorAlert';
-import { LoadingRows } from './LoadingRows';
+import { QueryFallback } from './QueryFallback';
+import {
+  TABLE_CELL as CELL,
+  TABLE_HEAD_CELL as HEAD_CELL,
+  TABLE_TEXT_CELL as TEXT_CELL,
+} from './tableClassNames';
 
 const STATUS_TONE: Record<ArtifactCampaign['status'], BadgeTone> = {
   ACTIVE: 'info',
   INACTIVE: 'neutral',
 };
-
-const HEAD_CELL = 'h-10 px-4 text-left text-xs font-medium whitespace-nowrap text-fg-muted';
-const CELL = 'h-12 px-4 font-mono text-xs whitespace-nowrap text-fg';
 
 type ArtifactCampaignsCardProps = {
   model: string;
@@ -30,7 +31,7 @@ export function ArtifactCampaignsCard({ model, version }: ArtifactCampaignsCardP
 
   function renderContent() {
     if (campaigns === undefined) {
-      return isPending ? <LoadingRows /> : <LoadErrorAlert onRetry={() => void refetch()} />;
+      return <QueryFallback isPending={isPending} onRetry={() => void refetch()} />;
     }
     if (campaigns.length === 0) {
       return (
@@ -69,7 +70,7 @@ export function ArtifactCampaignsCard({ model, version }: ArtifactCampaignsCardP
             {campaigns.map((campaign) => (
               <tr key={campaign.campaignId} className="border-t border-line bg-surface">
                 <td className={CELL}>{campaign.campaignId}</td>
-                <td className="h-12 px-4 text-sm whitespace-nowrap text-fg">{campaign.name}</td>
+                <td className={TEXT_CELL}>{campaign.name}</td>
                 <td className="h-12 px-4">
                   <Badge tone={STATUS_TONE[campaign.status]}>{campaign.status}</Badge>
                 </td>
