@@ -1,9 +1,9 @@
 import { useMemo } from 'react';
 
+import { useCdnEdges } from '@/shared/cdnEdge/useCdnEdges';
 import { Topbar } from '@/shared/ui/Topbar';
 
 import type { VehicleStatus } from '../api/vehicleStatusSchema';
-import { useCdnEdges } from '../hooks/useCdnEdges';
 import { useDashboardVehicles } from '../hooks/useDashboardVehicles';
 import { countVehicleResults } from '../lib/countVehicleResults';
 import { toQueryState, type QueryState } from '../lib/toQueryState';
