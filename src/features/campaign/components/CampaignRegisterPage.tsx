@@ -1,12 +1,12 @@
 import { useNavigate, useSearchParams } from 'react-router';
 
-import { routePaths } from '@/shared/config/routes';
+import { ROUTES, routePaths } from '@/shared/config/routes';
+import { Breadcrumb } from '@/shared/ui/Breadcrumb';
 import { Topbar } from '@/shared/ui/Topbar';
 
 import { useArtifactOptions } from '../hooks/useArtifactOptions';
 import { useRegisterCampaign } from '../hooks/useRegisterCampaign';
 import { parseId } from '../lib/parseId';
-import { Breadcrumb } from './Breadcrumb';
 import { CampaignRegisterForm } from './CampaignRegisterForm';
 import { RejectionGuide } from './RejectionGuide';
 
@@ -28,7 +28,7 @@ export function CampaignRegisterPage() {
     <>
       <Topbar title="캠페인 등록" />
       <div className="flex flex-col gap-6 p-8">
-        <Breadcrumb current="새 캠페인" />
+        <Breadcrumb parent={{ label: '캠페인', to: ROUTES.campaigns }} current="새 캠페인" />
         <div className="flex flex-col gap-6 xl:flex-row xl:items-start">
           <CampaignRegisterForm
             artifactOptions={artifacts.data}

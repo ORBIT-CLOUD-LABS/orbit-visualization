@@ -6,6 +6,7 @@ import { useCdnEdges } from '@/shared/cdnEdge/useCdnEdges';
 import { ROUTES } from '@/shared/config/routes';
 import { toQueryState } from '@/shared/lib/toQueryState';
 import { Alert } from '@/shared/ui/Alert';
+import { Breadcrumb } from '@/shared/ui/Breadcrumb';
 import { Button } from '@/shared/ui/Button';
 import { buttonClassName } from '@/shared/ui/buttonClassName';
 import { Card } from '@/shared/ui/Card';
@@ -19,7 +20,6 @@ import { parseVehicleId } from '../lib/parseVehicleId';
 
 import { LastUpdateCard } from './LastUpdateCard';
 import { UpdateHistoryCard } from './UpdateHistoryCard';
-import { VehicleBreadcrumb } from './VehicleBreadcrumb';
 import { VehicleLocationCard } from './VehicleLocationCard';
 import { VehicleSummaryCard } from './VehicleSummaryCard';
 
@@ -64,7 +64,11 @@ export function VehicleDetailPage() {
       (detail.isError && vehicle !== undefined) || (history.isError && history.data !== undefined);
     return (
       <>
-        <VehicleBreadcrumb current={vehicleId} />
+        <Breadcrumb
+          parent={{ label: '대시보드', to: ROUTES.dashboard }}
+          current={vehicleId}
+          isCurrentMono
+        />
         {isRefreshFailed && (
           <Alert
             type="error"

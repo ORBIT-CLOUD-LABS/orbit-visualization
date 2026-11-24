@@ -1,8 +1,9 @@
+import { ROUTES } from '@/shared/config/routes';
+import { Breadcrumb } from '@/shared/ui/Breadcrumb';
 import { Topbar } from '@/shared/ui/Topbar';
 
 import { useRegisterArtifact } from '../hooks/useRegisterArtifact';
 import { ArtifactRegisterForm } from './ArtifactRegisterForm';
-import { Breadcrumb } from './Breadcrumb';
 import { RegistrationResultCard } from './RegistrationResultCard';
 import { SigningGuide } from './SigningGuide';
 
@@ -21,7 +22,7 @@ export function ArtifactRegisterPage() {
     <>
       <Topbar title="파일 등록" />
       <div className="flex flex-col gap-6 p-8">
-        <Breadcrumb current="새 파일 등록" />
+        <Breadcrumb parent={{ label: '파일', to: ROUTES.artifacts }} current="새 파일 등록" />
         <div className="flex flex-col gap-6 xl:flex-row xl:items-start">
           {/* 등록할 때마다 key 가 바뀌어 입력이 비므로 같은 파일을 다시 올리지 않는다 */}
           <ArtifactRegisterForm

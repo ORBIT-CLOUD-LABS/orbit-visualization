@@ -2,6 +2,7 @@ import { Link, useParams } from 'react-router';
 
 import { ApiError } from '@/shared/api/ApiError';
 import { ROUTES } from '@/shared/config/routes';
+import { Breadcrumb, type BreadcrumbParent } from '@/shared/ui/Breadcrumb';
 import { buttonClassName } from '@/shared/ui/buttonClassName';
 import { Card } from '@/shared/ui/Card';
 import { EmptyState } from '@/shared/ui/EmptyState';
@@ -12,9 +13,9 @@ import { useArtifact } from '../hooks/useArtifact';
 import { parseArtifactId } from '../lib/parseArtifactId';
 import { ArtifactCampaignsCard } from './ArtifactCampaignsCard';
 import { ArtifactDetailCard } from './ArtifactDetailCard';
-import { Breadcrumb } from './Breadcrumb';
 
 const NOT_FOUND = 404;
+const BREADCRUMB_PARENT: BreadcrumbParent = { label: '파일', to: ROUTES.artifacts };
 
 /** 10 파일 상세 */
 export function ArtifactDetailPage() {
@@ -41,7 +42,10 @@ export function ArtifactDetailPage() {
     if (artifact !== undefined) {
       return (
         <>
-          <Breadcrumb current={`#${artifact.artifactId} ${artifact.model} ${artifact.version}`} />
+          <Breadcrumb
+            parent={BREADCRUMB_PARENT}
+            current={`#${artifact.artifactId} ${artifact.model} ${artifact.version}`}
+          />
           <ArtifactDetailCard artifact={artifact} />
           <ArtifactCampaignsCard model={artifact.model} version={artifact.version} />
         </>
@@ -49,7 +53,7 @@ export function ArtifactDetailPage() {
     }
     return (
       <>
-        <Breadcrumb current="파일 상세" />
+        <Breadcrumb parent={BREADCRUMB_PARENT} current="파일 상세" />
         <Card title="파일 정보">
           <QueryFallback isPending={isPending} onRetry={() => void refetch()} />
         </Card>
