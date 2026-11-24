@@ -1,8 +1,10 @@
 import { EventStreamContentType, fetchEventSource } from '@microsoft/fetch-event-source';
 
 import { config } from '@/config';
-import { tokenStorage } from '@/shared/auth/tokenStorage';
+import { authorizationHeader } from '@/shared/auth/authorizationHeader';
 import { reportUnauthorized } from '@/shared/auth/unauthorized';
+
+import { isRetriableStatus } from './isRetriableStatus';
 
 /** connecting: 첫 연결 중, reconnecting: 끊겨서 다시 연결 중, disconnected: 재연결을 멈춤 */
 export type SseConnectionStatus = 'connecting' | 'connected' | 'reconnecting' | 'disconnected';
@@ -34,25 +36,11 @@ const MAX_RECONNECT_ATTEMPTS = 3;
 const DEFAULT_RETRY_DELAY_MS = 1000;
 // fetch-event-source 가 재시도 때 넣는 헤더 키와 같아야 값이 두 번 들어가지 않는다
 const LAST_EVENT_ID_HEADER = 'last-event-id';
-const NO_CONTENT = 204;
 const UNAUTHORIZED = 401;
-const REQUEST_TIMEOUT = 408;
-const TOO_MANY_REQUESTS = 429;
 
 // onerror 에서 다시 던지면 fetch-event-source 가 재시도를 멈춘다
 class StopRetryingError extends Error {
   override readonly name = 'StopRetryingError';
-}
-
-// 204 는 SSE 명세상 재연결 중단이다. 4xx 는 다시 보내도 같지만 408·429 는 잠시 뒤 성공할 수 있다
-function isRetriableStatus(status: number): boolean {
-  if (status === NO_CONTENT) {
-    return false;
-  }
-  if (status >= 400 && status < 500) {
-    return status === REQUEST_TIMEOUT || status === TOO_MANY_REQUESTS;
-  }
-  return true;
 }
 
 function connect(options: SseConnectOptions): SseConnection {
@@ -80,14 +68,14 @@ function connect(options: SseConnectOptions): SseConnection {
       headers: lastEventId === null ? {} : { [LAST_EVENT_ID_HEADER]: lastEventId },
       // 재시도마다 토큰을 새로 읽는다. 401 로 지워졌거나 바뀐 토큰을 그대로 보내지 않는다
       fetch: (input, init) => {
-        const token = tokenStorage.get();
-        if (token === null) {
+        const authorization = authorizationHeader();
+        if (authorization === null) {
           return Promise.reject(
             new StopRetryingError('관리자 토큰이 없어 SSE 를 연결하지 않습니다'),
           );
         }
         const headers = new Headers(init?.headers);
-        headers.set('Authorization', `Bearer ${token}`);
+        headers.set('Authorization', authorization);
         return window.fetch(input, { ...init, headers });
       },
       // 숨은 탭에서도 연결을 유지해 상태 표시와 실제 연결이 어긋나지 않게 한다

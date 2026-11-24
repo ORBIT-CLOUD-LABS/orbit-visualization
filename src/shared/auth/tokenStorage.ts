@@ -4,7 +4,7 @@ const MAX_TOKEN_LENGTH = 4096;
 // Authorization 헤더에 그대로 넣을 수 있는 문자(공백 없는 ASCII)만 받는다
 const TOKEN_PATTERN = /^[\x21-\x7E]+$/;
 
-export function isValidToken(value: unknown): value is string {
+function isValidToken(value: unknown): value is string {
   return typeof value === 'string' && value.length <= MAX_TOKEN_LENGTH && TOKEN_PATTERN.test(value);
 }
 

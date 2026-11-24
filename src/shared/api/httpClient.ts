@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 import { config } from '@/config';
-import { tokenStorage } from '@/shared/auth/tokenStorage';
+import { authorizationHeader } from '@/shared/auth/authorizationHeader';
 import { reportUnauthorized } from '@/shared/auth/unauthorized';
 
 import { NetworkError } from './NetworkError';
@@ -16,9 +16,9 @@ export const httpClient = axios.create({
 });
 
 httpClient.interceptors.request.use((request) => {
-  const token = tokenStorage.get();
-  if (token !== null) {
-    request.headers.set('Authorization', `Bearer ${token}`);
+  const authorization = authorizationHeader();
+  if (authorization !== null) {
+    request.headers.set('Authorization', authorization);
   }
   return request;
 });
