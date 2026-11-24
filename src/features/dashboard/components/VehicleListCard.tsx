@@ -14,6 +14,7 @@ import {
   filterVehicles,
   type VehicleFilter,
 } from '../lib/filterVehicles';
+import type { QueryState } from '../lib/toQueryState';
 
 import { VehicleFilters } from './VehicleFilters';
 import { VehicleTable } from './VehicleTable';
@@ -21,10 +22,7 @@ import { VehicleTable } from './VehicleTable';
 const SKELETON_ROWS = [1, 2, 3, 4, 5] as const;
 const NO_VEHICLES: readonly VehicleStatus[] = [];
 
-export type VehicleListState =
-  | { status: 'pending' }
-  | { status: 'error'; errorCode?: string; onRetry: () => void }
-  | { status: 'success'; vehicles: readonly VehicleStatus[] };
+export type VehicleListState = QueryState<readonly VehicleStatus[]>;
 
 type VehicleListCardProps = {
   state: VehicleListState;
@@ -33,7 +31,7 @@ type VehicleListCardProps = {
 export function VehicleListCard({ state }: VehicleListCardProps) {
   const headingId = useId();
   const [filter, setFilter] = useState<VehicleFilter>(EMPTY_VEHICLE_FILTER);
-  const vehicles = state.status === 'success' ? state.vehicles : NO_VEHICLES;
+  const vehicles = state.status === 'success' ? state.data : NO_VEHICLES;
 
   const options = useMemo(() => collectFilterOptions(vehicles), [vehicles]);
   const filtered = useMemo(() => filterVehicles(vehicles, filter), [vehicles, filter]);

@@ -19,7 +19,7 @@ function renderCard(state: VehicleListState) {
 }
 
 function renderVehicles(vehicles: VehicleStatus[]) {
-  return renderCard({ status: 'success', vehicles });
+  return renderCard({ status: 'success', data: vehicles });
 }
 
 function manyVehicles(count: number): VehicleStatus[] {

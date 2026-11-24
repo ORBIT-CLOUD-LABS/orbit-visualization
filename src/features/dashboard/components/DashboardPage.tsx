@@ -1,17 +1,17 @@
 import { useMemo } from 'react';
 
-import { ApiError } from '@/shared/api/ApiError';
 import { Topbar } from '@/shared/ui/Topbar';
 
+import type { VehicleStatus } from '../api/vehicleStatusSchema';
 import { useCdnEdges } from '../hooks/useCdnEdges';
 import { useDashboardVehicles } from '../hooks/useDashboardVehicles';
 import { countVehicleResults } from '../lib/countVehicleResults';
-import { toQueryState } from '../lib/toQueryState';
+import { toQueryState, type QueryState } from '../lib/toQueryState';
 
 import { CdnEdgeStatusCard } from './CdnEdgeStatusCard';
 import { DisconnectedAlert } from './DisconnectedAlert';
 import { LiveConnectionStatus } from './LiveConnectionStatus';
-import { VehicleListCard, type VehicleListState } from './VehicleListCard';
+import { VehicleListCard } from './VehicleListCard';
 import { VehicleStatCards } from './VehicleStatCards';
 
 /** 02 대시보드. 차량 상태를 실시간으로 보여 준다 */
@@ -26,21 +26,11 @@ export function DashboardPage() {
     [vehicles],
   );
 
-  // 다시 불러오다 실패해도 이미 받은 목록은 계속 보여 준다
-  let listState: VehicleListState;
-  if (vehicles !== undefined) {
-    listState = { status: 'success', vehicles };
-  } else if (query.isError) {
-    listState = {
-      status: 'error',
-      errorCode: query.error instanceof ApiError ? query.error.code : undefined,
-      onRetry: () => {
-        void query.refetch();
-      },
-    };
-  } else {
-    listState = { status: 'pending' };
-  }
+  const snapshotState = toQueryState(query);
+  const vehicleState: QueryState<readonly VehicleStatus[]> =
+    snapshotState.status === 'success'
+      ? { status: 'success', data: snapshotState.data.vehicles }
+      : snapshotState;
   const edgeState = toQueryState(cdnEdgesQuery);
 
   return (
@@ -60,7 +50,7 @@ export function DashboardPage() {
             <CdnEdgeStatusCard state={edgeState} />
           </div>
         </div>
-        <VehicleListCard state={listState} />
+        <VehicleListCard state={vehicleState} />
       </div>
     </>
   );
