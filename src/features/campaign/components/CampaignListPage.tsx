@@ -1,11 +1,11 @@
 import { Card } from '@/shared/ui/Card';
 import { EmptyState } from '@/shared/ui/EmptyState';
+import { QueryFallback } from '@/shared/ui/QueryFallback';
 import { Topbar } from '@/shared/ui/Topbar';
 
 import { useCampaigns } from '../hooks/useCampaigns';
 import { CampaignListCard, LIST_DESCRIPTION, LIST_TITLE } from './CampaignListCard';
 import { CampaignStats } from './CampaignStats';
-import { QueryFallback } from './QueryFallback';
 import { RegisterCampaignLink } from './RegisterCampaignLink';
 
 /** 05 캠페인 목록 */

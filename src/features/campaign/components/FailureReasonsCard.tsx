@@ -1,9 +1,9 @@
 import { Card } from '@/shared/ui/Card';
 import { EmptyState } from '@/shared/ui/EmptyState';
+import { QueryFallback } from '@/shared/ui/QueryFallback';
 
 import type { CampaignStats } from '../api/campaignSchemas';
 import { sortFailureReasons } from '../lib/sortFailureReasons';
-import { QueryFallback } from './QueryFallback';
 import { TABLE_CELL as CELL, TABLE_HEAD_CELL as HEAD_CELL } from './tableClassNames';
 
 type FailureReasonsCardProps = {
