@@ -4,12 +4,11 @@ import { routePaths } from '@/shared/config/routes';
 import { Button } from '@/shared/ui/Button';
 import { buttonClassName } from '@/shared/ui/buttonClassName';
 import { Card } from '@/shared/ui/Card';
+import { KeyValue } from '@/shared/ui/KeyValue';
 import { VehicleResultBadge } from '@/shared/vehicle/VehicleResultBadge';
 
 import type { VehicleDetail } from '../api/vehicleSchemas';
 import { formatTimestamp } from '../lib/formatTimestamp';
-
-import { KeyValue } from './KeyValue';
 
 type VehicleSummaryCardProps = {
   vehicle: VehicleDetail;

@@ -7,13 +7,13 @@ import type { LatLng } from '@/shared/map/latLng';
 import { vehicleMarkerTone } from '@/shared/map/vehicleMarkerTone';
 import { Button } from '@/shared/ui/Button';
 import { Card } from '@/shared/ui/Card';
+import { KeyValue } from '@/shared/ui/KeyValue';
 import type { UpdateResult } from '@/shared/vehicle/updateResult';
 import type { VehicleLocation } from '@/shared/vehicle/vehicleLocationSchema';
 
 import { findNearestEdge, type NearestEdge } from '../lib/findNearestEdge';
 import { formatTimestamp } from '../lib/formatTimestamp';
 
-import { KeyValue } from './KeyValue';
 import { VehicleMiniMap } from './VehicleMiniMap';
 
 const COORDINATE_DIGITS = 4;

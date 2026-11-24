@@ -2,12 +2,11 @@ import { cn } from '@/shared/lib/cn';
 import { Alert } from '@/shared/ui/Alert';
 import { Card } from '@/shared/ui/Card';
 import { EmptyState } from '@/shared/ui/EmptyState';
+import { KeyValue } from '@/shared/ui/KeyValue';
 
 import type { VehicleLastUpdate } from '../api/vehicleSchemas';
 import { failureReasonLabel } from '../lib/failureReasonLabel';
 import { formatTimestamp } from '../lib/formatTimestamp';
-
-import { KeyValue } from './KeyValue';
 
 type LastUpdateCardProps = {
   /** 결과가 없으면 null */
