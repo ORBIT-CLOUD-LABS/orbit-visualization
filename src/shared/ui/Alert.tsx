@@ -15,6 +15,8 @@ const ALERT_TONE: Record<AlertType, Tone> = {
 type AlertProps = {
   type: AlertType;
   title: string;
+  /** 제목 아래 사람이 읽는 안내. 예: 다음에 확인할 것 */
+  description?: string;
   /** 서버 응답 code 처럼 사람이 아닌 도구가 읽는 값 */
   code?: string;
   /** 오른쪽에 둘 동작. 예: 다시 시도 버튼 */
@@ -22,7 +24,7 @@ type AlertProps = {
   className?: string;
 };
 
-export function Alert({ type, title, code, action, className }: AlertProps) {
+export function Alert({ type, title, description, code, action, className }: AlertProps) {
   const typeClass = TONE_CLASS[ALERT_TONE[type]];
 
   return (
@@ -37,6 +39,7 @@ export function Alert({ type, title, code, action, className }: AlertProps) {
       <span aria-hidden="true" className={cn('size-2 shrink-0 rounded-full', typeClass.dot)} />
       <div className="flex min-w-0 flex-1 flex-col gap-0.5">
         <p className="text-sm font-medium">{title}</p>
+        {description !== undefined && <p className="text-2xs">{description}</p>}
         {code !== undefined && <p className="font-mono text-2xs break-all">{code}</p>}
       </div>
       {action}
