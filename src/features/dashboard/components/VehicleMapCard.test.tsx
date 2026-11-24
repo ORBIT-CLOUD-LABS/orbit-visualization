@@ -5,10 +5,10 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { cdnEdgeStatusFixture } from '@/mocks/cdnEdgeHandlers';
 import { vehicleStatusFixture } from '@/mocks/dashboardHandlers';
+import type { CdnEdgeStatus } from '@/shared/cdnEdge/cdnEdgeSchema';
 import { routePaths } from '@/shared/config/routes';
 import { mockLeafletMap, mockTileLayer } from '@/test/reactLeafletMock';
 
-import type { CdnEdgeStatus } from '../api/cdnEdgeSchema';
 import type { VehicleStatus } from '../api/vehicleStatusSchema';
 import { formatClockTime } from '../lib/formatClockTime';
 import type { QueryState } from '../lib/toQueryState';

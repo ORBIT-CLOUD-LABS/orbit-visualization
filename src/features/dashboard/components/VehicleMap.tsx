@@ -12,9 +12,9 @@ import {
 } from 'react-leaflet';
 
 import { config } from '@/config';
+import type { CdnEdgeStatus } from '@/shared/cdnEdge/cdnEdgeSchema';
 import { Alert } from '@/shared/ui/Alert';
 
-import type { CdnEdgeStatus } from '../api/cdnEdgeSchema';
 import { buildEdgeLinks } from '../lib/buildEdgeLinks';
 import { computeMapBounds } from '../lib/computeMapBounds';
 import { createMapPathStyles, readDocumentTokenColor } from '../lib/createMapPathStyles';

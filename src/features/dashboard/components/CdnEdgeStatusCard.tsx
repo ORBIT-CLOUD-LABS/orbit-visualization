@@ -1,6 +1,7 @@
 import { useId } from 'react';
 import { Link } from 'react-router';
 
+import type { CdnEdgeStatus } from '@/shared/cdnEdge/cdnEdgeSchema';
 import { ROUTES } from '@/shared/config/routes';
 import { Alert } from '@/shared/ui/Alert';
 import { Badge } from '@/shared/ui/Badge';
@@ -9,7 +10,6 @@ import { buttonClassName } from '@/shared/ui/buttonClassName';
 import { EmptyState } from '@/shared/ui/EmptyState';
 import { SkeletonRow } from '@/shared/ui/SkeletonRow';
 
-import type { CdnEdgeStatus } from '../api/cdnEdgeSchema';
 import type { QueryState } from '../lib/toQueryState';
 
 const SKELETON_ROWS = [1, 2, 3] as const;

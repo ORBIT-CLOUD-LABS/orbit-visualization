@@ -1,6 +1,6 @@
 import { http, HttpResponse, type RequestHandler } from 'msw';
 
-import type { CdnEdgeStatus } from '@/features/dashboard/api/cdnEdgeSchema';
+import type { CdnEdgeStatus } from '@/shared/cdnEdge/cdnEdgeSchema';
 
 import { success } from './apiEnvelope';
 

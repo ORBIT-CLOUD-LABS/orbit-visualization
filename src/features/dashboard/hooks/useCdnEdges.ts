@@ -1,6 +1,7 @@
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 
-import type { CdnEdges, CdnEdgeStatus } from '../api/cdnEdgeSchema';
+import type { CdnEdges, CdnEdgeStatus } from '@/shared/cdnEdge/cdnEdgeSchema';
+
 import { dashboardKeys } from '../api/dashboardKeys';
 import { getCdnEdges } from '../api/getCdnEdges';
 

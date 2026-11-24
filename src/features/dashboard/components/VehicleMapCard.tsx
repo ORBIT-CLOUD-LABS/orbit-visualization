@@ -1,9 +1,9 @@
 import { useId, useMemo, useState } from 'react';
 
+import type { CdnEdgeStatus } from '@/shared/cdnEdge/cdnEdgeSchema';
 import { Alert } from '@/shared/ui/Alert';
 import { Button } from '@/shared/ui/Button';
 
-import type { CdnEdgeStatus } from '../api/cdnEdgeSchema';
 import type { VehicleStatus } from '../api/vehicleStatusSchema';
 import type { QueryState } from '../lib/toQueryState';
 import {
