@@ -63,6 +63,22 @@ describe('usePagination', () => {
     rerender({ items: numbers(30) });
     expect(result.current.page).toBe(2);
     expect(result.current.pageItems).toEqual(numbers(30).slice(20));
+
+    rerender({ items: numbers(45) });
+    expect(result.current.page).toBe(2);
+  });
+
+  it('숫자가 아닌 페이지는 무시한다', () => {
+    const { result } = renderHook(() => usePagination(numbers(45)));
+    act(() => result.current.setPage(2));
+
+    act(() => result.current.setPage(Number('abc')));
+
+    expect(result.current.page).toBe(2);
+  });
+
+  it('pageSize 가 1 보다 작으면 오류를 던진다', () => {
+    expect(() => renderHook(() => usePagination(numbers(3), { pageSize: 0 }))).toThrow(RangeError);
   });
 
   it('항목이 없으면 1 / 1 페이지에 범위는 0 이다', () => {

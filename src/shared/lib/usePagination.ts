@@ -34,23 +34,34 @@ export function usePagination<T>(
   items: readonly T[],
   { pageSize = DEFAULT_PAGE_SIZE, resetDeps = [] }: UsePaginationOptions = {},
 ): Pagination<T> {
-  const [requestedPage, setRequestedPage] = useState(1);
+  if (!Number.isInteger(pageSize) || pageSize < 1) {
+    throw new RangeError(`pageSize 는 1 이상의 정수여야 한다: ${pageSize}`);
+  }
+
+  const [storedPage, setStoredPage] = useState(1);
   const [prevResetDeps, setPrevResetDeps] = useState(resetDeps);
+
+  const totalCount = items.length;
+  const pageCount = Math.max(1, Math.ceil(totalCount / pageSize));
 
   // 렌더링 중에 이전 값과 비교해 바로 맞춘다 (react.dev "Adjusting some state when a prop changes")
   if (!isSameDeps(prevResetDeps, resetDeps)) {
     setPrevResetDeps(resetDeps);
-    setRequestedPage(1);
+    setStoredPage(1);
+  } else if (storedPage > pageCount) {
+    // 줄어든 페이지를 기억해 두어야 항목이 다시 늘어도 보던 페이지에 머문다
+    setStoredPage(pageCount);
   }
 
-  const totalCount = items.length;
-  const pageCount = Math.max(1, Math.ceil(totalCount / pageSize));
-  const page = Math.min(Math.max(requestedPage, 1), pageCount);
+  const page = Math.min(storedPage, pageCount);
   const offset = (page - 1) * pageSize;
   const pageItems = items.slice(offset, offset + pageSize);
 
   function setPage(next: number): void {
-    setRequestedPage(Math.min(Math.max(Math.trunc(next), 1), pageCount));
+    if (!Number.isFinite(next)) {
+      return;
+    }
+    setStoredPage(Math.min(Math.max(Math.trunc(next), 1), pageCount));
   }
 
   return {
