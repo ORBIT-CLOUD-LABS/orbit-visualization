@@ -10,13 +10,24 @@ type CardProps = {
   /** 제목 오른쪽 동작. 예: 필터, 등록 버튼 */
   action?: ReactNode;
   children: ReactNode;
+  /** 제목 요소 id. 본문의 표처럼 제목으로 이름 붙일 요소가 있으면 넘긴다 */
+  titleId?: string;
   /** 바깥 상자 스타일. 간격·여백을 바꿀 때 쓴다 */
   className?: string;
 };
 
 /** 제목으로 이름 붙인 영역(region). 화면 읽기 도구가 카드 단위로 이동할 수 있다 */
-export function Card({ title, description, badge, action, children, className }: CardProps) {
-  const titleId = useId();
+export function Card({
+  title,
+  description,
+  badge,
+  action,
+  children,
+  titleId: givenTitleId,
+  className,
+}: CardProps) {
+  const generatedTitleId = useId();
+  const titleId = givenTitleId ?? generatedTitleId;
   const heading = (
     <h2 id={titleId} className="text-md font-bold text-fg">
       {title}

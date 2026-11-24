@@ -1,4 +1,3 @@
-import { useId } from 'react';
 import { Link } from 'react-router';
 
 import type { CdnEdgeStatus } from '@/shared/cdnEdge/cdnEdgeSchema';
@@ -8,6 +7,7 @@ import { Alert } from '@/shared/ui/Alert';
 import { Badge } from '@/shared/ui/Badge';
 import { Button } from '@/shared/ui/Button';
 import { buttonClassName } from '@/shared/ui/buttonClassName';
+import { Card } from '@/shared/ui/Card';
 import { EmptyState } from '@/shared/ui/EmptyState';
 import { SkeletonRow } from '@/shared/ui/SkeletonRow';
 
@@ -19,8 +19,6 @@ type CdnEdgeStatusCardProps = {
 
 /** Edge 별 정상 여부와 배정 차량 수. 자세한 내용은 04 CDN Edge 화면으로 보낸다 */
 export function CdnEdgeStatusCard({ state }: CdnEdgeStatusCardProps) {
-  const headingId = useId();
-
   function renderBody() {
     if (state.status === 'pending') {
       return (
@@ -78,22 +76,17 @@ export function CdnEdgeStatusCard({ state }: CdnEdgeStatusCardProps) {
   }
 
   return (
-    <section
-      aria-labelledby={headingId}
-      className="flex flex-col gap-3 rounded-xl border border-line bg-surface p-5"
-    >
-      <div className="flex items-center justify-between gap-3">
-        <div className="flex flex-col gap-0.5">
-          <h2 id={headingId} className="text-md font-bold text-fg">
-            CDN Edge 상태
-          </h2>
-          <p className="text-xs text-fg-muted">Edge별 상태와 배정 차량 수</p>
-        </div>
+    <Card
+      title="CDN Edge 상태"
+      description="Edge별 상태와 배정 차량 수"
+      action={
         <Link to={ROUTES.edges} className={buttonClassName({ variant: 'ghost' })}>
           자세히
         </Link>
-      </div>
+      }
+      className="gap-3"
+    >
       {renderBody()}
-    </section>
+    </Card>
   );
 }

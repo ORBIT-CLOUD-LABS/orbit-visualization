@@ -1,10 +1,9 @@
-import { useId } from 'react';
-
 import type { CdnEdgeStatus } from '@/shared/cdnEdge/cdnEdgeSchema';
 import { cn } from '@/shared/lib/cn';
 import type { QueryState } from '@/shared/lib/toQueryState';
 import { Alert } from '@/shared/ui/Alert';
 import { Button } from '@/shared/ui/Button';
+import { Card } from '@/shared/ui/Card';
 
 import { EdgeMap } from './EdgeMap';
 
@@ -15,8 +14,6 @@ type EdgeMapCardProps = {
 
 /** Edge 위치와 정상 여부, 마커 팝업의 배정 차량 수를 보여 주는 지도 카드 */
 export function EdgeMapCard({ edgeState, className }: EdgeMapCardProps) {
-  const headingId = useId();
-
   function renderBody() {
     if (edgeState.status === 'pending') {
       return (
@@ -43,17 +40,8 @@ export function EdgeMapCard({ edgeState, className }: EdgeMapCardProps) {
   }
 
   return (
-    <section
-      aria-labelledby={headingId}
-      className={cn(
-        'flex min-w-0 flex-col gap-3 rounded-xl border border-line bg-surface p-5',
-        className,
-      )}
-    >
-      <h2 id={headingId} className="text-md font-bold text-fg">
-        Edge 위치 · 배정 차량
-      </h2>
+    <Card title="Edge 위치 · 배정 차량" className={cn('min-w-0 gap-3', className)}>
       {renderBody()}
-    </section>
+    </Card>
   );
 }

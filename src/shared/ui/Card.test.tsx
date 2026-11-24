@@ -37,4 +37,15 @@ describe('Card', () => {
     expect(within(card).queryByRole('button')).not.toBeInTheDocument();
     expect(within(card).getByText('본문')).toBeInTheDocument();
   });
+
+  it('넘긴 titleId 로 본문 요소도 제목으로 이름 붙일 수 있다', () => {
+    render(
+      <Card title="차량 목록" titleId="vehicle-list-title">
+        <table aria-labelledby="vehicle-list-title" />
+      </Card>,
+    );
+
+    expect(screen.getByRole('region', { name: '차량 목록' })).toBeInTheDocument();
+    expect(screen.getByRole('table', { name: '차량 목록' })).toBeInTheDocument();
+  });
 });

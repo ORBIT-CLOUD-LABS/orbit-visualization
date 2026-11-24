@@ -1,9 +1,10 @@
-import { useId, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import type { CdnEdgeStatus } from '@/shared/cdnEdge/cdnEdgeSchema';
 import type { QueryState } from '@/shared/lib/toQueryState';
 import { Alert } from '@/shared/ui/Alert';
 import { Button } from '@/shared/ui/Button';
+import { Card } from '@/shared/ui/Card';
 
 import type { VehicleStatus } from '../api/vehicleStatusSchema';
 import {
@@ -25,7 +26,6 @@ type VehicleMapCardProps = {
 
 /** 차량 위치와 배정 Edge 지도 카드 */
 export function VehicleMapCard({ vehicleState, edgeState }: VehicleMapCardProps) {
-  const headingId = useId();
   const [markerCache] = useState<VehicleMarkerCache>(() => new WeakMap());
   const vehicles = vehicleState.status === 'success' ? vehicleState.data : undefined;
   const markers = useMemo(
@@ -67,21 +67,16 @@ export function VehicleMapCard({ vehicleState, edgeState }: VehicleMapCardProps)
   }
 
   return (
-    <section
-      aria-labelledby={headingId}
-      className="flex min-w-0 flex-1 flex-col gap-3 rounded-xl border border-line bg-surface p-5"
+    <Card
+      title="차량 위치 · 배정 Edge"
+      description={
+        unlocatedCount > 0
+          ? `위치 정보가 없는 차량 ${unlocatedCount}대는 지도에 표시되지 않습니다`
+          : undefined
+      }
+      className="min-w-0 flex-1 gap-3"
     >
-      <div className="flex flex-col gap-0.5">
-        <h2 id={headingId} className="text-md font-bold text-fg">
-          차량 위치 · 배정 Edge
-        </h2>
-        {unlocatedCount > 0 && (
-          <p className="text-xs text-fg-muted">
-            위치 정보가 없는 차량 {unlocatedCount}대는 지도에 표시되지 않습니다
-          </p>
-        )}
-      </div>
       {renderBody()}
-    </section>
+    </Card>
   );
 }

@@ -4,6 +4,7 @@ import type { QueryState } from '@/shared/lib/toQueryState';
 import { usePagination } from '@/shared/lib/usePagination';
 import { Alert } from '@/shared/ui/Alert';
 import { Button } from '@/shared/ui/Button';
+import { Card } from '@/shared/ui/Card';
 import { EmptyState } from '@/shared/ui/EmptyState';
 import { Pagination } from '@/shared/ui/Pagination';
 import { SkeletonRow } from '@/shared/ui/SkeletonRow';
@@ -96,24 +97,21 @@ export function VehicleListCard({ state }: VehicleListCardProps) {
   }
 
   return (
-    <section
-      aria-labelledby={headingId}
-      className="flex flex-col gap-4 rounded-xl border border-line bg-surface p-5"
-    >
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 id={headingId} className="text-md font-bold text-fg">
-          차량 목록
-        </h2>
-        {vehicles.length > 0 && (
+    <Card
+      title="차량 목록"
+      titleId={headingId}
+      action={
+        vehicles.length > 0 ? (
           <VehicleFilters
             filter={filter}
             models={options.models}
             edgeIds={options.edgeIds}
             onChange={setFilter}
           />
-        )}
-      </div>
+        ) : undefined
+      }
+    >
       {renderBody()}
-    </section>
+    </Card>
   );
 }

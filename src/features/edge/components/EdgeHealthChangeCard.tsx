@@ -1,7 +1,6 @@
-import { useId } from 'react';
-
 import { cn } from '@/shared/lib/cn';
 import { formatClockTime } from '@/shared/lib/formatClockTime';
+import { Card } from '@/shared/ui/Card';
 import { SkeletonRow } from '@/shared/ui/SkeletonRow';
 
 import type { EdgeHealthTracker } from '../lib/trackEdgeHealth';
@@ -28,8 +27,6 @@ type EdgeHealthChangeCardProps = {
  * 불러오기 실패는 같은 조회를 쓰는 지도·Edge 목록 카드가 알리므로 여기서는 기록이 없다고만 보여 준다
  */
 export function EdgeHealthChangeCard({ tracker, isPending, className }: EdgeHealthChangeCardProps) {
-  const headingId = useId();
-
   function renderBody() {
     if (isPending) {
       return (
@@ -81,22 +78,12 @@ export function EdgeHealthChangeCard({ tracker, isPending, className }: EdgeHeal
   }
 
   return (
-    <section
-      aria-labelledby={headingId}
-      className={cn(
-        'flex min-w-0 flex-col gap-3 rounded-xl border border-line bg-surface p-5',
-        className,
-      )}
+    <Card
+      title="상태 변화 (화면 감지)"
+      description="이 화면에서 감지한 변화만 보여 주며, 화면을 떠나면 기록이 사라집니다"
+      className={cn('min-w-0 gap-3', className)}
     >
-      <div className="flex flex-col gap-0.5">
-        <h2 id={headingId} className="text-md font-bold text-fg">
-          상태 변화 (화면 감지)
-        </h2>
-        <p className="text-xs text-fg-muted">
-          이 화면에서 감지한 변화만 보여 주며, 화면을 떠나면 기록이 사라집니다
-        </p>
-      </div>
       {renderBody()}
-    </section>
+    </Card>
   );
 }
