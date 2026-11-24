@@ -1,3 +1,4 @@
+import { edgeHealthLabel } from '@/shared/cdnEdge/edgeHealthLabel';
 import { cn } from '@/shared/lib/cn';
 import { formatClockTime } from '@/shared/lib/formatClockTime';
 import { Card } from '@/shared/ui/Card';
@@ -9,10 +10,6 @@ import { EdgeHealthEntry } from './EdgeHealthEntry';
 
 const SKELETON_ROW_COUNT = 2;
 const EMPTY_CLASS = 'rounded-md bg-subtle px-3.5 py-6 text-center text-xs text-fg-muted';
-
-function healthLabel(healthy: boolean): string {
-  return healthy ? '정상' : '장애';
-}
 
 type EdgeHealthChangeCardProps = {
   /** 화면에서 감지한 변화. 아직 받은 값이 없으면 null */
@@ -53,7 +50,7 @@ export function EdgeHealthChangeCard({ tracker, isPending, className }: EdgeHeal
               <EdgeHealthEntry
                 key={edgeId}
                 tone="warning"
-                title={`${edgeId} ${healthLabel(healthy)} 확인 중`}
+                title={`${edgeId} ${edgeHealthLabel(healthy)} 확인 중`}
                 detail="다음 조회에서도 같으면 기록합니다"
               />
             ))}
@@ -66,7 +63,7 @@ export function EdgeHealthChangeCard({ tracker, isPending, className }: EdgeHeal
                 key={`${edgeId}@${detectedAt}`}
                 tone={healthy ? 'info' : 'danger'}
                 title={`${edgeId} ${healthy ? '복구' : '장애'} 감지 (${formatClockTime(detectedAt)})`}
-                detail={`${healthLabel(!healthy)} → ${healthLabel(healthy)}`}
+                detail={`${edgeHealthLabel(!healthy)} → ${edgeHealthLabel(healthy)}`}
                 isMonoDetail
               />
             ))}
