@@ -3,7 +3,7 @@ import userEvent, { type UserEvent } from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { describe, expect, it } from 'vitest';
 
-import { failure, success } from '@/mocks/artifactHandlers';
+import { failure, success } from '@/mocks/apiEnvelope';
 import { server } from '@/mocks/server';
 
 import { renderRoute } from '../test/renderRoute';

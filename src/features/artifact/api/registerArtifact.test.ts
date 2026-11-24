@@ -1,7 +1,7 @@
 import { http, HttpResponse } from 'msw';
 import { describe, expect, it } from 'vitest';
 
-import { success } from '@/mocks/artifactHandlers';
+import { success } from '@/mocks/apiEnvelope';
 import { server } from '@/mocks/server';
 
 import { registerArtifact } from './registerArtifact';

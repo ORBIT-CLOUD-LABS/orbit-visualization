@@ -1,5 +1,7 @@
 import { http, HttpResponse, type RequestHandler } from 'msw';
 
+import { failure, success } from './apiEnvelope';
+
 const ARTIFACTS_PATH = '/api/v1/admin/artifacts';
 
 export const artifactFixtures = [
@@ -24,14 +26,6 @@ export const artifactFixtures = [
     createdAt: '2026-09-30T09:00:00Z',
   },
 ];
-
-export function success(data: unknown, code = 'OK') {
-  return { isSuccess: true, code, message: '', data, error: null };
-}
-
-export function failure(code: string, message = '') {
-  return { isSuccess: false, code, message, data: null, error: null };
-}
 
 export const artifactHandlers: RequestHandler[] = [
   http.get(ARTIFACTS_PATH, () => HttpResponse.json(success({ artifacts: artifactFixtures }))),
