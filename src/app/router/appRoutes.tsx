@@ -1,14 +1,20 @@
 import { Navigate, type RouteObject } from 'react-router';
 
+import { AuthenticatedLayout } from '@/features/auth/components/AuthenticatedLayout';
+import { LoginPage } from '@/features/auth/components/LoginPage';
 import { ROUTES } from '@/shared/config/routes';
 
 import { PlaceholderPage } from './PlaceholderPage';
 import { RequireAuth } from './RequireAuth';
 
 export const appRoutes: RouteObject[] = [
-  { path: ROUTES.login, element: <PlaceholderPage title="로그인" /> },
+  { path: ROUTES.login, element: <LoginPage /> },
   {
-    element: <RequireAuth />,
+    element: (
+      <RequireAuth>
+        <AuthenticatedLayout />
+      </RequireAuth>
+    ),
     children: [
       { path: ROUTES.dashboard, element: <PlaceholderPage title="대시보드" /> },
       { path: ROUTES.vehicleDetail, element: <PlaceholderPage title="차량 상세" /> },

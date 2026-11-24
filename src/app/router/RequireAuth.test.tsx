@@ -1,22 +1,20 @@
-import { render, screen } from '@testing-library/react';
-import { createMemoryRouter, RouterProvider } from 'react-router';
+import { screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
 import { tokenStorage } from '@/shared/auth/tokenStorage';
+import { renderRoutes } from '@/test/renderRoutes';
 
 import { appRoutes } from './appRoutes';
 
 function renderAt(path: string) {
-  const router = createMemoryRouter(appRoutes, { initialEntries: [path] });
-  render(<RouterProvider router={router} />);
-  return router;
+  return renderRoutes(appRoutes, path).router;
 }
 
 describe('RequireAuth', () => {
   it('토큰이 없으면 로그인 화면으로 보낸다', async () => {
     const router = renderAt('/campaigns/1');
 
-    expect(await screen.findByRole('heading', { name: '로그인' })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: '관리자 토큰 입력' })).toBeInTheDocument();
     expect(router.state.location.pathname).toBe('/login');
   });
 
@@ -40,6 +38,6 @@ describe('RequireAuth', () => {
   it('로그인 화면은 토큰 없이 열린다', async () => {
     renderAt('/login');
 
-    expect(await screen.findByRole('heading', { name: '로그인' })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: '관리자 토큰 입력' })).toBeInTheDocument();
   });
 });

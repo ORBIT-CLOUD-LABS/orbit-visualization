@@ -39,6 +39,12 @@ describe('tokenStorage', () => {
     expect(tokenStorage.get()).toBeNull();
   });
 
+  it('저장할 수 있는 형식인지 알려 준다', () => {
+    expect(tokenStorage.isValid('admin-token-123')).toBe(true);
+    expect(tokenStorage.isValid('has space')).toBe(false);
+    expect(tokenStorage.isValid('')).toBe(false);
+  });
+
   it('형식이 다른 토큰은 저장하지 않고 오류를 던진다', () => {
     expect(() => tokenStorage.set('has space')).toThrow('관리자 토큰 형식');
     expect(tokenStorage.get()).toBeNull();
