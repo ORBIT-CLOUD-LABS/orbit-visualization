@@ -1,7 +1,6 @@
 import 'leaflet/dist/leaflet.css';
 
-import type { PathOptions } from 'leaflet';
-import { useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import {
   CircleMarker,
   MapContainer,
@@ -16,10 +15,10 @@ import { config } from '@/config';
 import { Alert } from '@/shared/ui/Alert';
 
 import type { CdnEdgeStatus } from '../api/cdnEdgeSchema';
-import { buildEdgeLinks, type EdgeLinkKind } from '../lib/buildEdgeLinks';
+import { buildEdgeLinks } from '../lib/buildEdgeLinks';
 import { computeMapBounds } from '../lib/computeMapBounds';
+import { createMapPathStyles, readDocumentTokenColor } from '../lib/createMapPathStyles';
 import type { LatLng, VehicleMarker } from '../lib/toVehicleMarkers';
-import type { VehicleMarkerTone } from '../lib/vehicleMarkerTone';
 
 import { FitBoundsOnce } from './FitBoundsOnce';
 import { InvalidateSizeOnResize } from './InvalidateSizeOnResize';
@@ -40,29 +39,15 @@ const PANES = {
   edges: { name: 'orbit-edges', zIndex: 430 },
 } as const;
 
-// Leaflet 은 색을 SVG 속성으로 넣는다. 토큰 색을 쓰도록 CSS 클래스로 덮는다 (CSS 가 속성보다 우선한다).
-// 객체가 바뀌면 react-leaflet 이 setStyle 을 부르므로 상수로 둔다
-const VEHICLE_PATH_OPTIONS: Record<VehicleMarkerTone, PathOptions> = {
-  success: { className: 'fill-success stroke-surface', fillOpacity: 1, weight: 1 },
-  danger: { className: 'fill-danger stroke-surface', fillOpacity: 1, weight: 1 },
-  neutral: { className: 'fill-neutral stroke-surface', fillOpacity: 1, weight: 1 },
-};
-
-const EDGE_PATH_OPTIONS: Record<'healthy' | 'unhealthy', PathOptions> = {
-  healthy: { className: 'fill-primary stroke-surface', fillOpacity: 1, weight: 2 },
-  unhealthy: { className: 'fill-danger stroke-surface', fillOpacity: 1, weight: 2 },
-};
-
 // leaflet.css 는 layer 밖이라 Tailwind 유틸리티보다 우선한다. 같은 요소의 색은 ! 로 덮는다
 const EDGE_LABEL_CLASS = {
   healthy: 'font-sans text-2xs font-medium text-fg!',
   unhealthy: 'font-sans text-2xs font-medium text-danger!',
 } as const;
 
-const LINK_PATH_OPTIONS: Record<EdgeLinkKind, PathOptions> = {
-  assigned: { className: 'stroke-primary', weight: 1.5 },
-  reassigned: { className: 'stroke-warning', weight: 2, dashArray: '4 4' },
-};
+function healthKey(edge: CdnEdgeStatus): 'healthy' | 'unhealthy' {
+  return edge.healthy ? 'healthy' : 'unhealthy';
+}
 
 type VehicleMapProps = {
   markers: readonly VehicleMarker[];
@@ -90,16 +75,21 @@ export function VehicleMap({ markers, edges, isReadyToFit }: VehicleMapProps) {
     }),
     [],
   );
+  // 토큰 색은 테마가 바뀌지 않으므로 처음 한 번만 읽는다
+  const [styles] = useState(() => createMapPathStyles(readDocumentTokenColor));
+  // 좌표 배열이 바뀌면 Leaflet 이 다시 그리므로 Edge 가 바뀔 때만 만든다
+  const edgeMarkers = useMemo(
+    () => edges.map((edge) => ({ edge, position: [edge.latitude, edge.longitude] as LatLng })),
+    [edges],
+  );
   const links = useMemo(() => buildEdgeLinks(markers, edges), [markers, edges]);
-  const bounds = useMemo(
+  const getBounds = useCallback(
     () =>
-      isReadyToFit
-        ? computeMapBounds([
-            ...markers.map((marker) => marker.position),
-            ...edges.map((edge): LatLng => [edge.latitude, edge.longitude]),
-          ])
-        : null,
-    [isReadyToFit, markers, edges],
+      computeMapBounds([
+        ...markers.map((marker) => marker.position),
+        ...edgeMarkers.map(({ position }) => position),
+      ]),
+    [markers, edgeMarkers],
   );
 
   return (
@@ -116,26 +106,25 @@ export function VehicleMap({ markers, edges, isReadyToFit }: VehicleMapProps) {
           eventHandlers={tileEventHandlers}
         />
         <InvalidateSizeOnResize />
-        <FitBoundsOnce bounds={bounds} />
+        <FitBoundsOnce getBounds={isReadyToFit ? getBounds : null} />
         {/* Leaflet pane 의 z-index 는 CSS 클래스가 아니라 pane 요소 style 로 정한다 */}
         <Pane name={PANES.links.name} style={{ zIndex: PANES.links.zIndex }}>
           {links.map((link) => (
             <Polyline
               key={link.id}
               positions={link.positions}
-              pathOptions={LINK_PATH_OPTIONS[link.kind]}
+              pathOptions={styles.link[link.kind]}
               interactive={false}
             />
           ))}
         </Pane>
         <Pane name={PANES.vehicles.name} style={{ zIndex: PANES.vehicles.zIndex }}>
           {markers.map((marker) => (
-            // Leaflet 은 className 을 바꿔도 다시 그리지 않으므로 결과가 바뀌면 새로 만든다
             <CircleMarker
-              key={`${marker.vehicleId}:${marker.tone}`}
+              key={marker.vehicleId}
               center={marker.position}
               radius={4}
-              pathOptions={VEHICLE_PATH_OPTIONS[marker.tone]}
+              pathOptions={styles.vehicle[marker.tone]}
             >
               <Popup>
                 <VehicleMarkerPopup marker={marker} />
@@ -144,18 +133,20 @@ export function VehicleMap({ markers, edges, isReadyToFit }: VehicleMapProps) {
           ))}
         </Pane>
         <Pane name={PANES.edges.name} style={{ zIndex: PANES.edges.zIndex }}>
-          {edges.map((edge) => (
+          {edgeMarkers.map(({ edge, position }) => (
             <CircleMarker
-              key={`${edge.edgeId}:${String(edge.healthy)}`}
-              center={[edge.latitude, edge.longitude]}
+              key={edge.edgeId}
+              center={position}
               radius={9}
-              pathOptions={EDGE_PATH_OPTIONS[edge.healthy ? 'healthy' : 'unhealthy']}
+              pathOptions={styles.edge[healthKey(edge)]}
             >
+              {/* Leaflet 은 툴팁 className 을 처음에만 붙이므로 상태가 바뀌면 툴팁만 새로 만든다 */}
               <Tooltip
+                key={healthKey(edge)}
                 permanent
                 direction="bottom"
                 offset={[0, 10]}
-                className={EDGE_LABEL_CLASS[edge.healthy ? 'healthy' : 'unhealthy']}
+                className={EDGE_LABEL_CLASS[healthKey(edge)]}
               >
                 {edge.healthy ? edge.name : `${edge.name} (장애)`}
               </Tooltip>
