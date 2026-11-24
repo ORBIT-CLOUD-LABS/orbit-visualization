@@ -1,12 +1,13 @@
 import { cn } from '@/shared/lib/cn';
+import { TONE_CLASS } from '@/shared/ui/toneClass';
 
 import type { ResultRatios } from '../lib/resultRatios';
 
-// 막대와 범례가 같은 색을 쓴다. 색만으로 전하지 않도록 범례에 이름과 비율을 함께 쓴다
+// 막대와 범례가 Badge·Alert 와 같은 상태색을 쓴다. 색만으로 전하지 않도록 범례에 이름과 비율을 함께 쓴다
 const SEGMENTS = [
-  { key: 'succeeded', label: '성공', color: 'bg-success' },
-  { key: 'failed', label: '실패', color: 'bg-danger' },
-  { key: 'inProgress', label: '대기·미보고', color: 'bg-warning' },
+  { key: 'succeeded', label: '성공', color: TONE_CLASS.success.dot },
+  { key: 'failed', label: '실패', color: TONE_CLASS.danger.dot },
+  { key: 'inProgress', label: '대기·미보고', color: TONE_CLASS.warning.dot },
 ] as const;
 
 type ResultBarProps = {
