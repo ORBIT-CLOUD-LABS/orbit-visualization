@@ -38,6 +38,13 @@ describe('Input', () => {
     expect(screen.queryByText('예: 1.2.0')).not.toBeInTheDocument();
   });
 
+  it('hideLabel 이면 label 을 숨겨도 입력 칸 이름으로 남긴다', () => {
+    render(<Input label="vehicleId 검색" hideLabel type="search" />);
+
+    expect(screen.getByRole('searchbox', { name: 'vehicleId 검색' })).toBeInTheDocument();
+    expect(screen.getByText('vehicleId 검색')).toHaveClass('sr-only');
+  });
+
   it('밖에서 넘긴 aria-describedby 와 오류 문구를 함께 연결한다', () => {
     render(
       <>
