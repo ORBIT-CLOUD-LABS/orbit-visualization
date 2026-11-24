@@ -1,8 +1,8 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { renderHook, waitFor } from '@testing-library/react';
+import { act, renderHook, waitFor } from '@testing-library/react';
 import { delay, http } from 'msw';
 import type { ReactNode } from 'react';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
   DASHBOARD_VEHICLES_URL,
@@ -12,7 +12,7 @@ import {
 import { server } from '@/mocks/server';
 import { fakeSseClient, type FakeSseClient } from '@/test/fakeSseClient';
 
-import { useDashboardVehicles } from './useDashboardVehicles';
+import { FIRST_CONNECT_WAIT_MS, useDashboardVehicles } from './useDashboardVehicles';
 
 const EARLIER = '2026-11-24T01:00:00.000Z';
 const LATER = '2026-11-24T01:00:05.000Z';
@@ -31,6 +31,10 @@ describe('useDashboardVehicles', () => {
 
   beforeEach(() => {
     sse = fakeSseClient();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   it('SSE 가 연결된 뒤에 스냅샷을 조회한다', async () => {
@@ -53,6 +57,26 @@ describe('useDashboardVehicles', () => {
       expect(result.current.query.data?.vehicles).toEqual([vehicleStatusFixture()]);
     });
     expect(requestCount).toBe(1);
+  });
+
+  it('SSE 첫 연결이 끝나지 않아도 대기 시간이 지나면 스냅샷을 조회한다', async () => {
+    vi.useFakeTimers();
+    const { result } = renderDashboardVehicles();
+
+    act(() => {
+      vi.advanceTimersByTime(FIRST_CONNECT_WAIT_MS - 1);
+    });
+    expect(result.current.query.isEnabled).toBe(false);
+
+    act(() => {
+      vi.advanceTimersByTime(1);
+    });
+    vi.useRealTimers();
+
+    await waitFor(() => {
+      expect(result.current.query.data?.vehicles).toEqual([vehicleStatusFixture()]);
+    });
+    expect(result.current.connection.status).toBe('connecting');
   });
 
   it('스냅샷을 받기 전에 온 변경분도 updatedAt 을 비교해 합친다', async () => {

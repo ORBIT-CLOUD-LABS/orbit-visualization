@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient, type UseQueryResult } from '@tanstack/react-query';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { dashboardKeys } from '../api/dashboardKeys';
 import { getVehicleStatusSnapshot } from '../api/getVehicleStatusSnapshot';
@@ -7,6 +7,9 @@ import type { VehicleStatus, VehicleStatusSnapshot } from '../api/vehicleStatusS
 import { mergeVehicleStatuses } from '../lib/mergeVehicleStatuses';
 
 import { useVehicleStatusStream, type VehicleStatusStream } from './useVehicleStatusStream';
+
+/** SSE 첫 연결을 기다리는 최대 시간. 지나면 연결을 기다리지 않고 스냅샷을 조회한다 */
+export const FIRST_CONNECT_WAIT_MS = 3000;
 
 export type DashboardVehicles = {
   /** 스냅샷에 SSE 변경분을 합친 전체 차량 상태. dataUpdatedAt 이 마지막 갱신 시각이다 */
@@ -16,6 +19,7 @@ export type DashboardVehicles = {
 
 /**
  * 대시보드 차량 상태. SSE 를 먼저 연결한 뒤 스냅샷을 조회하고, 받은 변경분을 Query 캐시에 합친다.
+ * 첫 연결이 FIRST_CONNECT_WAIT_MS 안에 끝나지 않으면 기다리지 않고 조회한다.
  * 화면 하나에서 한 번만 부르고 결과를 자식에게 넘긴다 (부를 때마다 SSE 연결이 하나씩 생긴다).
  */
 export function useDashboardVehicles(): DashboardVehicles {
@@ -44,6 +48,20 @@ export function useDashboardVehicles(): DashboardVehicles {
   );
 
   const connection = useVehicleStatusStream(handleChanges);
+  const [isFirstConnectWaitOver, setIsFirstConnectWaitOver] = useState(false);
+
+  // 첫 연결이 응답 없이 늘어지면 로딩이 끝나지 않는다. 대기 시간이 지나면 SSE 와 상관없이 조회한다
+  useEffect(() => {
+    if (connection.hasOpened) {
+      return;
+    }
+    const timer = setTimeout(() => {
+      setIsFirstConnectWaitOver(true);
+    }, FIRST_CONNECT_WAIT_MS);
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [connection.hasOpened]);
 
   const query = useQuery({
     queryKey: dashboardKeys.vehicles(),
@@ -51,7 +69,7 @@ export function useDashboardVehicles(): DashboardVehicles {
     queryFn: ({ signal }) => getVehicleStatusSnapshot(signal),
     // 서버가 구독자를 먼저 등록해야 스냅샷과 SSE 사이의 변경을 놓치지 않는다.
     // 첫 연결만 기다리고, 다시 연결하는 동안에는 조회를 막지 않는다
-    enabled: connection.hasOpened,
+    enabled: connection.hasOpened || isFirstConnectWaitOver,
   });
 
   const { data, fetchStatus } = query;
