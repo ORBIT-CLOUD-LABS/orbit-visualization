@@ -6,10 +6,8 @@ import { MemoryRouter } from 'react-router';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { failure } from '@/mocks/apiEnvelope';
+import { CDN_EDGES_URL, cdnEdgeStatusFixture, cdnEdgesResponse } from '@/mocks/cdnEdgeHandlers';
 import {
-  cdnEdgeStatusFixture,
-  cdnEdgesResponse,
-  DASHBOARD_CDN_EDGES_URL,
   DASHBOARD_VEHICLES_URL,
   vehicleSnapshotResponse,
   vehicleStatusFixture,
@@ -154,7 +152,7 @@ describe('DashboardPage', () => {
 
   it('CDN Edge 상태를 조회해 Edge 카드에 그린다', async () => {
     server.use(
-      http.get(DASHBOARD_CDN_EDGES_URL, () =>
+      http.get(CDN_EDGES_URL, () =>
         cdnEdgesResponse([cdnEdgeStatusFixture({ healthy: false, assignedVehicles: 3 })]),
       ),
     );
@@ -169,7 +167,7 @@ describe('DashboardPage', () => {
     const user = userEvent.setup();
     let isServerUp = false;
     server.use(
-      http.get(DASHBOARD_CDN_EDGES_URL, () =>
+      http.get(CDN_EDGES_URL, () =>
         isServerUp
           ? cdnEdgesResponse([cdnEdgeStatusFixture()])
           : HttpResponse.json(failure('INTERNAL_SERVER_ERROR', '서버 오류'), { status: 500 }),

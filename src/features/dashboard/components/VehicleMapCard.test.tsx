@@ -3,7 +3,8 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { cdnEdgeStatusFixture, vehicleStatusFixture } from '@/mocks/dashboardHandlers';
+import { cdnEdgeStatusFixture } from '@/mocks/cdnEdgeHandlers';
+import { vehicleStatusFixture } from '@/mocks/dashboardHandlers';
 import { routePaths } from '@/shared/config/routes';
 import { mockLeafletMap, mockTileLayer } from '@/test/reactLeafletMock';
 

@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router';
 import { describe, expect, it, vi } from 'vitest';
 
-import { cdnEdgeStatusFixture } from '@/mocks/dashboardHandlers';
+import { cdnEdgeStatusFixture } from '@/mocks/cdnEdgeHandlers';
 import { ROUTES } from '@/shared/config/routes';
 
 import type { CdnEdgeStatus } from '../api/cdnEdgeSchema';

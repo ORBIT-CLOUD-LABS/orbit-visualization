@@ -2,6 +2,7 @@ import type { RequestHandler } from 'msw';
 
 import { artifactHandlers } from './artifactHandlers';
 import { campaignHandlers } from './campaignHandlers';
+import { cdnEdgeHandlers } from './cdnEdgeHandlers';
 import { dashboardHandlers } from './dashboardHandlers';
 import { vehicleHandlers } from './vehicleHandlers';
 
@@ -9,6 +10,7 @@ import { vehicleHandlers } from './vehicleHandlers';
 export const handlers: RequestHandler[] = [
   ...artifactHandlers,
   ...campaignHandlers,
+  ...cdnEdgeHandlers,
   ...dashboardHandlers,
   ...vehicleHandlers,
 ];
