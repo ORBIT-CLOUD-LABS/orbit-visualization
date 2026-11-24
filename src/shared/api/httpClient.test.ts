@@ -131,6 +131,25 @@ describe('httpClient', () => {
     expect(tokenStorage.get()).toBeNull();
   });
 
+  it('직접 넘긴 토큰이 401 을 받으면 저장된 토큰을 지우지 않는다', async () => {
+    tokenStorage.set('stored-token');
+    const listener = vi.fn();
+    unsubscribe = onUnauthorized(listener);
+    server.use(
+      http.get('/api/v1/items/1', () =>
+        HttpResponse.json(failure('AUTHENTICATION_REQUIRED', '인증이 필요합니다.'), {
+          status: 401,
+        }),
+      ),
+    );
+
+    await expect(
+      httpClient.get('/items/1', { headers: { Authorization: 'Bearer other-token' } }),
+    ).rejects.toMatchObject({ status: 401 });
+    expect(listener).not.toHaveBeenCalled();
+    expect(tokenStorage.get()).toBe('stored-token');
+  });
+
   it('401 이 아닌 실패에는 알리지 않는다', async () => {
     const listener = vi.fn();
     unsubscribe = onUnauthorized(listener);

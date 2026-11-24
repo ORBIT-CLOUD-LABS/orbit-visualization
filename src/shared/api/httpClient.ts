@@ -36,7 +36,9 @@ function normalizeError(error: unknown): unknown {
   if (response === undefined) {
     return new NetworkError('서버에 연결하지 못했습니다', { cause: error });
   }
-  if (response.status === UNAUTHORIZED) {
+  // 직접 넘긴 다른 토큰이 거절된 것이면 저장된 토큰은 그대로 둔다
+  const sentStoredToken = error.config?.headers.get('Authorization') === authorizationHeader();
+  if (response.status === UNAUTHORIZED && sentStoredToken) {
     reportUnauthorized();
   }
   return toApiError(response.status, response.data, error);
