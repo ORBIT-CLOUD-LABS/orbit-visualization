@@ -2,6 +2,7 @@ import { useId } from 'react';
 
 import type { CdnEdgeStatus } from '@/shared/cdnEdge/cdnEdgeSchema';
 import { EdgeHealthBadge } from '@/shared/cdnEdge/EdgeHealthBadge';
+import { KeyValue } from '@/shared/ui/KeyValue';
 
 import { formatCoordinate } from '../lib/formatCoordinate';
 
@@ -30,12 +31,7 @@ export function EdgeCard({ edge }: EdgeCardProps) {
         <EdgeHealthBadge healthy={edge.healthy} className="shrink-0" />
       </div>
       <dl className="grid grid-cols-2 gap-4">
-        <div className="flex min-w-0 flex-col gap-1">
-          <dt className="text-xs text-fg-muted">좌표</dt>
-          <dd className="font-mono text-xs break-all text-fg">
-            {formatCoordinate(edge.latitude, edge.longitude)}
-          </dd>
-        </div>
+        <KeyValue label="좌표">{formatCoordinate(edge.latitude, edge.longitude)}</KeyValue>
         <div className="flex min-w-0 flex-col gap-1">
           <dt className="text-xs text-fg-muted">배정 차량</dt>
           <dd className="text-sm font-medium text-fg">{edge.assignedVehicles}대</dd>
