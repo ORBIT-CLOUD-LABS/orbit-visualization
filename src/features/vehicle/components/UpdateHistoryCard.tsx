@@ -2,10 +2,10 @@ import { usePagination } from '@/shared/lib/usePagination';
 import { Card } from '@/shared/ui/Card';
 import { EmptyState } from '@/shared/ui/EmptyState';
 import { Pagination } from '@/shared/ui/Pagination';
+import { QueryFallback } from '@/shared/ui/QueryFallback';
 
 import type { VehicleUpdateEvent } from '../api/vehicleSchemas';
 
-import { QueryFallback } from './QueryFallback';
 import { UpdateHistoryTable } from './UpdateHistoryTable';
 
 const NO_EVENTS: readonly VehicleUpdateEvent[] = [];
@@ -32,7 +32,9 @@ export function UpdateHistoryCard({
       return (
         <QueryFallback
           isPending={isPending}
-          errorTitle="업데이트 이력을 불러오지 못했습니다"
+          loadingLabel="불러오는 중입니다"
+          loadingVariant="divided"
+          errorMessage="업데이트 이력을 불러오지 못했습니다"
           errorCode={errorCode}
           onRetry={onRetry}
         />

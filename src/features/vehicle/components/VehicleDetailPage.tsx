@@ -9,6 +9,7 @@ import { Button } from '@/shared/ui/Button';
 import { buttonClassName } from '@/shared/ui/buttonClassName';
 import { Card } from '@/shared/ui/Card';
 import { EmptyState } from '@/shared/ui/EmptyState';
+import { QueryFallback } from '@/shared/ui/QueryFallback';
 import { Topbar } from '@/shared/ui/Topbar';
 
 import { useVehicleDetail } from '../hooks/useVehicleDetail';
@@ -16,7 +17,6 @@ import { useVehicleUpdateHistory } from '../hooks/useVehicleUpdateHistory';
 import { parseVehicleId } from '../lib/parseVehicleId';
 
 import { LastUpdateCard } from './LastUpdateCard';
-import { QueryFallback } from './QueryFallback';
 import { UpdateHistoryCard } from './UpdateHistoryCard';
 import { VehicleBreadcrumb } from './VehicleBreadcrumb';
 import { VehicleLocationCard } from './VehicleLocationCard';
@@ -83,7 +83,9 @@ export function VehicleDetailPage() {
           <Card className="p-6" title="차량 정보">
             <QueryFallback
               isPending={detail.isPending}
-              errorTitle="차량 정보를 불러오지 못했습니다"
+              loadingLabel="불러오는 중입니다"
+              loadingVariant="divided"
+              errorMessage="차량 정보를 불러오지 못했습니다"
               errorCode={errorCodeOf(detail.error)}
               onRetry={() => void detail.refetch(KEEP_IN_FLIGHT)}
             />
