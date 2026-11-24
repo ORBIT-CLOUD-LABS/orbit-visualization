@@ -1,5 +1,8 @@
 import { Navigate, type RouteObject } from 'react-router';
 
+import { ArtifactDetailPage } from '@/features/artifact/components/ArtifactDetailPage';
+import { ArtifactListPage } from '@/features/artifact/components/ArtifactListPage';
+import { ArtifactRegisterPage } from '@/features/artifact/components/ArtifactRegisterPage';
 import { AuthenticatedLayout } from '@/features/auth/components/AuthenticatedLayout';
 import { LoginPage } from '@/features/auth/components/LoginPage';
 import { ROUTES } from '@/shared/config/routes';
@@ -22,9 +25,9 @@ export const appRoutes: RouteObject[] = [
       { path: ROUTES.campaigns, element: <PlaceholderPage title="캠페인" /> },
       { path: ROUTES.campaignNew, element: <PlaceholderPage title="캠페인 만들기" /> },
       { path: ROUTES.campaignDetail, element: <PlaceholderPage title="캠페인 상세" /> },
-      { path: ROUTES.artifacts, element: <PlaceholderPage title="아티팩트" /> },
-      { path: ROUTES.artifactNew, element: <PlaceholderPage title="아티팩트 등록" /> },
-      { path: ROUTES.artifactDetail, element: <PlaceholderPage title="아티팩트 상세" /> },
+      { path: ROUTES.artifacts, element: <ArtifactListPage /> },
+      { path: ROUTES.artifactNew, element: <ArtifactRegisterPage /> },
+      { path: ROUTES.artifactDetail, element: <ArtifactDetailPage /> },
     ],
   },
   // 없는 경로는 라우터 기본 오류 화면 대신 대시보드로 보낸다
