@@ -2,12 +2,14 @@ import type { ReactNode } from 'react';
 
 import { cn } from '@/shared/lib/cn';
 
+import { TONE_CLASS, type Tone } from './toneClass';
+
 export type AlertType = 'error' | 'warning' | 'info';
 
-const TYPE_CLASS: Record<AlertType, { alert: string; dot: string }> = {
-  error: { alert: 'bg-danger-soft text-danger', dot: 'bg-danger' },
-  warning: { alert: 'bg-warning-soft text-warning', dot: 'bg-warning' },
-  info: { alert: 'bg-info-soft text-info', dot: 'bg-info' },
+const ALERT_TONE: Record<AlertType, Tone> = {
+  error: 'danger',
+  warning: 'warning',
+  info: 'info',
 };
 
 type AlertProps = {
@@ -21,12 +23,16 @@ type AlertProps = {
 };
 
 export function Alert({ type, title, code, action, className }: AlertProps) {
-  const typeClass = TYPE_CLASS[type];
+  const typeClass = TONE_CLASS[ALERT_TONE[type]];
 
   return (
     <div
       role={type === 'error' ? 'alert' : 'status'}
-      className={cn('flex items-center gap-2.5 rounded-md px-3.5 py-3', typeClass.alert, className)}
+      className={cn(
+        'flex items-center gap-2.5 rounded-md px-3.5 py-3',
+        typeClass.surface,
+        className,
+      )}
     >
       <span aria-hidden="true" className={cn('size-2 shrink-0 rounded-full', typeClass.dot)} />
       <div className="flex min-w-0 flex-1 flex-col gap-0.5">

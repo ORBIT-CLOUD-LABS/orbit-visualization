@@ -2,17 +2,19 @@ import type { ReactNode } from 'react';
 
 import { cn } from '@/shared/lib/cn';
 
+import { TONE_CLASS, type Tone } from './toneClass';
+
 export type BadgeTone =
   'success' | 'failed' | 'pending' | 'info' | 'neutral' | 'healthy' | 'unhealthy';
 
-const TONE_CLASS: Record<BadgeTone, { badge: string; dot: string }> = {
-  success: { badge: 'bg-success-soft text-success', dot: 'bg-success' },
-  failed: { badge: 'bg-danger-soft text-danger', dot: 'bg-danger' },
-  pending: { badge: 'bg-warning-soft text-warning', dot: 'bg-warning' },
-  info: { badge: 'bg-info-soft text-info', dot: 'bg-info' },
-  neutral: { badge: 'bg-muted text-neutral', dot: 'bg-neutral' },
-  healthy: { badge: 'bg-success-soft text-success', dot: 'bg-success' },
-  unhealthy: { badge: 'bg-danger-soft text-danger', dot: 'bg-danger' },
+const BADGE_TONE: Record<BadgeTone, Tone> = {
+  success: 'success',
+  failed: 'danger',
+  pending: 'warning',
+  info: 'info',
+  neutral: 'neutral',
+  healthy: 'success',
+  unhealthy: 'danger',
 };
 
 type BadgeProps = {
@@ -23,13 +25,13 @@ type BadgeProps = {
 };
 
 export function Badge({ tone, children, className }: BadgeProps) {
-  const toneClass = TONE_CLASS[tone];
+  const toneClass = TONE_CLASS[BADGE_TONE[tone]];
 
   return (
     <span
       className={cn(
         'inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-xs font-medium whitespace-nowrap',
-        toneClass.badge,
+        toneClass.surface,
         className,
       )}
     >
