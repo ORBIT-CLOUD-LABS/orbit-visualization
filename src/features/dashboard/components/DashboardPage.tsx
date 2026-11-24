@@ -2,7 +2,6 @@ import { useMemo } from 'react';
 
 import { Topbar } from '@/shared/ui/Topbar';
 
-import type { CdnEdgeStatus } from '../api/cdnEdgeSchema';
 import type { VehicleStatus } from '../api/vehicleStatusSchema';
 import { useCdnEdges } from '../hooks/useCdnEdges';
 import { useDashboardVehicles } from '../hooks/useDashboardVehicles';
@@ -15,8 +14,6 @@ import { LiveConnectionStatus } from './LiveConnectionStatus';
 import { VehicleListCard } from './VehicleListCard';
 import { VehicleMapCard } from './VehicleMapCard';
 import { VehicleStatCards } from './VehicleStatCards';
-
-const NO_EDGES: readonly CdnEdgeStatus[] = [];
 
 /** 02 대시보드. 차량 상태를 실시간으로 보여 준다 */
 export function DashboardPage() {
@@ -49,12 +46,7 @@ export function DashboardPage() {
         )}
         <VehicleStatCards counts={counts} />
         <div className="flex flex-col gap-6 xl:flex-row">
-          <VehicleMapCard
-            vehicleState={vehicleState}
-            edges={cdnEdgesQuery.data ?? NO_EDGES}
-            // 재시도를 기다리지 않도록 첫 실패에서도 차량만으로 범위를 맞춘다
-            isEdgesSettled={cdnEdgesQuery.data !== undefined || cdnEdgesQuery.failureCount > 0}
-          />
+          <VehicleMapCard vehicleState={vehicleState} edgeState={edgeState} />
           <div className="xl:w-75 xl:shrink-0">
             <CdnEdgeStatusCard state={edgeState} />
           </div>

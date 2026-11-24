@@ -1,4 +1,4 @@
-import { useId, useMemo } from 'react';
+import { useId, useMemo, useState } from 'react';
 
 import { Alert } from '@/shared/ui/Alert';
 import { Button } from '@/shared/ui/Button';
@@ -6,27 +6,31 @@ import { Button } from '@/shared/ui/Button';
 import type { CdnEdgeStatus } from '../api/cdnEdgeSchema';
 import type { VehicleStatus } from '../api/vehicleStatusSchema';
 import type { QueryState } from '../lib/toQueryState';
-import { toVehicleMarkers, type VehicleMarker } from '../lib/toVehicleMarkers';
+import {
+  toVehicleMarkers,
+  type VehicleMarker,
+  type VehicleMarkerCache,
+} from '../lib/toVehicleMarkers';
 
 import { VehicleMap } from './VehicleMap';
 
 const NO_MARKERS: readonly VehicleMarker[] = [];
+const NO_EDGES: readonly CdnEdgeStatus[] = [];
 
 type VehicleMapCardProps = {
   vehicleState: QueryState<readonly VehicleStatus[]>;
-  /** Edge 상태. 받기 전이나 받지 못했으면 빈 목록이고 차량만 그린다 */
-  edges: readonly CdnEdgeStatus[];
-  /** Edge 조회가 끝났으면(성공·실패) true. 처음 범위를 맞추는 시점을 정한다 */
-  isEdgesSettled: boolean;
+  /** Edge 상태. 받지 못했으면 차량만 그린다 */
+  edgeState: QueryState<readonly CdnEdgeStatus[]>;
 };
 
 /** 차량 위치와 배정 Edge 지도 카드 */
-export function VehicleMapCard({ vehicleState, edges, isEdgesSettled }: VehicleMapCardProps) {
+export function VehicleMapCard({ vehicleState, edgeState }: VehicleMapCardProps) {
   const headingId = useId();
+  const [markerCache] = useState<VehicleMarkerCache>(() => new WeakMap());
   const vehicles = vehicleState.status === 'success' ? vehicleState.data : undefined;
   const markers = useMemo(
-    () => (vehicles === undefined ? NO_MARKERS : toVehicleMarkers(vehicles)),
-    [vehicles],
+    () => (vehicles === undefined ? NO_MARKERS : toVehicleMarkers(vehicles, markerCache)),
+    [vehicles, markerCache],
   );
   const unlocatedCount = vehicles === undefined ? 0 : vehicles.length - markers.length;
 
@@ -52,7 +56,14 @@ export function VehicleMapCard({ vehicleState, edges, isEdgesSettled }: VehicleM
         />
       );
     }
-    return <VehicleMap markers={markers} edges={edges} isReadyToFit={isEdgesSettled} />;
+    return (
+      <VehicleMap
+        markers={markers}
+        edges={edgeState.status === 'success' ? edgeState.data : NO_EDGES}
+        // Edge 를 받았거나 끝내 받지 못했으면 처음 한 번 범위를 맞춘다
+        isReadyToFit={edgeState.status !== 'pending'}
+      />
+    );
   }
 
   return (

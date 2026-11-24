@@ -22,13 +22,17 @@ const SEOUL_EDGE = cdnEdgeStatusFixture({ latitude: 37.5, longitude: 127 });
 type CardProps = {
   vehicleState: QueryState<readonly VehicleStatus[]>;
   edges?: readonly CdnEdgeStatus[];
-  isEdgesSettled?: boolean;
+  edgeState?: QueryState<readonly CdnEdgeStatus[]>;
 };
 
-function card({ vehicleState, edges = [SEOUL_EDGE], isEdgesSettled = true }: CardProps) {
+function card({
+  vehicleState,
+  edges = [SEOUL_EDGE],
+  edgeState = { status: 'success', data: edges },
+}: CardProps) {
   return (
     <MemoryRouter>
-      <VehicleMapCard vehicleState={vehicleState} edges={edges} isEdgesSettled={isEdgesSettled} />
+      <VehicleMapCard vehicleState={vehicleState} edgeState={edgeState} />
     </MemoryRouter>
   );
 }
@@ -89,7 +93,7 @@ describe('VehicleMapCard', () => {
     const { rerender } = render(
       card({
         vehicleState: { status: 'success', data: [located('VH-0001', 35, 129)] },
-        isEdgesSettled: false,
+        edgeState: { status: 'pending' },
       }),
     );
     expect(mockLeafletMap.fitBounds).not.toHaveBeenCalled();
@@ -109,6 +113,23 @@ describe('VehicleMapCard', () => {
     rerender(card({ vehicleState: { status: 'success', data: [located('VH-0001', 33, 126)] } }));
 
     expect(mockLeafletMap.fitBounds).toHaveBeenCalledOnce();
+  });
+
+  it('Edge 를 받지 못해도 차량만으로 범위를 맞춘다', () => {
+    render(
+      card({
+        vehicleState: { status: 'success', data: [located('VH-0001', 35, 129)] },
+        edgeState: { status: 'error', onRetry: vi.fn() },
+      }),
+    );
+
+    expect(mockLeafletMap.fitBounds).toHaveBeenCalledWith(
+      [
+        [35, 129],
+        [35, 129],
+      ],
+      expect.any(Object),
+    );
   });
 
   it('위치를 보낸 차량이 없으면 지도 위에 안내한다', () => {

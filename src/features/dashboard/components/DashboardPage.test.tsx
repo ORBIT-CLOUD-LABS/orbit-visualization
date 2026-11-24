@@ -19,7 +19,8 @@ import { fakeSseClient, type FakeSseClient } from '@/test/fakeSseClient';
 
 import { DashboardPage } from './DashboardPage';
 
-vi.mock('react-leaflet', () => import('@/test/reactLeafletMock'));
+// 지도 자체는 VehicleMapCard 테스트에서 본다. jsdom 에서 Leaflet 을 그리지 않도록 지도만 뺀다
+vi.mock('./VehicleMap', () => ({ VehicleMap: () => null }));
 
 const EARLIER = '2026-11-24T01:00:00.000Z';
 const LATER = '2026-11-24T01:00:05.000Z';

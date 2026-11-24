@@ -29,6 +29,19 @@ describe('toVehicleMarkers', () => {
     ]);
   });
 
+  it('cache 를 넘기면 같은 차량 상태 객체의 마커를 재사용한다', () => {
+    const unchanged = vehicleStatusFixture({
+      vehicleId: 'VH-0001',
+      location: { latitude: 37.5, longitude: 127, updatedAt: LOCATED_AT },
+    });
+    const cache = new WeakMap();
+    const [first] = toVehicleMarkers([unchanged], cache);
+
+    const [again] = toVehicleMarkers([unchanged], cache);
+
+    expect(again).toBe(first);
+  });
+
   it('위치를 보낸 차량이 없으면 빈 목록이다', () => {
     expect(toVehicleMarkers([vehicleStatusFixture({ location: null })])).toEqual([]);
   });
