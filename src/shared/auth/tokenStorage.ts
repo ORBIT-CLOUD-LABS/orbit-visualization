@@ -8,10 +8,19 @@ export function isValidToken(value: unknown): value is string {
   return typeof value === 'string' && value.length <= MAX_TOKEN_LENGTH && TOKEN_PATTERN.test(value);
 }
 
+// 사이트 데이터를 막은 브라우저는 접근만 해도 SecurityError 를 던진다. 토큰이 없는 것으로 보고 로그인 화면으로 보낸다
+function readStorage(): string | null {
+  try {
+    return sessionStorage.getItem(STORAGE_KEY);
+  } catch {
+    return null;
+  }
+}
+
 export const tokenStorage = {
-  /** 저장된 토큰을 검증해 돌려준다. 없거나 형식이 다르면 지우고 null */
+  /** 저장된 토큰을 검증해 돌려준다. 없거나 형식이 다르거나 저장소를 쓸 수 없으면 null */
   get(): string | null {
-    const value = sessionStorage.getItem(STORAGE_KEY);
+    const value = readStorage();
     if (value === null) {
       return null;
     }

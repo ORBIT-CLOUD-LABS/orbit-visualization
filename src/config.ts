@@ -21,11 +21,17 @@ function isHttpUrlOrRootPath(value: string): boolean {
   if (value.startsWith('/')) {
     return !value.startsWith('//');
   }
-  if (!URL.canParse(value)) {
-    return false;
-  }
-  const { protocol } = new URL(value);
+  const protocol = parseProtocol(value);
   return protocol === 'http:' || protocol === 'https:';
+}
+
+// URL.canParse 는 Chrome 120 미만에 없어 시작 시 앱 전체가 멈춘다. 생성자로 확인한다
+function parseProtocol(value: string): string | null {
+  try {
+    return new URL(value).protocol;
+  } catch {
+    return null;
+  }
 }
 
 function requireBaseUrlEnv(name: string, value: unknown): string {

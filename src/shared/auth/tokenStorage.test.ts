@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { tokenStorage } from './tokenStorage';
 
@@ -30,6 +30,14 @@ describe('tokenStorage', () => {
       expect(sessionStorage.getItem('orbit.adminToken')).toBeNull();
     },
   );
+
+  it('브라우저가 저장소 접근을 막으면 null 을 돌려준다', () => {
+    vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
+      throw new DOMException('blocked', 'SecurityError');
+    });
+
+    expect(tokenStorage.get()).toBeNull();
+  });
 
   it('형식이 다른 토큰은 저장하지 않고 오류를 던진다', () => {
     expect(() => tokenStorage.set('has space')).toThrow('관리자 토큰 형식');
