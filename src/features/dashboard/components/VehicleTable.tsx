@@ -1,11 +1,10 @@
 import { Link } from 'react-router';
 
 import { routePaths } from '@/shared/config/routes';
+import { VehicleResultBadge } from '@/shared/vehicle/VehicleResultBadge';
 
 import type { VehicleStatus } from '../api/vehicleStatusSchema';
 import { formatClockTime } from '../lib/formatClockTime';
-
-import { VehicleResultBadge } from './VehicleResultBadge';
 
 const EMPTY_VALUE = '—';
 
