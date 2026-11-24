@@ -1,3 +1,4 @@
+import { clsx } from 'clsx';
 import { useId, type ComponentPropsWithRef } from 'react';
 
 import { cn } from '@/shared/lib/cn';
@@ -22,9 +23,8 @@ export function Input({
   const id = useId();
   const messageId = `${id}-message`;
   const message = error ?? help;
-  const describedBy = [ariaDescribedBy, message === undefined ? undefined : messageId]
-    .filter((value) => value !== undefined)
-    .join(' ');
+  // id 목록이라 tailwind-merge 를 거치지 않도록 cn 대신 clsx 로 합친다
+  const describedBy = clsx(ariaDescribedBy, message !== undefined && messageId);
 
   return (
     <div className={cn('flex flex-col gap-1.5', className)}>
