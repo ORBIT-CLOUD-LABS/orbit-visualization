@@ -113,6 +113,27 @@ describe('EdgeStatusPage', () => {
     expect(await within(seoul).findByText('장애')).toBeInTheDocument();
   });
 
+  it('다시 조회해 같은 장애가 두 번 이어지면 상태 변화에 기록한다', async () => {
+    let healthy = true;
+    server.use(
+      http.get(CDN_EDGES_URL, () => cdnEdgesResponse([cdnEdgeStatusFixture({ healthy })])),
+    );
+    const user = userEvent.setup();
+    renderPage();
+
+    const changes = screen.getByRole('region', { name: '상태 변화 (화면 감지)' });
+    expect(await within(changes).findByText('감지된 상태 변화가 없습니다')).toBeInTheDocument();
+    healthy = false;
+    await user.click(screen.getByRole('button', { name: '새로고침' }));
+    expect(await within(changes).findByText('edge-seoul 장애 확인 중')).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: '새로고침' }));
+
+    expect(
+      await within(changes).findByText(/^edge-seoul 장애 감지 \(\d{2}:\d{2}:\d{2}\)$/),
+    ).toBeInTheDocument();
+    expect(within(changes).queryByText('edge-seoul 장애 확인 중')).not.toBeInTheDocument();
+  });
+
   it('새로고침이 실패하면 받은 정보를 그대로 두고 실패를 알린다', async () => {
     let isServerUp = true;
     server.use(
