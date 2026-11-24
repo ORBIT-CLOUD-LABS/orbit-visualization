@@ -37,4 +37,17 @@ describe('Input', () => {
     expect(input).toHaveAccessibleDescription('버전 형식이 맞지 않습니다');
     expect(screen.queryByText('예: 1.2.0')).not.toBeInTheDocument();
   });
+
+  it('밖에서 넘긴 aria-describedby 와 오류 문구를 함께 연결한다', () => {
+    render(
+      <>
+        <p id="token-hint">브라우저에만 저장됩니다</p>
+        <Input label="토큰" aria-describedby="token-hint" error="토큰을 입력하세요" />
+      </>,
+    );
+
+    expect(screen.getByRole('textbox', { name: '토큰' })).toHaveAccessibleDescription(
+      '브라우저에만 저장됩니다 토큰을 입력하세요',
+    );
+  });
 });

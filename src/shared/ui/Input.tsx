@@ -9,10 +9,22 @@ type InputProps = Omit<ComponentPropsWithRef<'input'>, 'id'> & {
   error?: string;
 };
 
-export function Input({ label, help, error, required, className, ...props }: InputProps) {
+export function Input({
+  label,
+  help,
+  error,
+  required,
+  className,
+  'aria-describedby': ariaDescribedBy,
+  'aria-invalid': ariaInvalid,
+  ...props
+}: InputProps) {
   const id = useId();
   const messageId = `${id}-message`;
   const message = error ?? help;
+  const describedBy = [ariaDescribedBy, message === undefined ? undefined : messageId]
+    .filter((value) => value !== undefined)
+    .join(' ');
 
   return (
     <div className={cn('flex flex-col gap-1.5', className)}>
@@ -27,8 +39,8 @@ export function Input({ label, help, error, required, className, ...props }: Inp
       <input
         id={id}
         required={required}
-        aria-invalid={error === undefined ? undefined : true}
-        aria-describedby={message === undefined ? undefined : messageId}
+        aria-invalid={error === undefined ? ariaInvalid : true}
+        aria-describedby={describedBy === '' ? undefined : describedBy}
         className={cn(
           'h-10 w-full rounded-md border border-line bg-surface px-3 text-sm text-fg placeholder:text-fg-muted',
           'focus-visible:outline-2 focus-visible:-outline-offset-1 focus-visible:outline-primary',
