@@ -54,9 +54,18 @@ async function fetchWithConnectTimeout(
   const timer = window.setTimeout(() => {
     attempt.abort(new Error(`SSE 연결 응답이 ${CONNECT_TIMEOUT_MS}ms 안에 오지 않았습니다`));
   }, CONNECT_TIMEOUT_MS);
-  const signal = init.signal ? AbortSignal.any([init.signal, attempt.signal]) : attempt.signal;
+  // AbortSignal.any 는 Safari 17.4·Chrome 116 부터라 바깥 signal 의 abort 를 직접 넘긴다.
+  // 연결된 뒤에도 바깥 signal 로 스트림을 닫아야 하므로 리스너는 지우지 않는다
+  const { signal: outer } = init;
+  if (outer) {
+    if (outer.aborted) {
+      attempt.abort(outer.reason);
+    } else {
+      outer.addEventListener('abort', () => attempt.abort(outer.reason), { once: true });
+    }
+  }
   try {
-    return await window.fetch(input, { ...init, signal });
+    return await window.fetch(input, { ...init, signal: attempt.signal });
   } finally {
     window.clearTimeout(timer);
   }
