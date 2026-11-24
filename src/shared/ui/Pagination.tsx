@@ -1,9 +1,9 @@
 import type { ReactNode } from 'react';
 
 import { cn } from '@/shared/lib/cn';
+import { getPageItems } from '@/shared/lib/getPageItems';
 
 import { Button } from './Button';
-import { getPageItems } from './getPageItems';
 
 type PaginationProps = {
   /** 1부터 센다 */
