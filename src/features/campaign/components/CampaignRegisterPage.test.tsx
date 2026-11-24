@@ -159,6 +159,8 @@ describe('CampaignRegisterPage', () => {
     renderPage();
 
     expect(await screen.findByRole('alert')).toHaveTextContent('파일 목록을 불러오지 못했습니다');
+    await user.click(screen.getByRole('button', { name: '캠페인 등록' }));
+    expect(screen.getByText('배포할 파일을 선택하세요')).toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: '다시 시도' }));
 
     expect(await screen.findByRole('option', { name: FILE_12 })).toBeInTheDocument();

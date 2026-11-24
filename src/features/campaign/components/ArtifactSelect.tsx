@@ -69,6 +69,7 @@ export function ArtifactSelect({
             </Button>
           }
         />
+        {error !== undefined && <p className="text-xs text-danger">{error}</p>}
       </div>
     );
   }
