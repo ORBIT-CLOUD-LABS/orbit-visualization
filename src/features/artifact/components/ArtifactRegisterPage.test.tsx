@@ -87,6 +87,24 @@ describe('ArtifactRegisterPage', () => {
       '/campaigns/new?artifactId=12',
     );
     expect(screen.getByRole('button', { name: '등록' })).toBeEnabled();
+    expect(screen.getByRole('textbox', { name: '차종' })).toHaveValue('');
+  });
+
+  it('실패한 뒤 입력을 고치면 지난 안내를 지운다', async () => {
+    const user = userEvent.setup();
+    server.use(
+      http.post(REGISTER_PATH, () =>
+        HttpResponse.json(failure('SIGNATURE_INVALID'), { status: 422 }),
+      ),
+    );
+    renderPage();
+    await fillForm(user);
+    await user.click(screen.getByRole('button', { name: '등록' }));
+    expect(await screen.findByRole('alert')).toBeInTheDocument();
+
+    await user.type(screen.getByRole('textbox', { name: '키 버전' }), '2');
+
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
   });
 
   it.each([

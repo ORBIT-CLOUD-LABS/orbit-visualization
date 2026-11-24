@@ -30,10 +30,17 @@ type ArtifactRegisterFormProps = {
   isSubmitting: boolean;
   /** 마지막 등록 요청의 실패. 없으면 null */
   error: Error | null;
+  /** 입력이 바뀔 때마다 부른다 */
+  onEdit: () => void;
   onSubmit: (input: RegisterArtifactInput) => void;
 };
 
-export function ArtifactRegisterForm({ isSubmitting, error, onSubmit }: ArtifactRegisterFormProps) {
+export function ArtifactRegisterForm({
+  isSubmitting,
+  error,
+  onEdit,
+  onSubmit,
+}: ArtifactRegisterFormProps) {
   const [values, setValues] = useState(EMPTY_VALUES);
   const [errors, setErrors] = useState<ArtifactFormErrors>({});
   const serverError = error === null ? null : registerErrorMessage(error);
@@ -41,6 +48,7 @@ export function ArtifactRegisterForm({ isSubmitting, error, onSubmit }: Artifact
   function change<Field extends ArtifactFormField>(field: Field, value: ArtifactFormValues[Field]) {
     setValues((previous) => ({ ...previous, [field]: value }));
     setErrors((previous) => ({ ...previous, [field]: undefined }));
+    onEdit();
   }
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
