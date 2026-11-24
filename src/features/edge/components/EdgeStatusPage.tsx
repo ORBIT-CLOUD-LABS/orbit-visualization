@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import { ApiError } from '@/shared/api/ApiError';
+import { errorCodeOf } from '@/shared/api/errorCodeOf';
 import { useCdnEdges } from '@/shared/cdnEdge/useCdnEdges';
 import { formatClockTime } from '@/shared/lib/formatClockTime';
 import { toQueryState } from '@/shared/lib/toQueryState';
@@ -29,7 +29,7 @@ export function EdgeStatusPage() {
   const lastUpdated = formatClockTime(query.dataUpdatedAt === 0 ? null : query.dataUpdatedAt);
   // 이미 받은 값이 있으면 그대로 두고, 새로고침이 실패했다는 것만 알린다
   const isRefreshFailed = query.isError && edges !== undefined;
-  const errorCode = query.error instanceof ApiError ? query.error.code : undefined;
+  const errorCode = errorCodeOf(query.error);
 
   function handleRefresh() {
     void query.refetch(KEEP_IN_FLIGHT);
