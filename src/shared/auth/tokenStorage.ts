@@ -18,6 +18,11 @@ function readStorage(): string | null {
 }
 
 export const tokenStorage = {
+  /** 저장할 수 있는 형식인지 본다. 입력 화면이 저장 전에 확인할 때 쓴다 */
+  isValid(token: string): boolean {
+    return isValidToken(token);
+  },
+
   /** 저장된 토큰을 검증해 돌려준다. 없거나 형식이 다르거나 저장소를 쓸 수 없으면 null */
   get(): string | null {
     const value = readStorage();
