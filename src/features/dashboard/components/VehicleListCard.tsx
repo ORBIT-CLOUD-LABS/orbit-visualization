@@ -56,7 +56,7 @@ export function VehicleListCard({ state }: VehicleListCardProps) {
       return (
         <Alert
           type="error"
-          title="차량 목록을 불러오지 못했습니다"
+          title="차량 목록을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요."
           code={state.errorCode}
           action={
             <Button variant="secondary" onClick={state.onRetry}>
