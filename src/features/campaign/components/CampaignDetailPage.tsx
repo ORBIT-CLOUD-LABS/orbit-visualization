@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router';
 import { ApiError } from '@/shared/api/ApiError';
 import { ROUTES } from '@/shared/config/routes';
 import { buttonClassName } from '@/shared/ui/buttonClassName';
+import { Card } from '@/shared/ui/Card';
 import { EmptyState } from '@/shared/ui/EmptyState';
 import { Topbar } from '@/shared/ui/Topbar';
 
@@ -12,7 +13,6 @@ import { parseId } from '../lib/parseId';
 import { Breadcrumb } from './Breadcrumb';
 import { CampaignInfoCard } from './CampaignInfoCard';
 import { CampaignStatsSection } from './CampaignStatsSection';
-import { Card } from './Card';
 import { DeactivateCampaignButton } from './DeactivateCampaignButton';
 import { QueryFallback } from './QueryFallback';
 

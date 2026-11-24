@@ -1,10 +1,10 @@
+import { Card } from '@/shared/ui/Card';
 import { EmptyState } from '@/shared/ui/EmptyState';
 import { Topbar } from '@/shared/ui/Topbar';
 
 import { useCampaigns } from '../hooks/useCampaigns';
 import { CampaignListCard, LIST_DESCRIPTION, LIST_TITLE } from './CampaignListCard';
 import { CampaignStats } from './CampaignStats';
-import { Card } from './Card';
 import { QueryFallback } from './QueryFallback';
 import { RegisterCampaignLink } from './RegisterCampaignLink';
 

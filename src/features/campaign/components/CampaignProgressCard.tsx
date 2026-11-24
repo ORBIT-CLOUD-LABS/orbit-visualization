@@ -1,10 +1,10 @@
 import { Alert } from '@/shared/ui/Alert';
 import { Button } from '@/shared/ui/Button';
+import { Card } from '@/shared/ui/Card';
 import { StatCard } from '@/shared/ui/StatCard';
 
 import type { CampaignStats } from '../api/campaignSchemas';
 import { resultRatios } from '../lib/resultRatios';
-import { Card } from './Card';
 import { QueryFallback } from './QueryFallback';
 import { ResultBar } from './ResultBar';
 

@@ -1,12 +1,12 @@
 import { useState } from 'react';
 
 import { usePagination } from '@/shared/lib/usePagination';
+import { Card } from '@/shared/ui/Card';
 import { EmptyState } from '@/shared/ui/EmptyState';
 import { Pagination } from '@/shared/ui/Pagination';
 
 import { CAMPAIGN_STATUSES, type CampaignSummary } from '../api/campaignSchemas';
 import { CampaignTable } from './CampaignTable';
-import { Card } from './Card';
 import { ALL, FilterSelect } from './FilterSelect';
 import { RegisterCampaignLink } from './RegisterCampaignLink';
 
