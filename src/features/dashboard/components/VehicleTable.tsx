@@ -1,10 +1,10 @@
 import { Link } from 'react-router';
 
 import { routePaths } from '@/shared/config/routes';
+import { formatClockTime } from '@/shared/lib/formatClockTime';
 import { VehicleResultBadge } from '@/shared/vehicle/VehicleResultBadge';
 
 import type { VehicleStatus } from '../api/vehicleStatusSchema';
-import { formatClockTime } from '../lib/formatClockTime';
 
 const EMPTY_VALUE = '—';
 

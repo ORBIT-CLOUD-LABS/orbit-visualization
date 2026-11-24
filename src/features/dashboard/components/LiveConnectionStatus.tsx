@@ -1,7 +1,6 @@
 import type { SseConnectionStatus } from '@/shared/api/sseClient';
+import { formatClockTime } from '@/shared/lib/formatClockTime';
 import { Badge, type BadgeTone } from '@/shared/ui/Badge';
-
-import { formatClockTime } from '../lib/formatClockTime';
 
 const STATUS_BADGE: Record<SseConnectionStatus, { tone: BadgeTone; label: string }> = {
   connecting: { tone: 'pending', label: '연결 중' },

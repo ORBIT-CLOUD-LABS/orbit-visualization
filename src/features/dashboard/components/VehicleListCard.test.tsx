@@ -4,9 +4,9 @@ import { MemoryRouter } from 'react-router';
 import { describe, expect, it, vi } from 'vitest';
 
 import { vehicleStatusFixture } from '@/mocks/dashboardHandlers';
+import { formatClockTime } from '@/shared/lib/formatClockTime';
 
 import type { VehicleStatus } from '../api/vehicleStatusSchema';
-import { formatClockTime } from '../lib/formatClockTime';
 
 import type { QueryState } from '../lib/toQueryState';
 

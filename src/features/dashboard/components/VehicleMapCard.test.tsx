@@ -7,10 +7,10 @@ import { cdnEdgeStatusFixture } from '@/mocks/cdnEdgeHandlers';
 import { vehicleStatusFixture } from '@/mocks/dashboardHandlers';
 import type { CdnEdgeStatus } from '@/shared/cdnEdge/cdnEdgeSchema';
 import { routePaths } from '@/shared/config/routes';
+import { formatClockTime } from '@/shared/lib/formatClockTime';
 import { mockLeafletMap, mockTileLayer } from '@/test/reactLeafletMock';
 
 import type { VehicleStatus } from '../api/vehicleStatusSchema';
-import { formatClockTime } from '../lib/formatClockTime';
 import type { QueryState } from '../lib/toQueryState';
 
 import { VehicleMapCard } from './VehicleMapCard';

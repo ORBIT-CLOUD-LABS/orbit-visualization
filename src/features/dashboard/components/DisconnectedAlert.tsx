@@ -1,7 +1,6 @@
+import { formatClockTime } from '@/shared/lib/formatClockTime';
 import { Alert } from '@/shared/ui/Alert';
 import { Button } from '@/shared/ui/Button';
-
-import { formatClockTime } from '../lib/formatClockTime';
 
 type DisconnectedAlertProps = {
   /** 마지막으로 데이터를 받은 시각(ms). 아직 받지 못했으면 null */
