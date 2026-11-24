@@ -4,6 +4,7 @@ import { ArtifactDetailPage } from '@/features/artifact/components/ArtifactDetai
 import { ArtifactListPage } from '@/features/artifact/components/ArtifactListPage';
 import { ArtifactRegisterPage } from '@/features/artifact/components/ArtifactRegisterPage';
 import { AuthenticatedLayout } from '@/features/auth/components/AuthenticatedLayout';
+import { CampaignDetailPage } from '@/features/campaign/components/CampaignDetailPage';
 import { CampaignListPage } from '@/features/campaign/components/CampaignListPage';
 import { CampaignRegisterPage } from '@/features/campaign/components/CampaignRegisterPage';
 import { LoginPage } from '@/features/auth/components/LoginPage';
@@ -26,7 +27,7 @@ export const appRoutes: RouteObject[] = [
       { path: ROUTES.edges, element: <PlaceholderPage title="Edge" /> },
       { path: ROUTES.campaigns, element: <CampaignListPage /> },
       { path: ROUTES.campaignNew, element: <CampaignRegisterPage /> },
-      { path: ROUTES.campaignDetail, element: <PlaceholderPage title="캠페인 상세" /> },
+      { path: ROUTES.campaignDetail, element: <CampaignDetailPage /> },
       { path: ROUTES.artifacts, element: <ArtifactListPage /> },
       { path: ROUTES.artifactNew, element: <ArtifactRegisterPage /> },
       { path: ROUTES.artifactDetail, element: <ArtifactDetailPage /> },
