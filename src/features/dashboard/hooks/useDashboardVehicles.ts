@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient, type UseQueryResult } from '@tanstack/react-query';
-import { useCallback, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { dashboardKeys } from '../api/dashboardKeys';
 import { getVehicleStatusSnapshot } from '../api/getVehicleStatusSnapshot';
@@ -20,15 +20,18 @@ export type DashboardVehicles = {
  */
 export function useDashboardVehicles(): DashboardVehicles {
   const queryClient = useQueryClient();
-  // 캐시에 스냅샷이 없을 때 받은 변경분. 스냅샷을 받으면 합치고 비운다
+  // 스냅샷이 없거나 조회 중일 때 받은 변경분. 조회 결과가 캐시에 들어간 뒤 다시 합친다
   const pendingChangesRef = useRef<VehicleStatus[]>([]);
 
   const handleChanges = useCallback(
     (changes: VehicleStatus[]) => {
       const queryKey = dashboardKeys.vehicles();
       const current = queryClient.getQueryData<VehicleStatusSnapshot>(queryKey);
+      // 조회 결과가 캐시를 덮어쓰기 전까지는 받은 변경분을 남겨 둔다. 같은 차량은 하나만 남긴다
+      if (current === undefined || queryClient.isFetching({ queryKey }) > 0) {
+        pendingChangesRef.current = mergeVehicleStatuses(pendingChangesRef.current, changes);
+      }
       if (current === undefined) {
-        pendingChangesRef.current = [...pendingChangesRef.current, ...changes];
         return;
       }
       queryClient.setQueryData<VehicleStatusSnapshot>(queryKey, {
@@ -41,25 +44,35 @@ export function useDashboardVehicles(): DashboardVehicles {
 
   const connection = useVehicleStatusStream(handleChanges);
 
+  // 서버가 구독자를 먼저 등록해야 스냅샷과 SSE 사이의 변경을 놓치지 않는다.
+  // 첫 조회만 기다리고, 다시 연결하는 동안에는 조회를 막지 않는다
+  const [hasStreamOpened, setHasStreamOpened] = useState(false);
+  const isStreamOpened = hasStreamOpened || connection.status !== 'connecting';
+  if (isStreamOpened && !hasStreamOpened) {
+    setHasStreamOpened(true);
+  }
+
   const query = useQuery({
     queryKey: dashboardKeys.vehicles(),
-    queryFn: async ({ signal }) => {
-      const snapshot = await getVehicleStatusSnapshot(signal);
-      // 조회하는 사이 캐시나 대기열에 들어온 변경분이 스냅샷보다 늦을 수 있어 updatedAt 으로 합친다
-      const cached = queryClient.getQueryData<VehicleStatusSnapshot>(dashboardKeys.vehicles());
-      const pending = pendingChangesRef.current;
-      pendingChangesRef.current = [];
-      return {
-        ...snapshot,
-        vehicles: mergeVehicleStatuses(snapshot.vehicles, [
-          ...(cached?.vehicles ?? []),
-          ...pending,
-        ]),
-      };
-    },
-    // 서버가 구독자를 먼저 등록해야 스냅샷과 SSE 사이의 변경을 놓치지 않는다
-    enabled: connection.status !== 'connecting',
+    // 스냅샷이 기준이다. 서버에서 빠진 차량이 캐시에 남지 않도록 이전 캐시와 합치지 않는다
+    queryFn: ({ signal }) => getVehicleStatusSnapshot(signal),
+    enabled: isStreamOpened,
   });
+
+  const { data, fetchStatus } = query;
+  // 조회 결과가 캐시에 들어간 뒤 그 사이 받은 변경분을 다시 합친다. updatedAt 이 늦은 것만 반영된다
+  useEffect(() => {
+    if (data === undefined || fetchStatus !== 'idle' || pendingChangesRef.current.length === 0) {
+      return;
+    }
+    const pending = pendingChangesRef.current;
+    pendingChangesRef.current = [];
+    queryClient.setQueryData<VehicleStatusSnapshot>(dashboardKeys.vehicles(), (current) =>
+      current === undefined
+        ? current
+        : { ...current, vehicles: mergeVehicleStatuses(current.vehicles, pending) },
+    );
+  }, [data, fetchStatus, queryClient]);
 
   return { query, connection };
 }

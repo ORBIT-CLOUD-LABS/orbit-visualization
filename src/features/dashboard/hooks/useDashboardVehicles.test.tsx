@@ -113,6 +113,65 @@ describe('useDashboardVehicles', () => {
     });
   });
 
+  it('다시 조회하는 동안 온 변경분은 조회 결과를 받은 뒤 다시 합친다', async () => {
+    let snapshotResult: 'SUCCEEDED' | null = null;
+    server.use(
+      http.get(DASHBOARD_VEHICLES_URL, async () => {
+        await delay(20);
+        return vehicleSnapshotResponse([
+          vehicleStatusFixture({ updatedAt: EARLIER, lastResult: snapshotResult }),
+        ]);
+      }),
+    );
+    const { result } = renderDashboardVehicles();
+    sse.setStatus('connected');
+    await waitFor(() => {
+      expect(result.current.query.data).toBeDefined();
+    });
+
+    snapshotResult = 'SUCCEEDED';
+    const refetching = result.current.query.refetch();
+    sse.emit('vehicles', [vehicleStatusFixture({ updatedAt: LATER, lastResult: 'FAILED' })]);
+    await refetching;
+
+    await waitFor(() => {
+      expect(result.current.query.data?.vehicles[0]?.lastResult).toBe('FAILED');
+    });
+  });
+
+  it('다시 조회한 스냅샷에 없는 차량은 목록에서 뺀다', async () => {
+    let vehicleIds = ['VH-0001', 'VH-0002'];
+    server.use(
+      http.get(DASHBOARD_VEHICLES_URL, () =>
+        vehicleSnapshotResponse(vehicleIds.map((vehicleId) => vehicleStatusFixture({ vehicleId }))),
+      ),
+    );
+    const { result } = renderDashboardVehicles();
+    sse.setStatus('connected');
+    await waitFor(() => {
+      expect(result.current.query.data?.vehicles).toHaveLength(2);
+    });
+
+    vehicleIds = ['VH-0001'];
+    await result.current.query.refetch();
+
+    await waitFor(() => {
+      expect(result.current.query.data?.vehicles).toHaveLength(1);
+    });
+  });
+
+  it('첫 연결 뒤 다시 연결하는 중에도 스냅샷을 다시 조회할 수 있다', async () => {
+    const { result } = renderDashboardVehicles();
+    sse.setStatus('connected');
+    await waitFor(() => {
+      expect(result.current.query.data).toBeDefined();
+    });
+
+    sse.setStatus('connecting');
+
+    expect(result.current.query.isEnabled).toBe(true);
+  });
+
   it('vehicles 가 아닌 이벤트는 무시한다', async () => {
     const { result } = renderDashboardVehicles();
     sse.setStatus('connected');
