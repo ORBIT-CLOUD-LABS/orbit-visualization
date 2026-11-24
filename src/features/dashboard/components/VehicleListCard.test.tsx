@@ -8,9 +8,11 @@ import { vehicleStatusFixture } from '@/mocks/dashboardHandlers';
 import type { VehicleStatus } from '../api/vehicleStatusSchema';
 import { formatClockTime } from '../lib/formatClockTime';
 
-import { VehicleListCard, type VehicleListState } from './VehicleListCard';
+import type { QueryState } from '../lib/toQueryState';
 
-function renderCard(state: VehicleListState) {
+import { VehicleListCard } from './VehicleListCard';
+
+function renderCard(state: QueryState<readonly VehicleStatus[]>) {
   return render(
     <MemoryRouter>
       <VehicleListCard state={state} />
@@ -19,7 +21,7 @@ function renderCard(state: VehicleListState) {
 }
 
 function renderVehicles(vehicles: VehicleStatus[]) {
-  return renderCard({ status: 'success', vehicles });
+  return renderCard({ status: 'success', data: vehicles });
 }
 
 function manyVehicles(count: number): VehicleStatus[] {
