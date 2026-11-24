@@ -2,7 +2,7 @@ import { QueryClient } from '@tanstack/react-query';
 import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { failure } from '@/mocks/apiEnvelope';
 import { CDN_EDGES_URL, cdnEdgeStatusFixture, cdnEdgesResponse } from '@/mocks/cdnEdgeHandlers';
@@ -11,6 +11,8 @@ import { ROUTES } from '@/shared/config/routes';
 import { renderRoutes } from '@/test/renderRoutes';
 
 import { EdgeStatusPage } from './EdgeStatusPage';
+
+vi.mock('react-leaflet', () => import('@/test/reactLeafletMock'));
 
 const routes = [{ path: ROUTES.edges, element: <EdgeStatusPage /> }];
 
@@ -73,7 +75,8 @@ describe('EdgeStatusPage', () => {
     server.use(http.get(CDN_EDGES_URL, () => cdnEdgesResponse([])));
     renderPage();
 
-    expect(await screen.findByText('등록된 CDN Edge가 없습니다')).toBeInTheDocument();
+    const list = screen.getByRole('region', { name: 'Edge 목록' });
+    expect(await within(list).findByText('등록된 CDN Edge가 없습니다')).toBeInTheDocument();
     expect(screen.getByRole('region', { name: 'Edge 통계' })).toHaveTextContent('Edge 수0');
   });
 
@@ -111,6 +114,27 @@ describe('EdgeStatusPage', () => {
     await user.click(screen.getByRole('button', { name: '새로고침' }));
 
     expect(await within(seoul).findByText('장애')).toBeInTheDocument();
+  });
+
+  it('다시 조회해 같은 장애가 두 번 이어지면 상태 변화에 기록한다', async () => {
+    let healthy = true;
+    server.use(
+      http.get(CDN_EDGES_URL, () => cdnEdgesResponse([cdnEdgeStatusFixture({ healthy })])),
+    );
+    const user = userEvent.setup();
+    renderPage();
+
+    const changes = screen.getByRole('region', { name: '상태 변화 (화면 감지)' });
+    expect(await within(changes).findByText('감지된 상태 변화가 없습니다')).toBeInTheDocument();
+    healthy = false;
+    await user.click(screen.getByRole('button', { name: '새로고침' }));
+    expect(await within(changes).findByText('edge-seoul 장애 확인 중')).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: '새로고침' }));
+
+    expect(
+      await within(changes).findByText(/^edge-seoul 장애 감지 \(\d{2}:\d{2}:\d{2}\)$/),
+    ).toBeInTheDocument();
+    expect(within(changes).queryByText('edge-seoul 장애 확인 중')).not.toBeInTheDocument();
   });
 
   it('새로고침이 실패하면 받은 정보를 그대로 두고 실패를 알린다', async () => {

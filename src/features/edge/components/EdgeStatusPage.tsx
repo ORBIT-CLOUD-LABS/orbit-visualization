@@ -3,13 +3,17 @@ import { useMemo } from 'react';
 import { ApiError } from '@/shared/api/ApiError';
 import { useCdnEdges } from '@/shared/cdnEdge/useCdnEdges';
 import { formatClockTime } from '@/shared/lib/formatClockTime';
+import { toQueryState } from '@/shared/lib/toQueryState';
 import { Alert } from '@/shared/ui/Alert';
 import { Button } from '@/shared/ui/Button';
 import { Topbar } from '@/shared/ui/Topbar';
 
+import { useEdgeHealthChanges } from '../hooks/useEdgeHealthChanges';
 import { summarizeEdges } from '../lib/summarizeEdges';
 
 import { EdgeCardList } from './EdgeCardList';
+import { EdgeHealthChangeCard } from './EdgeHealthChangeCard';
+import { EdgeMapCard } from './EdgeMapCard';
 import { EdgeStatCards } from './EdgeStatCards';
 
 // 버튼을 여러 번 눌러도 진행 중인 요청을 취소하고 다시 보내지 않는다
@@ -20,6 +24,8 @@ export function EdgeStatusPage() {
   const query = useCdnEdges();
   const edges = query.data;
   const summary = useMemo(() => (edges === undefined ? null : summarizeEdges(edges)), [edges]);
+  const healthTracker = useEdgeHealthChanges(edges, query.dataUpdatedAt);
+  const edgeState = toQueryState(query);
   const lastUpdated = formatClockTime(query.dataUpdatedAt === 0 ? null : query.dataUpdatedAt);
   // 이미 받은 값이 있으면 그대로 두고, 새로고침이 실패했다는 것만 알린다
   const isRefreshFailed = query.isError && edges !== undefined;
@@ -59,6 +65,14 @@ export function EdgeStatusPage() {
           />
         )}
         <EdgeStatCards summary={summary} />
+        <div className="flex flex-col gap-6 xl:flex-row">
+          <EdgeMapCard edgeState={edgeState} className="xl:flex-1" />
+          <EdgeHealthChangeCard
+            tracker={healthTracker}
+            isPending={query.isPending}
+            className="xl:w-80 xl:shrink-0"
+          />
+        </div>
         <EdgeCardList
           edges={edges}
           isPending={query.isPending}
