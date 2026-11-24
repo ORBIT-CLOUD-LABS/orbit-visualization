@@ -12,5 +12,6 @@ describe('failureReasonLabel', () => {
   it('모르는 사유나 null 이면 일반 문구를 쓴다', () => {
     expect(failureReasonLabel('NEW_REASON')).toBe('업데이트 실패');
     expect(failureReasonLabel(null)).toBe('업데이트 실패');
+    expect(failureReasonLabel('constructor')).toBe('업데이트 실패');
   });
 });

@@ -10,9 +10,10 @@ type UpdateHistoryTableProps = {
   events: readonly VehicleUpdateEvent[];
 };
 
-// 서버가 id 를 주지 않으므로 한 시도를 가리키는 값을 묶어 key 로 쓴다
-function eventKey(event: VehicleUpdateEvent): string {
-  return `${event.finishedAt}-${event.campaignId}-${event.version}-${event.result}`;
+// 서버가 id 를 주지 않고 같은 값의 시도가 둘 있을 수 있다.
+// 목록은 서버 순서 그대로이고 화면에서 다시 정렬하지 않으므로 순번을 함께 쓴다
+function eventKey(event: VehicleUpdateEvent, index: number): string {
+  return `${event.finishedAt}-${event.campaignId}-${index}`;
 }
 
 export function UpdateHistoryTable({ events }: UpdateHistoryTableProps) {
@@ -29,8 +30,8 @@ export function UpdateHistoryTable({ events }: UpdateHistoryTableProps) {
           </tr>
         </thead>
         <tbody className="divide-y divide-line bg-surface font-mono text-fg">
-          {events.map((event) => (
-            <tr key={eventKey(event)}>
+          {events.map((event, index) => (
+            <tr key={eventKey(event, index)}>
               <td className="px-4 py-3">{formatTimestamp(event.finishedAt)}</td>
               <td className="px-4 py-3">{event.campaignId}</td>
               <td className="px-4 py-3">{event.version}</td>
