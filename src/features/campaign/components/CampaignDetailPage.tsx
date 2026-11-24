@@ -7,6 +7,7 @@ import { EmptyState } from '@/shared/ui/EmptyState';
 import { Topbar } from '@/shared/ui/Topbar';
 
 import { useCampaign } from '../hooks/useCampaign';
+import { useCampaignStats } from '../hooks/useCampaignStats';
 import { parseId } from '../lib/parseId';
 import { Breadcrumb } from './Breadcrumb';
 import { CampaignInfoCard } from './CampaignInfoCard';
@@ -22,6 +23,8 @@ export function CampaignDetailPage() {
   const params = useParams();
   const campaignId = parseId(params.campaignId);
   const { data: campaign, error, isPending, refetch } = useCampaign(campaignId);
+  // 상세를 기다리지 않고 진행 현황도 함께 요청한다
+  const statsQuery = useCampaignStats(campaignId);
   const isNotFound =
     campaignId === null || (error instanceof ApiError && error.status === NOT_FOUND);
 
@@ -51,7 +54,7 @@ export function CampaignDetailPage() {
               )
             }
           />
-          <CampaignStatsSection campaignId={campaign.campaignId} />
+          <CampaignStatsSection statsQuery={statsQuery} />
         </>
       );
     }
