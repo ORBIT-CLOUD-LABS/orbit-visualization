@@ -7,6 +7,7 @@ import { CdnEdgeLayer } from '@/shared/map/CdnEdgeLayer';
 import { computeMapBounds } from '@/shared/map/computeMapBounds';
 import { FitBoundsOnce } from '@/shared/map/FitBoundsOnce';
 import type { LatLng } from '@/shared/map/latLng';
+import { MapEmptyNotice } from '@/shared/map/MapEmptyNotice';
 import { MapPane } from '@/shared/map/MapPane';
 import { useMapPathStyles } from '@/shared/map/useMapPathStyles';
 
@@ -42,11 +43,7 @@ export function VehicleMap({ markers, edges, isReadyToFit }: VehicleMapProps) {
       tileErrorMessage="지도를 불러오지 못했습니다. 차량 목록은 그대로 볼 수 있습니다."
       overlay={
         <>
-          {markers.length === 0 && (
-            <p className="pointer-events-none absolute inset-x-0 top-1/2 z-1000 mx-auto w-fit -translate-y-1/2 rounded-sm bg-surface px-3 py-1.5 text-xs text-fg-muted">
-              위치를 보낸 차량이 없습니다
-            </p>
-          )}
+          {markers.length === 0 && <MapEmptyNotice>위치를 보낸 차량이 없습니다</MapEmptyNotice>}
           <VehicleMapLegend className="absolute bottom-3 left-3 z-1000" />
         </>
       }
