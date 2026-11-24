@@ -79,6 +79,79 @@ describe('useDashboardVehicles', () => {
     expect(result.current.connection.status).toBe('connecting');
   });
 
+  it('대기 시간이 지나 조회한 뒤 SSE 가 연결되면 그 사이 놓친 변경을 받으려고 한 번 더 조회한다', async () => {
+    let snapshotResult: 'SUCCEEDED' | 'FAILED' | null = null;
+    let requestCount = 0;
+    server.use(
+      http.get(DASHBOARD_VEHICLES_URL, () => {
+        requestCount += 1;
+        return vehicleSnapshotResponse([vehicleStatusFixture({ lastResult: snapshotResult })]);
+      }),
+    );
+    vi.useFakeTimers();
+    const { result } = renderDashboardVehicles();
+    act(() => {
+      vi.advanceTimersByTime(FIRST_CONNECT_WAIT_MS);
+    });
+    vi.useRealTimers();
+    await waitFor(() => {
+      expect(result.current.query.data).toBeDefined();
+    });
+
+    snapshotResult = 'FAILED';
+    sse.setStatus('connected');
+
+    await waitFor(() => {
+      expect(result.current.query.data?.vehicles[0]?.lastResult).toBe('FAILED');
+    });
+    sse.setStatus('reconnecting');
+    sse.setStatus('connected');
+    expect(requestCount).toBe(2);
+  });
+
+  it('첫 연결에 실패해 조회한 뒤 다시 연결되면 한 번 더 조회한다', async () => {
+    let requestCount = 0;
+    server.use(
+      http.get(DASHBOARD_VEHICLES_URL, () => {
+        requestCount += 1;
+        return vehicleSnapshotResponse([vehicleStatusFixture()]);
+      }),
+    );
+    const { result } = renderDashboardVehicles();
+    sse.setStatus('reconnecting');
+    await waitFor(() => {
+      expect(result.current.query.data).toBeDefined();
+    });
+
+    sse.setStatus('connected');
+
+    await waitFor(() => {
+      expect(requestCount).toBe(2);
+    });
+  });
+
+  it('대기 시간 안에 SSE 가 연결되면 스냅샷을 한 번만 조회한다', async () => {
+    let requestCount = 0;
+    server.use(
+      http.get(DASHBOARD_VEHICLES_URL, () => {
+        requestCount += 1;
+        return vehicleSnapshotResponse([vehicleStatusFixture()]);
+      }),
+    );
+    vi.useFakeTimers();
+    const { result } = renderDashboardVehicles();
+    sse.setStatus('connected');
+    act(() => {
+      vi.advanceTimersByTime(FIRST_CONNECT_WAIT_MS);
+    });
+    vi.useRealTimers();
+
+    await waitFor(() => {
+      expect(result.current.query.data).toBeDefined();
+    });
+    expect(requestCount).toBe(1);
+  });
+
   it('스냅샷을 받기 전에 온 변경분도 updatedAt 을 비교해 합친다', async () => {
     server.use(
       http.get(DASHBOARD_VEHICLES_URL, async () => {
