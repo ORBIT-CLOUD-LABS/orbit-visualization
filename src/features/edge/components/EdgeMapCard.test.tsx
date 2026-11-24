@@ -75,7 +75,11 @@ describe('EdgeMapCard', () => {
     expect(mockLeafletMap.fitBounds).not.toHaveBeenCalled();
 
     rerender(card([SEOUL]));
+    expect(mockLeafletMap.fitBounds).toHaveBeenCalledOnce();
 
+    // 잠깐 비었다 돌아와도 다시 맞추지 않는다
+    rerender(card([]));
+    rerender(card([SEOUL]));
     expect(mockLeafletMap.fitBounds).toHaveBeenCalledOnce();
   });
 
