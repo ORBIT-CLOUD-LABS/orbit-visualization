@@ -1,6 +1,7 @@
 import { Link } from 'react-router';
 
 import { routePaths } from '@/shared/config/routes';
+import { formatTimestamp } from '@/shared/lib/formatDateTime';
 import { Button } from '@/shared/ui/Button';
 import { buttonClassName } from '@/shared/ui/buttonClassName';
 import { Card } from '@/shared/ui/Card';
@@ -8,7 +9,6 @@ import { KeyValue } from '@/shared/ui/KeyValue';
 import { VehicleResultBadge } from '@/shared/vehicle/VehicleResultBadge';
 
 import type { VehicleDetail } from '../api/vehicleSchemas';
-import { formatTimestamp } from '../lib/formatTimestamp';
 
 type VehicleSummaryCardProps = {
   vehicle: VehicleDetail;

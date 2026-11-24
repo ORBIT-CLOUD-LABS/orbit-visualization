@@ -1,4 +1,5 @@
 import { cn } from '@/shared/lib/cn';
+import { formatTimestamp } from '@/shared/lib/formatDateTime';
 import { Alert } from '@/shared/ui/Alert';
 import { Card } from '@/shared/ui/Card';
 import { EmptyState } from '@/shared/ui/EmptyState';
@@ -6,7 +7,6 @@ import { KeyValue } from '@/shared/ui/KeyValue';
 
 import type { VehicleLastUpdate } from '../api/vehicleSchemas';
 import { failureReasonLabel } from '../lib/failureReasonLabel';
-import { formatTimestamp } from '../lib/formatTimestamp';
 
 type LastUpdateCardProps = {
   /** 결과가 없으면 null */

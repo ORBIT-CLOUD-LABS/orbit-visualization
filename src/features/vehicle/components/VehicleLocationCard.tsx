@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 
 import type { CdnEdgeStatus } from '@/shared/cdnEdge/cdnEdgeSchema';
 import { cn } from '@/shared/lib/cn';
+import { formatTimestamp } from '@/shared/lib/formatDateTime';
 import type { QueryState } from '@/shared/lib/toQueryState';
 import type { LatLng } from '@/shared/map/latLng';
 import { vehicleMarkerTone } from '@/shared/map/vehicleMarkerTone';
@@ -12,7 +13,6 @@ import type { UpdateResult } from '@/shared/vehicle/updateResult';
 import type { VehicleLocation } from '@/shared/vehicle/vehicleLocationSchema';
 
 import { findNearestEdge, type NearestEdge } from '../lib/findNearestEdge';
-import { formatTimestamp } from '../lib/formatTimestamp';
 
 import { VehicleMiniMap } from './VehicleMiniMap';
 
