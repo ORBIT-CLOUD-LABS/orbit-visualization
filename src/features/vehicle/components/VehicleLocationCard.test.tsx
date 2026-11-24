@@ -4,10 +4,11 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { cdnEdgeStatusFixture } from '@/mocks/cdnEdgeHandlers';
 import type { CdnEdgeStatus } from '@/shared/cdnEdge/cdnEdgeSchema';
-import { formatClockTime } from '@/shared/lib/formatClockTime';
 import type { QueryState } from '@/shared/lib/toQueryState';
 import type { VehicleLocation } from '@/shared/vehicle/vehicleLocationSchema';
 import { mockLeafletMap } from '@/test/reactLeafletMock';
+
+import { formatTimestamp } from '../lib/formatTimestamp';
 
 import { VehicleLocationCard } from './VehicleLocationCard';
 
@@ -39,19 +40,23 @@ type RenderOptions = {
   edgeState?: QueryState<readonly CdnEdgeStatus[]>;
 };
 
-function renderCard({
+function card({
   location = LOCATION,
   assignedEdgeId = 'edge-seoul',
   edgeState = { status: 'success', data: [SEOUL, DAEJEON, BUSAN] },
 }: RenderOptions = {}) {
-  render(
+  return (
     <VehicleLocationCard
       location={location}
       assignedEdgeId={assignedEdgeId}
       lastResult="FAILED"
       edgeState={edgeState}
-    />,
+    />
   );
+}
+
+function renderCard(options: RenderOptions = {}) {
+  render(card(options));
   return screen.getByRole('region', { name: '위치 · 배정 Edge' });
 }
 
@@ -70,7 +75,7 @@ describe('VehicleLocationCard', () => {
     expect(card).toHaveTextContent('37.5200');
     expect(card).toHaveTextContent('126.9000');
     expect(within(card).getByText('edge-seoul · 8.6 km')).toBeInTheDocument();
-    expect(card).toHaveTextContent(formatClockTime(LOCATION.updatedAt) ?? '');
+    expect(card).toHaveTextContent(formatTimestamp(LOCATION.updatedAt));
   });
 
   it('지도에 모든 Edge 를 이름으로 그리고 장애 Edge 는 알린다', () => {
@@ -136,6 +141,23 @@ describe('VehicleLocationCard', () => {
     await user.click(within(card).getByRole('button', { name: '다시 시도' }));
 
     expect(onRetry).toHaveBeenCalledOnce();
+  });
+
+  it('실패했던 Edge 조회가 다시 성공하면 Edge 까지 담도록 범위를 다시 맞춘다', () => {
+    const { rerender } = render(card({ edgeState: { status: 'error', onRetry: vi.fn() } }));
+
+    rerender(card());
+
+    expect(fittedBounds()).toEqual([
+      [
+        [37.52, 126.9],
+        [37.52, 126.9],
+      ],
+      [
+        [37.52, 126.9],
+        [SEOUL.latitude, SEOUL.longitude],
+      ],
+    ]);
   });
 
   it('Edge 가 하나도 없으면 가까운 Edge 를 비워 둔다', () => {

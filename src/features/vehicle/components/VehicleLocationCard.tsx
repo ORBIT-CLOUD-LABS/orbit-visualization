@@ -1,7 +1,6 @@
 import { useMemo } from 'react';
 
 import type { CdnEdgeStatus } from '@/shared/cdnEdge/cdnEdgeSchema';
-import { formatClockTime } from '@/shared/lib/formatClockTime';
 import type { QueryState } from '@/shared/lib/toQueryState';
 import type { LatLng } from '@/shared/map/latLng';
 import { vehicleMarkerTone } from '@/shared/map/vehicleMarkerTone';
@@ -10,6 +9,7 @@ import type { UpdateResult } from '@/shared/vehicle/updateResult';
 import type { VehicleLocation } from '@/shared/vehicle/vehicleLocationSchema';
 
 import { findNearestEdge, type NearestEdge } from '../lib/findNearestEdge';
+import { formatTimestamp } from '../lib/formatTimestamp';
 
 import { Card } from './Card';
 import { KeyValue } from './KeyValue';
@@ -74,8 +74,8 @@ export function VehicleLocationCard({
         </div>
       ) : (
         <VehicleMiniMap
-          // 새로고침으로 위치가 바뀌면 지도를 새로 만들어 범위를 다시 맞춘다
-          key={position.join(',')}
+          // 새로고침으로 위치가 바뀌거나 실패했던 Edge 조회가 다시 성공하면 지도를 새로 만들어 범위를 다시 맞춘다
+          key={`${position.join(',')}:${edgeState.status === 'error' ? 'vehicle-only' : 'with-edges'}`}
           position={position}
           tone={vehicleMarkerTone(lastResult)}
           assignedEdgeId={assignedEdgeId}
@@ -90,7 +90,7 @@ export function VehicleLocationCard({
         <KeyValue label="경도">{location?.longitude.toFixed(COORDINATE_DIGITS)}</KeyValue>
         <KeyValue label="가까운 Edge (화면 계산)">{renderNearestEdge()}</KeyValue>
         <KeyValue label="위치 수신">
-          {location === null ? null : formatClockTime(location.updatedAt)}
+          {location === null ? null : formatTimestamp(location.updatedAt)}
         </KeyValue>
       </dl>
     </Card>
