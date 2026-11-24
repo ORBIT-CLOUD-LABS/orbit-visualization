@@ -43,6 +43,8 @@ export function VehicleDetailPage() {
   function handleRefresh() {
     void detail.refetch(KEEP_IN_FLIGHT);
     void history.refetch(KEEP_IN_FLIGHT);
+    // 가까운 Edge 와 Edge 상태도 누른 시점 기준으로 맞춘다
+    void edges.refetch(KEEP_IN_FLIGHT);
   }
 
   function renderContent() {

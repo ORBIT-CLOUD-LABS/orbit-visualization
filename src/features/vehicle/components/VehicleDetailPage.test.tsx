@@ -177,10 +177,15 @@ describe('VehicleDetailPage', () => {
     expect(screen.getByRole('region', { name: /VH-0001/ })).toHaveTextContent('MODEL-A');
   });
 
-  it('새로고침하면 상세와 이력을 다시 불러온다', async () => {
+  it('새로고침하면 상세·이력·Edge 를 다시 불러온다', async () => {
     let detailCalls = 0;
     let historyCalls = 0;
+    let edgeCalls = 0;
     server.use(
+      http.get(CDN_EDGES_URL, () => {
+        edgeCalls += 1;
+        return cdnEdgesResponse([cdnEdgeStatusFixture()]);
+      }),
       http.get(VEHICLE_DETAIL_URL, () => {
         detailCalls += 1;
         return HttpResponse.json(success(vehicleDetailFixture()));
@@ -197,6 +202,6 @@ describe('VehicleDetailPage', () => {
     const refresh = await screen.findByRole('button', { name: '새로고침' });
     await user.click(refresh);
 
-    await expect.poll(() => [detailCalls, historyCalls]).toEqual([2, 2]);
+    await expect.poll(() => [detailCalls, historyCalls, edgeCalls]).toEqual([2, 2, 2]);
   });
 });
