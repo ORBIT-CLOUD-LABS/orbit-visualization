@@ -12,6 +12,8 @@ import {
 import { server } from '@/mocks/server';
 import { fakeSseClient, type FakeSseClient } from '@/test/fakeSseClient';
 
+import type { VehicleStatus } from '../api/vehicleStatusSchema';
+
 import { FIRST_CONNECT_WAIT_MS, useDashboardVehicles } from './useDashboardVehicles';
 
 const EARLIER = '2026-11-24T01:00:00.000Z';
@@ -35,6 +37,20 @@ function advanceFakeTime(ms: number) {
   vi.useRealTimers();
 }
 
+// 스냅샷 요청 수를 센다. vehicles 는 요청마다 불러서 응답을 바꿀 수 있다
+function countSnapshotRequests(
+  vehicles: () => VehicleStatus[] = () => [vehicleStatusFixture()],
+): () => number {
+  let count = 0;
+  server.use(
+    http.get(DASHBOARD_VEHICLES_URL, () => {
+      count += 1;
+      return vehicleSnapshotResponse(vehicles());
+    }),
+  );
+  return () => count;
+}
+
 describe('useDashboardVehicles', () => {
   let sse: FakeSseClient;
 
@@ -47,25 +63,19 @@ describe('useDashboardVehicles', () => {
   });
 
   it('SSE 가 연결된 뒤에 스냅샷을 조회한다', async () => {
-    let requestCount = 0;
-    server.use(
-      http.get(DASHBOARD_VEHICLES_URL, () => {
-        requestCount += 1;
-        return vehicleSnapshotResponse([vehicleStatusFixture()]);
-      }),
-    );
+    const requestCount = countSnapshotRequests();
     const { result } = renderDashboardVehicles();
 
     expect(sse.lastOptions()?.path).toBe('/dashboard/vehicles/stream');
     expect(result.current.connection.status).toBe('connecting');
-    expect(requestCount).toBe(0);
+    expect(requestCount()).toBe(0);
 
     sse.setStatus('connected');
 
     await waitFor(() => {
       expect(result.current.query.data?.vehicles).toEqual([vehicleStatusFixture()]);
     });
-    expect(requestCount).toBe(1);
+    expect(requestCount()).toBe(1);
   });
 
   it('SSE 첫 연결이 끝나지 않아도 대기 시간이 지나면 스냅샷을 조회한다', async () => {
@@ -86,14 +96,10 @@ describe('useDashboardVehicles', () => {
   });
 
   it('대기 시간이 지나 조회한 뒤 SSE 가 연결되면 그 사이 놓친 변경을 받으려고 한 번 더 조회한다', async () => {
-    let snapshotResult: 'SUCCEEDED' | 'FAILED' | null = null;
-    let requestCount = 0;
-    server.use(
-      http.get(DASHBOARD_VEHICLES_URL, () => {
-        requestCount += 1;
-        return vehicleSnapshotResponse([vehicleStatusFixture({ lastResult: snapshotResult })]);
-      }),
-    );
+    let snapshotResult: 'FAILED' | null = null;
+    const requestCount = countSnapshotRequests(() => [
+      vehicleStatusFixture({ lastResult: snapshotResult }),
+    ]);
     vi.useFakeTimers();
     const { result } = renderDashboardVehicles();
     advanceFakeTime(FIRST_CONNECT_WAIT_MS);
@@ -111,17 +117,11 @@ describe('useDashboardVehicles', () => {
     sse.setStatus('connected');
     // 다시 연결해도 조회하지 않는지 보려면 요청이 나갈 시간을 준 뒤 센다
     await act(() => delay(20));
-    expect(requestCount).toBe(2);
+    expect(requestCount()).toBe(2);
   });
 
   it('첫 연결에 실패해 조회한 뒤 다시 연결되면 한 번 더 조회한다', async () => {
-    let requestCount = 0;
-    server.use(
-      http.get(DASHBOARD_VEHICLES_URL, () => {
-        requestCount += 1;
-        return vehicleSnapshotResponse([vehicleStatusFixture()]);
-      }),
-    );
+    const requestCount = countSnapshotRequests();
     const { result } = renderDashboardVehicles();
     sse.setStatus('reconnecting');
     await waitFor(() => {
@@ -131,18 +131,12 @@ describe('useDashboardVehicles', () => {
     sse.setStatus('connected');
 
     await waitFor(() => {
-      expect(requestCount).toBe(2);
+      expect(requestCount()).toBe(2);
     });
   });
 
   it('대기 시간 안에 SSE 가 연결되면 스냅샷을 한 번만 조회한다', async () => {
-    let requestCount = 0;
-    server.use(
-      http.get(DASHBOARD_VEHICLES_URL, () => {
-        requestCount += 1;
-        return vehicleSnapshotResponse([vehicleStatusFixture()]);
-      }),
-    );
+    const requestCount = countSnapshotRequests();
     vi.useFakeTimers();
     const { result } = renderDashboardVehicles();
     sse.setStatus('connected');
@@ -151,7 +145,7 @@ describe('useDashboardVehicles', () => {
     await waitFor(() => {
       expect(result.current.query.data).toBeDefined();
     });
-    expect(requestCount).toBe(1);
+    expect(requestCount()).toBe(1);
   });
 
   it('스냅샷을 받기 전에 온 변경분도 updatedAt 을 비교해 합친다', async () => {
