@@ -6,15 +6,15 @@ import { buttonClassName } from '@/shared/ui/buttonClassName';
 import { Card } from '@/shared/ui/Card';
 import { EmptyState } from '@/shared/ui/EmptyState';
 import { QueryFallback } from '@/shared/ui/QueryFallback';
-
-import type { ArtifactCampaign } from '../api/getModelCampaigns';
-import { useArtifactCampaigns } from '../hooks/useArtifactCampaigns';
-import { formatDate } from '../lib/formatDateTime';
 import {
   TABLE_CELL as CELL,
   TABLE_HEAD_CELL as HEAD_CELL,
   TABLE_TEXT_CELL as TEXT_CELL,
-} from './tableClassNames';
+} from '@/shared/ui/tableClassNames';
+
+import type { ArtifactCampaign } from '../api/getModelCampaigns';
+import { useArtifactCampaigns } from '../hooks/useArtifactCampaigns';
+import { formatDate } from '../lib/formatDateTime';
 
 const STATUS_TONE: Record<ArtifactCampaign['status'], BadgeTone> = {
   ACTIVE: 'info',
