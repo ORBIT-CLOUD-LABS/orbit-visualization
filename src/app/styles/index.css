@@ -1,0 +1,92 @@
+@import 'tailwindcss';
+
+/* 디자인 토큰. 값의 원본은 Figma `Front 화면` 의 Color·Spacing·Radius 변수다.
+   기본 팔레트·글자 크기·모서리는 지우고 여기 정의한 토큰만 쓴다. (docs/styling.md) */
+@theme {
+  --color-*: initial;
+  --color-transparent: transparent;
+  --color-current: currentColor;
+
+  /* 배경 */
+  --color-canvas: #f5f7fa;
+  --color-surface: #ffffff;
+  --color-subtle: #f8fafc;
+  --color-muted: #f1f5f9;
+  --color-map: #e8eef5;
+  --color-inverse: #0f172a;
+  --color-sidebar: #334155;
+  --color-nav-active: #1e3a8a;
+  --color-note: #fffbeb;
+
+  /* 글자 */
+  --color-fg: #0f172a;
+  --color-fg-muted: #64748b;
+  --color-fg-inverse: #ffffff;
+  --color-nav: #cbd5e1;
+  --color-nav-muted: #94a3b8;
+  --color-code: #e2e8f0;
+
+  /* 테두리 */
+  --color-line: #e2e8f0;
+  --color-line-note: #fcd34d;
+  --color-line-danger: #fca5a5;
+
+  /* 브랜드 */
+  --color-primary: #2563eb;
+  --color-primary-soft: #dbeafe;
+  --color-accent: #60a5fa;
+  --color-accent-soft: #93c5fd;
+
+  /* 상태 */
+  --color-success: #15803d;
+  --color-success-soft: #dcfce7;
+  --color-danger: #b91c1c;
+  --color-danger-soft: #fee2e2;
+  --color-warning: #b45309;
+  --color-warning-soft: #fef3c7;
+  --color-info: #0e7490;
+  --color-info-soft: #cffafe;
+  --color-neutral: #64748b;
+
+  /* 모서리 */
+  --radius-*: initial;
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 10px;
+  --radius-xl: 12px;
+  --radius-2xl: 14px;
+  --radius-full: 999px;
+
+  /* 글꼴 */
+  --font-*: initial;
+  --font-sans: 'Noto Sans KR', system-ui, sans-serif;
+  --font-mono: 'Roboto Mono', ui-monospace, monospace;
+
+  /* 글자 크기. Figma 에서 쓰는 11~24px 만 둔다 */
+  --text-*: initial;
+  --text-2xs: 11px;
+  --text-2xs--line-height: 16px;
+  --text-xs: 12px;
+  --text-xs--line-height: 18px;
+  --text-sm: 13px;
+  --text-sm--line-height: 20px;
+  --text-base: 14px;
+  --text-base--line-height: 20px;
+  --text-md: 16px;
+  --text-md--line-height: 24px;
+  --text-lg: 18px;
+  --text-lg--line-height: 26px;
+  --text-xl: 20px;
+  --text-xl--line-height: 28px;
+  --text-2xl: 22px;
+  --text-2xl--line-height: 30px;
+  --text-3xl: 24px;
+  --text-3xl--line-height: 32px;
+}
+
+@layer base {
+  body {
+    @apply bg-canvas font-sans text-sm text-fg antialiased;
+  }
+}
