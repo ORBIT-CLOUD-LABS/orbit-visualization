@@ -2,24 +2,25 @@ import { Link, useParams } from 'react-router';
 
 import { ApiError } from '@/shared/api/ApiError';
 import { ROUTES } from '@/shared/config/routes';
+import { parseId } from '@/shared/lib/parseId';
+import { Breadcrumb } from '@/shared/ui/Breadcrumb';
 import { buttonClassName } from '@/shared/ui/buttonClassName';
+import { Card } from '@/shared/ui/Card';
 import { EmptyState } from '@/shared/ui/EmptyState';
+import { QueryFallback } from '@/shared/ui/QueryFallback';
 import { Topbar } from '@/shared/ui/Topbar';
 
 import { useArtifact } from '../hooks/useArtifact';
-import { parseArtifactId } from '../lib/parseArtifactId';
 import { ArtifactCampaignsCard } from './ArtifactCampaignsCard';
 import { ArtifactDetailCard } from './ArtifactDetailCard';
-import { Breadcrumb } from './Breadcrumb';
-import { Card } from './Card';
-import { QueryFallback } from './QueryFallback';
 
 const NOT_FOUND = 404;
+const BREADCRUMB_PARENT = { label: '파일', to: ROUTES.artifacts };
 
 /** 10 파일 상세 */
 export function ArtifactDetailPage() {
   const params = useParams();
-  const artifactId = parseArtifactId(params.artifactId);
+  const artifactId = parseId(params.artifactId);
   const { data: artifact, error, isPending, refetch } = useArtifact(artifactId);
   const isNotFound =
     artifactId === null || (error instanceof ApiError && error.status === NOT_FOUND);
@@ -41,7 +42,10 @@ export function ArtifactDetailPage() {
     if (artifact !== undefined) {
       return (
         <>
-          <Breadcrumb current={`#${artifact.artifactId} ${artifact.model} ${artifact.version}`} />
+          <Breadcrumb
+            parent={BREADCRUMB_PARENT}
+            current={`#${artifact.artifactId} ${artifact.model} ${artifact.version}`}
+          />
           <ArtifactDetailCard artifact={artifact} />
           <ArtifactCampaignsCard model={artifact.model} version={artifact.version} />
         </>
@@ -49,7 +53,7 @@ export function ArtifactDetailPage() {
     }
     return (
       <>
-        <Breadcrumb current="파일 상세" />
+        <Breadcrumb parent={BREADCRUMB_PARENT} current="파일 상세" />
         <Card title="파일 정보">
           <QueryFallback isPending={isPending} onRetry={() => void refetch()} />
         </Card>

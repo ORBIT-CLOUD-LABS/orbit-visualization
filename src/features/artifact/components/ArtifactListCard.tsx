@@ -1,11 +1,12 @@
 import { useState } from 'react';
 
+import { formatPageSummary } from '@/shared/lib/formatPageSummary';
 import { usePagination } from '@/shared/lib/usePagination';
+import { Card } from '@/shared/ui/Card';
 import { Pagination } from '@/shared/ui/Pagination';
 
 import type { Artifact } from '../api/artifactSchemas';
 import { ArtifactTable } from './ArtifactTable';
-import { Card } from './Card';
 import { RegisterArtifactLink } from './RegisterArtifactLink';
 
 /** 차종 필터에서 전체를 뜻하는 값 */
@@ -54,7 +55,7 @@ export function ArtifactListCard({ artifacts }: ArtifactListCardProps) {
         page={pagination.page}
         pageCount={pagination.pageCount}
         onPageChange={pagination.setPage}
-        summary={`${pagination.totalCount}개 중 ${pagination.rangeStart}–${pagination.rangeEnd} · ${pagination.page} / ${pagination.pageCount} 페이지`}
+        summary={formatPageSummary(pagination, '개')}
       />
     </Card>
   );

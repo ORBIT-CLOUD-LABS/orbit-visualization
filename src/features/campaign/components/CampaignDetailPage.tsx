@@ -2,21 +2,22 @@ import { Link, useParams } from 'react-router';
 
 import { ApiError } from '@/shared/api/ApiError';
 import { ROUTES } from '@/shared/config/routes';
+import { parseId } from '@/shared/lib/parseId';
+import { Breadcrumb } from '@/shared/ui/Breadcrumb';
 import { buttonClassName } from '@/shared/ui/buttonClassName';
+import { Card } from '@/shared/ui/Card';
 import { EmptyState } from '@/shared/ui/EmptyState';
+import { QueryFallback } from '@/shared/ui/QueryFallback';
 import { Topbar } from '@/shared/ui/Topbar';
 
 import { useCampaign } from '../hooks/useCampaign';
 import { useCampaignStats } from '../hooks/useCampaignStats';
-import { parseId } from '../lib/parseId';
-import { Breadcrumb } from './Breadcrumb';
 import { CampaignInfoCard } from './CampaignInfoCard';
 import { CampaignStatsSection } from './CampaignStatsSection';
-import { Card } from './Card';
 import { DeactivateCampaignButton } from './DeactivateCampaignButton';
-import { QueryFallback } from './QueryFallback';
 
 const NOT_FOUND = 404;
+const BREADCRUMB_PARENT = { label: '캠페인', to: ROUTES.campaigns };
 
 /** 07 캠페인 상세 */
 export function CampaignDetailPage() {
@@ -45,7 +46,10 @@ export function CampaignDetailPage() {
     if (campaign !== undefined) {
       return (
         <>
-          <Breadcrumb current={`#${campaign.campaignId} ${campaign.name}`} />
+          <Breadcrumb
+            parent={BREADCRUMB_PARENT}
+            current={`#${campaign.campaignId} ${campaign.name}`}
+          />
           <CampaignInfoCard
             campaign={campaign}
             action={
@@ -60,7 +64,7 @@ export function CampaignDetailPage() {
     }
     return (
       <>
-        <Breadcrumb current="캠페인 상세" />
+        <Breadcrumb parent={BREADCRUMB_PARENT} current="캠페인 상세" />
         <Card title="캠페인 정보">
           <QueryFallback isPending={isPending} onRetry={() => void refetch()} />
         </Card>

@@ -1,11 +1,12 @@
+import { formatPageSummary } from '@/shared/lib/formatPageSummary';
 import { usePagination } from '@/shared/lib/usePagination';
+import { Card } from '@/shared/ui/Card';
 import { EmptyState } from '@/shared/ui/EmptyState';
 import { Pagination } from '@/shared/ui/Pagination';
+import { QueryFallback } from '@/shared/ui/QueryFallback';
 
 import type { VehicleUpdateEvent } from '../api/vehicleSchemas';
 
-import { Card } from './Card';
-import { QueryFallback } from './QueryFallback';
 import { UpdateHistoryTable } from './UpdateHistoryTable';
 
 const NO_EVENTS: readonly VehicleUpdateEvent[] = [];
@@ -32,7 +33,9 @@ export function UpdateHistoryCard({
       return (
         <QueryFallback
           isPending={isPending}
-          errorTitle="업데이트 이력을 불러오지 못했습니다"
+          loadingLabel="불러오는 중입니다"
+          loadingVariant="divided"
+          errorMessage="업데이트 이력을 불러오지 못했습니다"
           errorCode={errorCode}
           onRetry={onRetry}
         />
@@ -53,14 +56,14 @@ export function UpdateHistoryCard({
           page={pagination.page}
           pageCount={pagination.pageCount}
           onPageChange={pagination.setPage}
-          summary={`${pagination.totalCount}건 중 ${pagination.rangeStart}–${pagination.rangeEnd} · ${pagination.page} / ${pagination.pageCount} 페이지`}
+          summary={formatPageSummary(pagination, '건')}
         />
       </>
     );
   }
 
   return (
-    <Card title="업데이트 이력" description="최근 50건 · 완료 시각 늦은 순">
+    <Card className="p-6" title="업데이트 이력" description="최근 50건 · 완료 시각 늦은 순">
       {renderBody()}
     </Card>
   );

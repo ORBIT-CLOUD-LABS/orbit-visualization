@@ -1,11 +1,12 @@
 import { useMemo } from 'react';
 
-import { ApiError } from '@/shared/api/ApiError';
+import { errorCodeOf } from '@/shared/api/errorCodeOf';
 import { useCdnEdges } from '@/shared/cdnEdge/useCdnEdges';
 import { formatClockTime } from '@/shared/lib/formatClockTime';
 import { toQueryState } from '@/shared/lib/toQueryState';
 import { Alert } from '@/shared/ui/Alert';
 import { Button } from '@/shared/ui/Button';
+import { EMPTY_VALUE } from '@/shared/ui/emptyValue';
 import { Topbar } from '@/shared/ui/Topbar';
 
 import { useEdgeHealthChanges } from '../hooks/useEdgeHealthChanges';
@@ -29,7 +30,7 @@ export function EdgeStatusPage() {
   const lastUpdated = formatClockTime(query.dataUpdatedAt === 0 ? null : query.dataUpdatedAt);
   // 이미 받은 값이 있으면 그대로 두고, 새로고침이 실패했다는 것만 알린다
   const isRefreshFailed = query.isError && edges !== undefined;
-  const errorCode = query.error instanceof ApiError ? query.error.code : undefined;
+  const errorCode = errorCodeOf(query.error);
 
   function handleRefresh() {
     void query.refetch(KEEP_IN_FLIGHT);
@@ -43,7 +44,7 @@ export function EdgeStatusPage() {
         right={
           <>
             <p className="text-xs text-fg-muted">
-              마지막 갱신 <span className="font-mono">{lastUpdated ?? '—'}</span>
+              마지막 갱신 <span className="font-mono">{lastUpdated ?? EMPTY_VALUE}</span>
             </p>
             <Button variant="secondary" disabled={query.isFetching} onClick={handleRefresh}>
               새로고침

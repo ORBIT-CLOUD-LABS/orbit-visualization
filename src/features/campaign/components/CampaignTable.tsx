@@ -2,15 +2,15 @@ import { Link } from 'react-router';
 
 import { routePaths } from '@/shared/config/routes';
 import { buttonClassName } from '@/shared/ui/buttonClassName';
-
-import type { CampaignSummary } from '../api/campaignSchemas';
-import { formatUtcDate } from '../lib/formatUtc';
-import { CampaignStatusBadge } from './CampaignStatusBadge';
 import {
   TABLE_CELL as CELL,
   TABLE_HEAD_CELL as HEAD_CELL,
   TABLE_TEXT_CELL as TEXT_CELL,
-} from './tableClassNames';
+} from '@/shared/ui/tableClassNames';
+
+import type { CampaignSummary } from '../api/campaignSchemas';
+import { formatUtcDate } from '../lib/formatUtc';
+import { CampaignStatusBadge } from './CampaignStatusBadge';
 
 const COLUMNS = ['ID', '이름', '차종', '목표 버전', '상태', '적용 기간', '등록일'] as const;
 

@@ -1,14 +1,13 @@
-import { useId } from 'react';
 import { Link } from 'react-router';
 
 import type { CdnEdgeStatus } from '@/shared/cdnEdge/cdnEdgeSchema';
+import { EdgeHealthBadge } from '@/shared/cdnEdge/EdgeHealthBadge';
 import { ROUTES } from '@/shared/config/routes';
 import type { QueryState } from '@/shared/lib/toQueryState';
-import { Alert } from '@/shared/ui/Alert';
-import { Badge } from '@/shared/ui/Badge';
-import { Button } from '@/shared/ui/Button';
 import { buttonClassName } from '@/shared/ui/buttonClassName';
+import { Card } from '@/shared/ui/Card';
 import { EmptyState } from '@/shared/ui/EmptyState';
+import { LoadErrorAlert } from '@/shared/ui/LoadErrorAlert';
 import { SkeletonRow } from '@/shared/ui/SkeletonRow';
 
 const SKELETON_ROWS = [1, 2, 3] as const;
@@ -19,8 +18,6 @@ type CdnEdgeStatusCardProps = {
 
 /** Edge 별 정상 여부와 배정 차량 수. 자세한 내용은 04 CDN Edge 화면으로 보낸다 */
 export function CdnEdgeStatusCard({ state }: CdnEdgeStatusCardProps) {
-  const headingId = useId();
-
   function renderBody() {
     if (state.status === 'pending') {
       return (
@@ -34,15 +31,10 @@ export function CdnEdgeStatusCard({ state }: CdnEdgeStatusCardProps) {
     }
     if (state.status === 'error') {
       return (
-        <Alert
-          type="error"
-          title="CDN Edge 상태를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요."
-          code={state.errorCode}
-          action={
-            <Button variant="secondary" onClick={state.onRetry}>
-              다시 시도
-            </Button>
-          }
+        <LoadErrorAlert
+          message="CDN Edge 상태를 불러오지 못했습니다"
+          errorCode={state.errorCode}
+          onRetry={state.onRetry}
         />
       );
     }
@@ -66,9 +58,7 @@ export function CdnEdgeStatusCard({ state }: CdnEdgeStatusCardProps) {
               <p className="truncate font-mono text-2xs text-fg-muted">{edge.edgeId}</p>
             </div>
             <div className="flex shrink-0 flex-col items-end gap-1">
-              <Badge tone={edge.healthy ? 'healthy' : 'unhealthy'}>
-                {edge.healthy ? '정상' : '장애'}
-              </Badge>
+              <EdgeHealthBadge healthy={edge.healthy} />
               <p className="text-xs text-fg-muted">배정 {edge.assignedVehicles}대</p>
             </div>
           </li>
@@ -78,22 +68,17 @@ export function CdnEdgeStatusCard({ state }: CdnEdgeStatusCardProps) {
   }
 
   return (
-    <section
-      aria-labelledby={headingId}
-      className="flex flex-col gap-3 rounded-xl border border-line bg-surface p-5"
-    >
-      <div className="flex items-center justify-between gap-3">
-        <div className="flex flex-col gap-0.5">
-          <h2 id={headingId} className="text-md font-bold text-fg">
-            CDN Edge 상태
-          </h2>
-          <p className="text-xs text-fg-muted">Edge별 상태와 배정 차량 수</p>
-        </div>
+    <Card
+      title="CDN Edge 상태"
+      description="Edge별 상태와 배정 차량 수"
+      action={
         <Link to={ROUTES.edges} className={buttonClassName({ variant: 'ghost' })}>
           자세히
         </Link>
-      </div>
+      }
+      className="gap-3"
+    >
       {renderBody()}
-    </section>
+    </Card>
   );
 }

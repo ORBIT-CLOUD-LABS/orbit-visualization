@@ -1,6 +1,5 @@
 import { Alert } from '@/shared/ui/Alert';
-
-import { Card } from './Card';
+import { Card } from '@/shared/ui/Card';
 
 // 서버가 등록을 거부하는 경우(INVALID_INPUT·ARTIFACT_NOT_FOUND·ACTIVE_CAMPAIGN_EXISTS). code 원문은 보여 주지 않는다
 const REJECTIONS = [

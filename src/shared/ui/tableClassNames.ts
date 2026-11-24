@@ -1,4 +1,4 @@
-// 캠페인 화면 표들이 함께 쓰는 칸 스타일
+// 캠페인·파일 목록 표들이 함께 쓰는 칸 스타일
 export const TABLE_HEAD_CELL =
   'h-10 px-4 text-left text-xs font-medium whitespace-nowrap text-fg-muted';
 /** 숫자·코드 값 칸 */

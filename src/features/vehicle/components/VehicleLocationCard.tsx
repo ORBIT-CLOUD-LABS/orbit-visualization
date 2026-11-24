@@ -1,18 +1,19 @@
 import { useMemo } from 'react';
 
 import type { CdnEdgeStatus } from '@/shared/cdnEdge/cdnEdgeSchema';
+import { cn } from '@/shared/lib/cn';
+import { formatTimestamp } from '@/shared/lib/formatDateTime';
 import type { QueryState } from '@/shared/lib/toQueryState';
 import type { LatLng } from '@/shared/map/latLng';
 import { vehicleMarkerTone } from '@/shared/map/vehicleMarkerTone';
 import { Button } from '@/shared/ui/Button';
+import { Card } from '@/shared/ui/Card';
+import { KeyValue } from '@/shared/ui/KeyValue';
 import type { UpdateResult } from '@/shared/vehicle/updateResult';
 import type { VehicleLocation } from '@/shared/vehicle/vehicleLocationSchema';
 
 import { findNearestEdge, type NearestEdge } from '../lib/findNearestEdge';
-import { formatTimestamp } from '../lib/formatTimestamp';
 
-import { Card } from './Card';
-import { KeyValue } from './KeyValue';
 import { VehicleMiniMap } from './VehicleMiniMap';
 
 const COORDINATE_DIGITS = 4;
@@ -70,7 +71,7 @@ export function VehicleLocationCard({
   }
 
   return (
-    <Card title="위치 · 배정 Edge" className={className}>
+    <Card title="위치 · 배정 Edge" className={cn('p-6', className)}>
       {position === null ? (
         <div className="flex h-50 items-center justify-center rounded-lg bg-map">
           <p className="text-xs text-fg-muted">아직 위치를 받지 않았습니다</p>

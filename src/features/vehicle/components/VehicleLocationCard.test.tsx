@@ -4,11 +4,10 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { cdnEdgeStatusFixture } from '@/mocks/cdnEdgeHandlers';
 import type { CdnEdgeStatus } from '@/shared/cdnEdge/cdnEdgeSchema';
+import { formatTimestamp } from '@/shared/lib/formatDateTime';
 import type { QueryState } from '@/shared/lib/toQueryState';
 import type { VehicleLocation } from '@/shared/vehicle/vehicleLocationSchema';
 import { mockLeafletMap } from '@/test/reactLeafletMock';
-
-import { formatTimestamp } from '../lib/formatTimestamp';
 
 import { VehicleLocationCard } from './VehicleLocationCard';
 

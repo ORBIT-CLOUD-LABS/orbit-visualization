@@ -1,20 +1,20 @@
 import { Link } from 'react-router';
 
 import { routePaths } from '@/shared/config/routes';
+import { formatDate } from '@/shared/lib/formatDateTime';
 import { Badge, type BadgeTone } from '@/shared/ui/Badge';
 import { buttonClassName } from '@/shared/ui/buttonClassName';
+import { Card } from '@/shared/ui/Card';
 import { EmptyState } from '@/shared/ui/EmptyState';
-
-import type { ArtifactCampaign } from '../api/getModelCampaigns';
-import { useArtifactCampaigns } from '../hooks/useArtifactCampaigns';
-import { formatDate } from '../lib/formatDateTime';
-import { Card } from './Card';
-import { QueryFallback } from './QueryFallback';
+import { QueryFallback } from '@/shared/ui/QueryFallback';
 import {
   TABLE_CELL as CELL,
   TABLE_HEAD_CELL as HEAD_CELL,
   TABLE_TEXT_CELL as TEXT_CELL,
-} from './tableClassNames';
+} from '@/shared/ui/tableClassNames';
+
+import type { ArtifactCampaign } from '../api/getModelCampaigns';
+import { useArtifactCampaigns } from '../hooks/useArtifactCampaigns';
 
 const STATUS_TONE: Record<ArtifactCampaign['status'], BadgeTone> = {
   ACTIVE: 'info',

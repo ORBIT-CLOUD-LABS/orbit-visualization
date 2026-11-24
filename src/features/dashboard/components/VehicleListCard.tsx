@@ -1,12 +1,14 @@
 import { useId, useMemo, useState } from 'react';
 
+import { formatPageSummary } from '@/shared/lib/formatPageSummary';
 import type { QueryState } from '@/shared/lib/toQueryState';
 import { usePagination } from '@/shared/lib/usePagination';
-import { Alert } from '@/shared/ui/Alert';
 import { Button } from '@/shared/ui/Button';
+import { Card } from '@/shared/ui/Card';
 import { EmptyState } from '@/shared/ui/EmptyState';
+import { LoadErrorAlert } from '@/shared/ui/LoadErrorAlert';
+import { LoadingRows } from '@/shared/ui/LoadingRows';
 import { Pagination } from '@/shared/ui/Pagination';
-import { SkeletonRow } from '@/shared/ui/SkeletonRow';
 
 import type { VehicleStatus } from '../api/vehicleStatusSchema';
 import {
@@ -19,7 +21,7 @@ import {
 import { VehicleFilters } from './VehicleFilters';
 import { VehicleTable } from './VehicleTable';
 
-const SKELETON_ROWS = [1, 2, 3, 4, 5] as const;
+const SKELETON_ROW_COUNT = 5;
 const NO_VEHICLES: readonly VehicleStatus[] = [];
 
 type VehicleListCardProps = {
@@ -39,25 +41,19 @@ export function VehicleListCard({ state }: VehicleListCardProps) {
   function renderBody() {
     if (state.status === 'pending') {
       return (
-        <div aria-busy="true" className="flex flex-col divide-y divide-line">
-          <p className="sr-only">차량 목록을 불러오는 중입니다</p>
-          {SKELETON_ROWS.map((row) => (
-            <SkeletonRow key={row} />
-          ))}
-        </div>
+        <LoadingRows
+          label="차량 목록을 불러오는 중입니다"
+          rows={SKELETON_ROW_COUNT}
+          variant="divided"
+        />
       );
     }
     if (state.status === 'error') {
       return (
-        <Alert
-          type="error"
-          title="차량 목록을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요."
-          code={state.errorCode}
-          action={
-            <Button variant="secondary" onClick={state.onRetry}>
-              다시 시도
-            </Button>
-          }
+        <LoadErrorAlert
+          message="차량 목록을 불러오지 못했습니다"
+          errorCode={state.errorCode}
+          onRetry={state.onRetry}
         />
       );
     }
@@ -89,31 +85,28 @@ export function VehicleListCard({ state }: VehicleListCardProps) {
           page={pagination.page}
           pageCount={pagination.pageCount}
           onPageChange={pagination.setPage}
-          summary={`${pagination.totalCount}대 중 ${pagination.rangeStart}–${pagination.rangeEnd} · ${pagination.page} / ${pagination.pageCount} 페이지`}
+          summary={formatPageSummary(pagination, '대')}
         />
       </>
     );
   }
 
   return (
-    <section
-      aria-labelledby={headingId}
-      className="flex flex-col gap-4 rounded-xl border border-line bg-surface p-5"
-    >
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 id={headingId} className="text-md font-bold text-fg">
-          차량 목록
-        </h2>
-        {vehicles.length > 0 && (
+    <Card
+      title="차량 목록"
+      titleId={headingId}
+      action={
+        vehicles.length > 0 ? (
           <VehicleFilters
             filter={filter}
             models={options.models}
             edgeIds={options.edgeIds}
             onChange={setFilter}
           />
-        )}
-      </div>
+        ) : undefined
+      }
+    >
       {renderBody()}
-    </section>
+    </Card>
   );
 }

@@ -3,12 +3,12 @@ import { Link } from 'react-router';
 
 import { routePaths } from '@/shared/config/routes';
 import { buttonClassName } from '@/shared/ui/buttonClassName';
+import { KeyValue } from '@/shared/ui/KeyValue';
 
 import type { CampaignDetail } from '../api/campaignSchemas';
 import { formatTargetList, formatVersionRange } from '../lib/formatTarget';
 import { formatUtcDateTime } from '../lib/formatUtc';
 import { CampaignStatusBadge } from './CampaignStatusBadge';
-import { KeyValue } from './KeyValue';
 
 type CampaignInfoCardProps = {
   campaign: CampaignDetail;

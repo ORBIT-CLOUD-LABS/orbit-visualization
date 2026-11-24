@@ -1,9 +1,8 @@
+import { formatTimestamp } from '@/shared/lib/formatDateTime';
+import { EMPTY_VALUE } from '@/shared/ui/emptyValue';
 import { VehicleResultBadge } from '@/shared/vehicle/VehicleResultBadge';
 
 import type { VehicleUpdateEvent } from '../api/vehicleSchemas';
-import { formatTimestamp } from '../lib/formatTimestamp';
-
-import { EMPTY_VALUE } from './emptyValue';
 
 const COLUMNS = ['완료 시각', '캠페인', '버전', '결과', '실패 사유', '다운로드 Edge'] as const;
 

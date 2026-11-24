@@ -1,34 +1,31 @@
 import { Link, useParams } from 'react-router';
 
 import { ApiError } from '@/shared/api/ApiError';
+import { errorCodeOf } from '@/shared/api/errorCodeOf';
 import { useCdnEdges } from '@/shared/cdnEdge/useCdnEdges';
 import { ROUTES } from '@/shared/config/routes';
 import { toQueryState } from '@/shared/lib/toQueryState';
 import { Alert } from '@/shared/ui/Alert';
+import { Breadcrumb } from '@/shared/ui/Breadcrumb';
 import { Button } from '@/shared/ui/Button';
 import { buttonClassName } from '@/shared/ui/buttonClassName';
+import { Card } from '@/shared/ui/Card';
 import { EmptyState } from '@/shared/ui/EmptyState';
+import { QueryFallback } from '@/shared/ui/QueryFallback';
 import { Topbar } from '@/shared/ui/Topbar';
 
 import { useVehicleDetail } from '../hooks/useVehicleDetail';
 import { useVehicleUpdateHistory } from '../hooks/useVehicleUpdateHistory';
 import { parseVehicleId } from '../lib/parseVehicleId';
 
-import { Card } from './Card';
 import { LastUpdateCard } from './LastUpdateCard';
-import { QueryFallback } from './QueryFallback';
 import { UpdateHistoryCard } from './UpdateHistoryCard';
-import { VehicleBreadcrumb } from './VehicleBreadcrumb';
 import { VehicleLocationCard } from './VehicleLocationCard';
 import { VehicleSummaryCard } from './VehicleSummaryCard';
 
 const NOT_FOUND = 404;
 // 버튼을 여러 번 눌러도 진행 중인 요청을 취소하고 다시 보내지 않는다
 const KEEP_IN_FLIGHT = { cancelRefetch: false } as const;
-
-function errorCodeOf(error: unknown): string | undefined {
-  return error instanceof ApiError ? error.code : undefined;
-}
 
 /** 03 차량 상세. 실시간 갱신 없이 새로고침 버튼으로 다시 불러온다 */
 export function VehicleDetailPage() {
@@ -67,7 +64,11 @@ export function VehicleDetailPage() {
       (detail.isError && vehicle !== undefined) || (history.isError && history.data !== undefined);
     return (
       <>
-        <VehicleBreadcrumb current={vehicleId} />
+        <Breadcrumb
+          parent={{ label: '대시보드', to: ROUTES.dashboard }}
+          current={vehicleId}
+          isCurrentMono
+        />
         {isRefreshFailed && (
           <Alert
             type="error"
@@ -80,10 +81,12 @@ export function VehicleDetailPage() {
           />
         )}
         {vehicle === undefined ? (
-          <Card title="차량 정보">
+          <Card className="p-6" title="차량 정보">
             <QueryFallback
               isPending={detail.isPending}
-              errorTitle="차량 정보를 불러오지 못했습니다"
+              loadingLabel="불러오는 중입니다"
+              loadingVariant="divided"
+              errorMessage="차량 정보를 불러오지 못했습니다"
               errorCode={errorCodeOf(detail.error)}
               onRetry={() => void detail.refetch(KEEP_IN_FLIGHT)}
             />

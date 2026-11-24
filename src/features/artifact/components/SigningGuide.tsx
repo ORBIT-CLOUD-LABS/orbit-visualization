@@ -1,4 +1,4 @@
-import { Card } from './Card';
+import { Card } from '@/shared/ui/Card';
 
 // 서버 FirmwareSignaturePayload 와 같은 다섯 줄(형식·차종·버전·SHA-256·크기)에 서명한다.
 // GNU base64 는 76자마다 줄을 바꿔 vault 인자가 갈라지므로 줄바꿈을 지우고 따옴표로 감싼다

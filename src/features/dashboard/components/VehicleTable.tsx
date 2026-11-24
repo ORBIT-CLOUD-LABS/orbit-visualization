@@ -2,11 +2,10 @@ import { Link } from 'react-router';
 
 import { routePaths } from '@/shared/config/routes';
 import { formatClockTime } from '@/shared/lib/formatClockTime';
+import { EMPTY_VALUE } from '@/shared/ui/emptyValue';
 import { VehicleResultBadge } from '@/shared/vehicle/VehicleResultBadge';
 
 import type { VehicleStatus } from '../api/vehicleStatusSchema';
-
-const EMPTY_VALUE = '—';
 
 const COLUMNS = [
   'vehicleId',

@@ -1,6 +1,6 @@
 import type { UseQueryResult } from '@tanstack/react-query';
 
-import { ApiError } from '@/shared/api/ApiError';
+import { errorCodeOf } from '@/shared/api/errorCodeOf';
 
 /** 카드가 그릴 서버 데이터 상태. 다시 불러오다 실패해도 이미 받은 데이터가 있으면 success 다 */
 export type QueryState<T> =
@@ -16,7 +16,7 @@ export function toQueryState<T>(query: UseQueryResult<T>): QueryState<T> {
   if (query.isError) {
     return {
       status: 'error',
-      errorCode: query.error instanceof ApiError ? query.error.code : undefined,
+      errorCode: errorCodeOf(query.error),
       onRetry: () => {
         // 여러 번 눌러도 진행 중인 요청을 취소하고 다시 보내지 않는다
         void query.refetch({ cancelRefetch: false });

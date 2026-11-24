@@ -1,18 +1,17 @@
 import { Link } from 'react-router';
 
 import { routePaths } from '@/shared/config/routes';
+import { formatDate } from '@/shared/lib/formatDateTime';
 import { buttonClassName } from '@/shared/ui/buttonClassName';
-
-import type { Artifact } from '../api/artifactSchemas';
-import { formatDate } from '../lib/formatDateTime';
-import { formatFileSize } from '../lib/formatFileSize';
-import { shortenSha256 } from '../lib/shortenSha256';
-
 import {
   TABLE_CELL as CELL,
   TABLE_HEAD_CELL as HEAD_CELL,
   TABLE_TEXT_CELL as TEXT_CELL,
-} from './tableClassNames';
+} from '@/shared/ui/tableClassNames';
+
+import type { Artifact } from '../api/artifactSchemas';
+import { formatFileSize } from '../lib/formatFileSize';
+import { shortenSha256 } from '../lib/shortenSha256';
 
 type ArtifactTableProps = {
   artifacts: readonly Artifact[];
