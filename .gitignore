@@ -6,7 +6,7 @@ dist
 coverage
 *.tsbuildinfo
 
-# 로컬 환경변수 (키 목록은 .env.example)
+# 로컬 환경변수
 .env
 .env.local
 .env.*.local

@@ -1,7 +1,8 @@
 @import 'tailwindcss';
 
-/* 디자인 토큰. 값의 원본은 Figma `Front 화면` 의 Color·Spacing·Radius 변수다.
-   기본 팔레트·글자 크기·모서리는 지우고 여기 정의한 토큰만 쓴다. (docs/styling.md) */
+/* 디자인 토큰. 값의 원본은 Figma `Front 화면` 의 Color·Radius 변수와 화면의 글자 크기다.
+   기본 팔레트·글자 크기·모서리는 지우고 여기 정의한 토큰만 쓴다. (docs/styling.md)
+   간격은 Tailwind 기본 4px 단위(p-0.5 = 2px … p-15 = 60px)가 Figma Spacing 변수(2~60px)를 그대로 덮으므로 따로 두지 않는다. */
 @theme {
   --color-*: initial;
   --color-transparent: transparent;
