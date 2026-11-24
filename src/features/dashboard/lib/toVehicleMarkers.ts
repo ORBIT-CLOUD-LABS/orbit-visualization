@@ -1,4 +1,6 @@
-import type { UpdateResult, VehicleStatus } from '../api/vehicleStatusSchema';
+import type { UpdateResult } from '@/shared/vehicle/updateResult';
+
+import type { VehicleStatus } from '../api/vehicleStatusSchema';
 
 import { vehicleMarkerTone, type VehicleMarkerTone } from './vehicleMarkerTone';
 
