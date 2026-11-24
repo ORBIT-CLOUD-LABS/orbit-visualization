@@ -65,7 +65,8 @@ export function useDashboardVehicles(): DashboardVehicles {
 
   const isSnapshotEnabled = connection.hasOpened || isFirstConnectWaitOver;
 
-  // 연결되기 전에 조회를 켰으면 구독 전 변경을 놓쳤을 수 있다. 처음 연결됐을 때 한 번만 다시 조회한다
+  // 연결되기 전에 조회를 켰으면 구독 전 변경을 놓쳤을 수 있다. 처음 연결됐을 때 한 번만 다시 조회한다.
+  // 다시 연결할 때는 sseClient 가 Last-Event-ID 를 보내 서버가 놓친 변경을 이어 보내므로 조회하지 않는다
   const hasConnectedRef = useRef(false);
   const enabledBeforeConnectRef = useRef(false);
   useEffect(() => {
