@@ -1,17 +1,9 @@
 import { z } from 'zod';
 
-/** 차량별 최근 업데이트 결과. 결과가 없으면 null 이다 */
-export const UPDATE_RESULTS = ['SUCCEEDED', 'FAILED'] as const;
-export type UpdateResult = (typeof UPDATE_RESULTS)[number];
+import { UPDATE_RESULTS } from '@/shared/vehicle/updateResult';
+import { vehicleLocationSchema } from '@/shared/vehicle/vehicleLocationSchema';
 
 const instantSchema = z.iso.datetime();
-
-/** 차량의 마지막 위치 (VehicleLocationResponse) */
-export const vehicleLocationSchema = z.object({
-  latitude: z.number(),
-  longitude: z.number(),
-  updatedAt: instantSchema,
-});
 
 /** 차량 한 대 상태 (VehicleStatusResponse). 스냅샷과 SSE `vehicles` 이벤트가 같은 형식을 쓴다 */
 export const vehicleStatusSchema = z.object({
@@ -39,6 +31,5 @@ export const vehicleStatusSnapshotSchema = z.object({
   vehicles: z.array(vehicleStatusSchema),
 });
 
-export type VehicleLocation = z.infer<typeof vehicleLocationSchema>;
 export type VehicleStatus = z.infer<typeof vehicleStatusSchema>;
 export type VehicleStatusSnapshot = z.infer<typeof vehicleStatusSnapshotSchema>;
