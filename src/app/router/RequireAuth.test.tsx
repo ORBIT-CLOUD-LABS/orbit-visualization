@@ -1,21 +1,13 @@
-import { QueryClientProvider } from '@tanstack/react-query';
-import { render, screen } from '@testing-library/react';
-import { createMemoryRouter, RouterProvider } from 'react-router';
+import { screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
-import { createQueryClient } from '@/app/queryClient';
 import { tokenStorage } from '@/shared/auth/tokenStorage';
+import { renderRoutes } from '@/test/renderRoutes';
 
 import { appRoutes } from './appRoutes';
 
 function renderAt(path: string) {
-  const router = createMemoryRouter(appRoutes, { initialEntries: [path] });
-  render(
-    <QueryClientProvider client={createQueryClient()}>
-      <RouterProvider router={router} />
-    </QueryClientProvider>,
-  );
-  return router;
+  return renderRoutes(appRoutes, path).router;
 }
 
 describe('RequireAuth', () => {

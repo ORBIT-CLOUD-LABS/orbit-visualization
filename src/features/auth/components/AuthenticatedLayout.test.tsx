@@ -1,17 +1,14 @@
-import { QueryClientProvider } from '@tanstack/react-query';
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { createMemoryRouter, RouterProvider } from 'react-router';
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import { createQueryClient } from '@/app/queryClient';
 import { tokenStorage } from '@/shared/auth/tokenStorage';
+import { renderRoutes } from '@/test/renderRoutes';
 
 import { AuthenticatedLayout } from './AuthenticatedLayout';
 
 function renderAt(path: string) {
-  const queryClient = createQueryClient();
-  const router = createMemoryRouter(
+  return renderRoutes(
     [
       { path: '/login', element: <h1>관리자 토큰 입력</h1> },
       {
@@ -23,14 +20,8 @@ function renderAt(path: string) {
         ],
       },
     ],
-    { initialEntries: [path] },
+    path,
   );
-  render(
-    <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
-    </QueryClientProvider>,
-  );
-  return { router, queryClient };
 }
 
 describe('AuthenticatedLayout', () => {

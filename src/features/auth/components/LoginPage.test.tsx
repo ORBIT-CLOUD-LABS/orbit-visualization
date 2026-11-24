@@ -1,13 +1,11 @@
-import { QueryClientProvider } from '@tanstack/react-query';
-import { render, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
-import { createMemoryRouter, RouterProvider } from 'react-router';
 import { describe, expect, it } from 'vitest';
 
-import { createQueryClient } from '@/app/queryClient';
 import { server } from '@/mocks/server';
 import { tokenStorage } from '@/shared/auth/tokenStorage';
+import { renderRoutes } from '@/test/renderRoutes';
 
 import { LoginPage } from './LoginPage';
 
@@ -24,19 +22,13 @@ function success() {
 }
 
 function renderLogin() {
-  const router = createMemoryRouter(
+  return renderRoutes(
     [
       { path: '/login', element: <LoginPage /> },
       { path: '/', element: <h1>대시보드</h1> },
     ],
-    { initialEntries: ['/login'] },
-  );
-  render(
-    <QueryClientProvider client={createQueryClient()}>
-      <RouterProvider router={router} />
-    </QueryClientProvider>,
-  );
-  return router;
+    '/login',
+  ).router;
 }
 
 async function submitToken(token: string) {
