@@ -28,6 +28,8 @@ export default defineConfig(({ mode }) => {
     test: {
       environment: 'jsdom',
       setupFiles: ['./src/test/setup.ts'],
+      // 테스트는 src 에만 있다. 저장소 안의 에이전트 worktree(.claude/worktrees)를 읽지 않게 범위를 좁힌다
+      include: ['src/**/*.test.{ts,tsx}'],
       restoreMocks: true,
       env: {
         VITE_API_BASE_URL: '/api/v1',

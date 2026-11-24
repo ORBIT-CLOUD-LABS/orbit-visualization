@@ -6,7 +6,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { Sidebar, type SidebarItem } from './Sidebar';
 
 const ITEMS: SidebarItem[] = [
-  { to: '/', label: '대시보드', end: true },
+  { to: '/', label: '대시보드', end: true, activeFor: ['/vehicles/:vehicleId'] },
   { to: '/campaigns', label: '캠페인' },
   { to: '/artifacts', label: '파일' },
   { to: '/edges', label: 'CDN Edge' },
@@ -35,6 +35,13 @@ describe('Sidebar', () => {
 
     expect(screen.getByRole('link', { name: '캠페인' })).toHaveAttribute('aria-current', 'page');
     expect(screen.getByRole('link', { name: '대시보드' })).not.toHaveAttribute('aria-current');
+  });
+
+  it('activeFor 경로에서도 메뉴를 선택 상태로 표시한다', () => {
+    renderSidebar('/vehicles/VH-001');
+
+    expect(screen.getByRole('link', { name: '대시보드' })).toHaveAttribute('aria-current', 'page');
+    expect(screen.getByRole('link', { name: '캠페인' })).not.toHaveAttribute('aria-current');
   });
 
   it('가린 토큰을 보여 주고 토큰 변경을 누르면 알린다', async () => {
