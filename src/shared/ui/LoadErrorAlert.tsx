@@ -2,7 +2,7 @@ import { Alert } from './Alert';
 import { Button } from './Button';
 
 type LoadErrorAlertProps = {
-  /** 무엇을 불러오지 못했는지. 예: "차량 정보를 불러오지 못했습니다" */
+  /** 무엇을 불러오지 못했는지. 끝에 마침표를 붙이지 않는다. 예: "차량 정보를 불러오지 못했습니다" */
   message?: string;
   /** 서버 응답 code. 없으면 생략 */
   code?: string;

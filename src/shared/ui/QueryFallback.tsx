@@ -7,7 +7,7 @@ type QueryFallbackProps = {
   /** 화면 읽기 도구에 알릴 로딩 문구 */
   loadingLabel?: string;
   loadingVariant?: LoadingRowsVariant;
-  /** 무엇을 불러오지 못했는지. 예: "차량 정보를 불러오지 못했습니다" */
+  /** 무엇을 불러오지 못했는지. 끝에 마침표를 붙이지 않는다. 예: "차량 정보를 불러오지 못했습니다" */
   errorMessage?: string;
   /** 서버 응답 code. 없으면 생략 */
   errorCode?: string;
