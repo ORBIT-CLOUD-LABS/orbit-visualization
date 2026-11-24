@@ -1,5 +1,6 @@
 import { Navigate, type RouteObject } from 'react-router';
 
+import { DashboardPage } from '@/features/dashboard/components/DashboardPage';
 import { ROUTES } from '@/shared/config/routes';
 
 import { PlaceholderPage } from './PlaceholderPage';
@@ -10,7 +11,7 @@ export const appRoutes: RouteObject[] = [
   {
     element: <RequireAuth />,
     children: [
-      { path: ROUTES.dashboard, element: <PlaceholderPage title="대시보드" /> },
+      { path: ROUTES.dashboard, element: <DashboardPage /> },
       { path: ROUTES.vehicleDetail, element: <PlaceholderPage title="차량 상세" /> },
       { path: ROUTES.edges, element: <PlaceholderPage title="Edge" /> },
       { path: ROUTES.campaigns, element: <PlaceholderPage title="캠페인" /> },
