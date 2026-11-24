@@ -4,6 +4,7 @@ import { ArtifactDetailPage } from '@/features/artifact/components/ArtifactDetai
 import { ArtifactListPage } from '@/features/artifact/components/ArtifactListPage';
 import { ArtifactRegisterPage } from '@/features/artifact/components/ArtifactRegisterPage';
 import { AuthenticatedLayout } from '@/features/auth/components/AuthenticatedLayout';
+import { CampaignListPage } from '@/features/campaign/components/CampaignListPage';
 import { LoginPage } from '@/features/auth/components/LoginPage';
 import { ROUTES } from '@/shared/config/routes';
 
@@ -22,7 +23,7 @@ export const appRoutes: RouteObject[] = [
       { path: ROUTES.dashboard, element: <PlaceholderPage title="대시보드" /> },
       { path: ROUTES.vehicleDetail, element: <PlaceholderPage title="차량 상세" /> },
       { path: ROUTES.edges, element: <PlaceholderPage title="Edge" /> },
-      { path: ROUTES.campaigns, element: <PlaceholderPage title="캠페인" /> },
+      { path: ROUTES.campaigns, element: <CampaignListPage /> },
       { path: ROUTES.campaignNew, element: <PlaceholderPage title="캠페인 만들기" /> },
       { path: ROUTES.campaignDetail, element: <PlaceholderPage title="캠페인 상세" /> },
       { path: ROUTES.artifacts, element: <ArtifactListPage /> },
