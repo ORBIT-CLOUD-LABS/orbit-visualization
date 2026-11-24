@@ -2,6 +2,7 @@ import { Link, useParams } from 'react-router';
 
 import { ApiError } from '@/shared/api/ApiError';
 import { ROUTES } from '@/shared/config/routes';
+import { parseId } from '@/shared/lib/parseId';
 import { Breadcrumb, type BreadcrumbParent } from '@/shared/ui/Breadcrumb';
 import { buttonClassName } from '@/shared/ui/buttonClassName';
 import { Card } from '@/shared/ui/Card';
@@ -10,7 +11,6 @@ import { QueryFallback } from '@/shared/ui/QueryFallback';
 import { Topbar } from '@/shared/ui/Topbar';
 
 import { useArtifact } from '../hooks/useArtifact';
-import { parseArtifactId } from '../lib/parseArtifactId';
 import { ArtifactCampaignsCard } from './ArtifactCampaignsCard';
 import { ArtifactDetailCard } from './ArtifactDetailCard';
 
@@ -20,7 +20,7 @@ const BREADCRUMB_PARENT: BreadcrumbParent = { label: '파일', to: ROUTES.artifa
 /** 10 파일 상세 */
 export function ArtifactDetailPage() {
   const params = useParams();
-  const artifactId = parseArtifactId(params.artifactId);
+  const artifactId = parseId(params.artifactId);
   const { data: artifact, error, isPending, refetch } = useArtifact(artifactId);
   const isNotFound =
     artifactId === null || (error instanceof ApiError && error.status === NOT_FOUND);

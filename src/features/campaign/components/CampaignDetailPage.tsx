@@ -2,6 +2,7 @@ import { Link, useParams } from 'react-router';
 
 import { ApiError } from '@/shared/api/ApiError';
 import { ROUTES } from '@/shared/config/routes';
+import { parseId } from '@/shared/lib/parseId';
 import { Breadcrumb, type BreadcrumbParent } from '@/shared/ui/Breadcrumb';
 import { buttonClassName } from '@/shared/ui/buttonClassName';
 import { Card } from '@/shared/ui/Card';
@@ -11,7 +12,6 @@ import { Topbar } from '@/shared/ui/Topbar';
 
 import { useCampaign } from '../hooks/useCampaign';
 import { useCampaignStats } from '../hooks/useCampaignStats';
-import { parseId } from '../lib/parseId';
 import { CampaignInfoCard } from './CampaignInfoCard';
 import { CampaignStatsSection } from './CampaignStatsSection';
 import { DeactivateCampaignButton } from './DeactivateCampaignButton';

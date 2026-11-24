@@ -1,12 +1,12 @@
 import { useNavigate, useSearchParams } from 'react-router';
 
 import { ROUTES, routePaths } from '@/shared/config/routes';
+import { parseId } from '@/shared/lib/parseId';
 import { Breadcrumb } from '@/shared/ui/Breadcrumb';
 import { Topbar } from '@/shared/ui/Topbar';
 
 import { useArtifactOptions } from '../hooks/useArtifactOptions';
 import { useRegisterCampaign } from '../hooks/useRegisterCampaign';
-import { parseId } from '../lib/parseId';
 import { CampaignRegisterForm } from './CampaignRegisterForm';
 import { RejectionGuide } from './RejectionGuide';
 
