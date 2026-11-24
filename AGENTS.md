@@ -33,6 +33,7 @@ orbit 이 프리셋과 다르게 정한 규칙은 따로 두지 않고 해당 �
 | [docs/react/browser-security.md](docs/react/browser-security.md)           | 공개 환경변수, 사용자 입력을 화면에 그릴 때, 인증 토큰을 다룰 때 |
 | [docs/styling.md](docs/styling.md)                                         | 화면 스타일을 쓸 때. Tailwind 토큰, 클래스 조합                  |
 | [docs/data-fetching.md](docs/data-fetching.md)                             | 서버와 통신할 때. axios, TanStack Query, SSE                     |
+| [docs/decisions/0001-admin-token-session-storage.md](docs/decisions/0001-admin-token-session-storage.md) | 인증 토큰 저장 방식을 바꿀 때 |
 
 ## 핵심 규칙
 
