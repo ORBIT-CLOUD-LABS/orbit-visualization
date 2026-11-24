@@ -26,6 +26,15 @@ function renderDashboardVehicles() {
   return renderHook(() => useDashboardVehicles(), { wrapper });
 }
 
+// fake timer 로 시간을 보낸 뒤 실제 timer 로 돌린다. 남은 timer(Query 알림 등)를 먼저 비워 버려지지 않게 한다
+function advanceFakeTime(ms: number) {
+  act(() => {
+    vi.advanceTimersByTime(ms);
+    vi.runOnlyPendingTimers();
+  });
+  vi.useRealTimers();
+}
+
 describe('useDashboardVehicles', () => {
   let sse: FakeSseClient;
 
@@ -68,10 +77,7 @@ describe('useDashboardVehicles', () => {
     });
     expect(result.current.query.isEnabled).toBe(false);
 
-    act(() => {
-      vi.advanceTimersByTime(1);
-    });
-    vi.useRealTimers();
+    advanceFakeTime(1);
 
     await waitFor(() => {
       expect(result.current.query.data?.vehicles).toEqual([vehicleStatusFixture()]);
@@ -90,10 +96,7 @@ describe('useDashboardVehicles', () => {
     );
     vi.useFakeTimers();
     const { result } = renderDashboardVehicles();
-    act(() => {
-      vi.advanceTimersByTime(FIRST_CONNECT_WAIT_MS);
-    });
-    vi.useRealTimers();
+    advanceFakeTime(FIRST_CONNECT_WAIT_MS);
     await waitFor(() => {
       expect(result.current.query.data).toBeDefined();
     });
@@ -106,6 +109,8 @@ describe('useDashboardVehicles', () => {
     });
     sse.setStatus('reconnecting');
     sse.setStatus('connected');
+    // 다시 연결해도 조회하지 않는지 보려면 요청이 나갈 시간을 준 뒤 센다
+    await act(() => delay(20));
     expect(requestCount).toBe(2);
   });
 
@@ -141,10 +146,7 @@ describe('useDashboardVehicles', () => {
     vi.useFakeTimers();
     const { result } = renderDashboardVehicles();
     sse.setStatus('connected');
-    act(() => {
-      vi.advanceTimersByTime(FIRST_CONNECT_WAIT_MS);
-    });
-    vi.useRealTimers();
+    advanceFakeTime(FIRST_CONNECT_WAIT_MS);
 
     await waitFor(() => {
       expect(result.current.query.data).toBeDefined();
