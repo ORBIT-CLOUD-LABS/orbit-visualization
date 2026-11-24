@@ -5,7 +5,3 @@ interface ImportMetaEnv {
   readonly VITE_API_BASE_URL: unknown;
   readonly VITE_MAP_TILE_URL: unknown;
 }
-
-interface ImportMeta {
-  readonly env: ImportMetaEnv;
-}

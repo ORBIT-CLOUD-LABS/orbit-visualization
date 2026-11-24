@@ -25,6 +25,12 @@ function isHttpUrlOrRootPath(value: string): boolean {
   return protocol === 'http:' || protocol === 'https:';
 }
 
+function assertHttpUrlOrRootPath(name: string, value: string): void {
+  if (!isHttpUrlOrRootPath(value)) {
+    throw new Error(`환경변수 ${name} 은 http(s) 주소나 / 로 시작하는 경로여야 합니다`);
+  }
+}
+
 // URL.canParse 는 Chrome 120 미만에 없어 시작 시 앱 전체가 멈춘다. 생성자로 확인한다
 function parseProtocol(value: string): string | null {
   try {
@@ -36,9 +42,7 @@ function parseProtocol(value: string): string | null {
 
 function requireBaseUrlEnv(name: string, value: unknown): string {
   const url = requireEnv(name, value);
-  if (!isHttpUrlOrRootPath(url)) {
-    throw new Error(`환경변수 ${name} 은 http(s) 주소나 / 로 시작하는 경로여야 합니다`);
-  }
+  assertHttpUrlOrRootPath(name, url);
   return url.replace(/\/+$/, '');
 }
 
@@ -49,10 +53,7 @@ function requireTileUrlEnv(name: string, value: unknown): string {
     throw new Error(`환경변수 ${name} 에 ${missing.join(', ')} 가 없습니다`);
   }
   // 템플릿 자리표시자를 예시 값으로 바꿔 주소 형식만 확인한다
-  const sample = url.replaceAll(/\{[a-z]+\}/g, '0');
-  if (!isHttpUrlOrRootPath(sample)) {
-    throw new Error(`환경변수 ${name} 은 http(s) 주소나 / 로 시작하는 경로여야 합니다`);
-  }
+  assertHttpUrlOrRootPath(name, url.replaceAll(/\{[a-z]+\}/g, '0'));
   return url;
 }
 
