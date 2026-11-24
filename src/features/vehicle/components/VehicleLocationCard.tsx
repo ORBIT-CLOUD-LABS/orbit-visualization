@@ -44,7 +44,10 @@ export function VehicleLocationCard({
     [location],
   );
   const edges = edgeState.status === 'success' ? edgeState.data : NO_EDGES;
-  const nearest = position === null ? null : findNearestEdge(position, edges);
+  const nearest = useMemo(
+    () => (position === null ? null : findNearestEdge(position, edges)),
+    [position, edges],
+  );
 
   function renderNearestEdge() {
     if (position === null) {
@@ -74,8 +77,6 @@ export function VehicleLocationCard({
         </div>
       ) : (
         <VehicleMiniMap
-          // 새로고침으로 위치가 바뀌거나 실패했던 Edge 조회가 다시 성공하면 지도를 새로 만들어 범위를 다시 맞춘다
-          key={`${position.join(',')}:${edgeState.status === 'error' ? 'vehicle-only' : 'with-edges'}`}
           position={position}
           tone={vehicleMarkerTone(lastResult)}
           assignedEdgeId={assignedEdgeId}

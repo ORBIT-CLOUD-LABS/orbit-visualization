@@ -160,6 +160,19 @@ describe('VehicleLocationCard', () => {
     ]);
   });
 
+  it('새로고침으로 위치가 바뀌면 범위를 다시 맞추고, Edge 만 다시 받으면 화면을 그대로 둔다', () => {
+    const { rerender } = render(card());
+
+    rerender(card({ edgeState: { status: 'success', data: [SEOUL, DAEJEON] } }));
+    expect(mockLeafletMap.fitBounds).toHaveBeenCalledTimes(1);
+
+    rerender(card({ location: { ...LOCATION, latitude: 36.4, longitude: 127.4 } }));
+    expect(fittedBounds()[1]).toEqual([
+      [36.35, 126.978],
+      [37.5665, 127.4],
+    ]);
+  });
+
   it('Edge 가 하나도 없으면 가까운 Edge 를 비워 둔다', () => {
     const card = renderCard({ edgeState: { status: 'success', data: [] } });
 

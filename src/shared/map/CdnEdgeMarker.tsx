@@ -1,4 +1,5 @@
 import type { PathOptions } from 'leaflet';
+import { useMemo } from 'react';
 import { CircleMarker, Tooltip } from 'react-leaflet';
 
 import type { CdnEdgeStatus } from '@/shared/cdnEdge/cdnEdgeSchema';
@@ -13,14 +14,17 @@ const EDGE_LABEL_CLASS = {
 
 type CdnEdgeMarkerProps = {
   edge: CdnEdgeStatus;
-  /** 좌표 배열이 바뀌면 Leaflet 이 다시 그리므로, Edge 가 바뀔 때만 새로 만들어 넘긴다 */
-  position: LatLng;
   pathStyles: Record<'healthy' | 'unhealthy', PathOptions>;
 };
 
 /** Edge 대표 좌표의 원 마커와 이름 라벨. 장애면 라벨에 알린다 */
-export function CdnEdgeMarker({ edge, position, pathStyles }: CdnEdgeMarkerProps) {
+export function CdnEdgeMarker({ edge, pathStyles }: CdnEdgeMarkerProps) {
   const health = edge.healthy ? 'healthy' : 'unhealthy';
+  // 좌표 배열이 바뀌면 Leaflet 이 마커를 다시 놓으므로 좌표가 바뀔 때만 만든다
+  const position = useMemo<LatLng>(
+    () => [edge.latitude, edge.longitude],
+    [edge.latitude, edge.longitude],
+  );
 
   return (
     <CircleMarker center={position} radius={9} pathOptions={pathStyles[health]}>

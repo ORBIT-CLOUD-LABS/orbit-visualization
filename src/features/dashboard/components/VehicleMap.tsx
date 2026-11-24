@@ -1,14 +1,14 @@
-import { useCallback, useMemo, useState } from 'react';
-import { CircleMarker, Pane, Polyline, Popup } from 'react-leaflet';
+import { useCallback, useMemo } from 'react';
+import { CircleMarker, Polyline, Popup } from 'react-leaflet';
 
 import type { CdnEdgeStatus } from '@/shared/cdnEdge/cdnEdgeSchema';
 import { BaseMap } from '@/shared/map/BaseMap';
-import { CdnEdgeMarker } from '@/shared/map/CdnEdgeMarker';
+import { CdnEdgeLayer } from '@/shared/map/CdnEdgeLayer';
 import { computeMapBounds } from '@/shared/map/computeMapBounds';
-import { createMapPathStyles, readDocumentTokenColor } from '@/shared/map/createMapPathStyles';
 import { FitBoundsOnce } from '@/shared/map/FitBoundsOnce';
 import type { LatLng } from '@/shared/map/latLng';
-import { MAP_PANES } from '@/shared/map/mapPanes';
+import { MapPane } from '@/shared/map/MapPane';
+import { useMapPathStyles } from '@/shared/map/useMapPathStyles';
 
 import { buildEdgeLinks } from '../lib/buildEdgeLinks';
 import type { VehicleMarker } from '../lib/toVehicleMarkers';
@@ -25,21 +25,15 @@ type VehicleMapProps = {
 
 /** 차량 마지막 위치와 Edge 대표 좌표를 그리는 Leaflet 지도 */
 export function VehicleMap({ markers, edges, isReadyToFit }: VehicleMapProps) {
-  // 토큰 색은 테마가 바뀌지 않으므로 처음 한 번만 읽는다
-  const [styles] = useState(() => createMapPathStyles(readDocumentTokenColor));
-  // 좌표 배열이 바뀌면 Leaflet 이 다시 그리므로 Edge 가 바뀔 때만 만든다
-  const edgeMarkers = useMemo(
-    () => edges.map((edge) => ({ edge, position: [edge.latitude, edge.longitude] as LatLng })),
-    [edges],
-  );
+  const styles = useMapPathStyles();
   const links = useMemo(() => buildEdgeLinks(markers, edges), [markers, edges]);
   const getBounds = useCallback(
     () =>
       computeMapBounds([
         ...markers.map((marker) => marker.position),
-        ...edgeMarkers.map(({ position }) => position),
+        ...edges.map((edge): LatLng => [edge.latitude, edge.longitude]),
       ]),
-    [markers, edgeMarkers],
+    [markers, edges],
   );
 
   return (
@@ -58,7 +52,7 @@ export function VehicleMap({ markers, edges, isReadyToFit }: VehicleMapProps) {
       }
     >
       <FitBoundsOnce getBounds={isReadyToFit ? getBounds : null} />
-      <Pane name={MAP_PANES.links.name} style={{ zIndex: MAP_PANES.links.zIndex }}>
+      <MapPane layer="links">
         {links.map((link) => (
           <Polyline
             key={link.id}
@@ -67,8 +61,8 @@ export function VehicleMap({ markers, edges, isReadyToFit }: VehicleMapProps) {
             interactive={false}
           />
         ))}
-      </Pane>
-      <Pane name={MAP_PANES.vehicles.name} style={{ zIndex: MAP_PANES.vehicles.zIndex }}>
+      </MapPane>
+      <MapPane layer="vehicles">
         {markers.map((marker) => (
           <CircleMarker
             key={marker.vehicleId}
@@ -81,17 +75,8 @@ export function VehicleMap({ markers, edges, isReadyToFit }: VehicleMapProps) {
             </Popup>
           </CircleMarker>
         ))}
-      </Pane>
-      <Pane name={MAP_PANES.edges.name} style={{ zIndex: MAP_PANES.edges.zIndex }}>
-        {edgeMarkers.map(({ edge, position }) => (
-          <CdnEdgeMarker
-            key={edge.edgeId}
-            edge={edge}
-            position={position}
-            pathStyles={styles.edge}
-          />
-        ))}
-      </Pane>
+      </MapPane>
+      <CdnEdgeLayer edges={edges} pathStyles={styles.edge} />
     </BaseMap>
   );
 }
