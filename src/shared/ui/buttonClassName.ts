@@ -5,11 +5,12 @@ export type ButtonVariant = 'primary' | 'secondary' | 'danger' | 'ghost';
 /** md: 글자 버튼, icon: 아이콘만 있거나 페이지 번호처럼 정사각형인 버튼 */
 export type ButtonSize = 'md' | 'icon';
 
+// enabled: 는 <a> 에 맞지 않아서 not-disabled: 로 비활성 버튼의 hover 만 뺀다
 const VARIANT_CLASS: Record<ButtonVariant, string> = {
-  primary: 'bg-primary text-fg-inverse hover:bg-nav-active',
-  secondary: 'border border-line bg-surface text-fg hover:bg-subtle',
-  danger: 'bg-danger text-fg-inverse hover:bg-danger/90',
-  ghost: 'text-primary hover:bg-primary-soft',
+  primary: 'bg-primary text-fg-inverse not-disabled:hover:bg-nav-active',
+  secondary: 'border border-line bg-surface text-fg not-disabled:hover:bg-subtle',
+  danger: 'bg-danger text-fg-inverse not-disabled:hover:bg-danger/90',
+  ghost: 'text-primary not-disabled:hover:bg-primary-soft',
 };
 
 const SIZE_CLASS: Record<ButtonSize, string> = {
