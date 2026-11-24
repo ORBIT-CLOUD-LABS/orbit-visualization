@@ -97,6 +97,26 @@ describe('CampaignDetailPage', () => {
     ]);
   });
 
+  it('실패한 차량이 없으면 실패 사유 대신 빈 상태를 보여 준다', async () => {
+    server.use(
+      http.get(STATS_PATH, () =>
+        HttpResponse.json(
+          success({
+            ...campaignStatsFixture,
+            failed: 0,
+            failureReasons: { DOWNLOAD_FAILED: 0 },
+            inProgress: 20,
+          }),
+        ),
+      ),
+    );
+    renderPage();
+
+    const reasons = await screen.findByRole('region', { name: '실패 사유별 건수' });
+    expect(await within(reasons).findByText('실패한 차량이 없습니다')).toBeInTheDocument();
+    expect(within(reasons).queryByRole('table')).not.toBeInTheDocument();
+  });
+
   it('새로고침하면 진행 현황을 다시 불러온다', async () => {
     const user = userEvent.setup();
     let requestCount = 0;
