@@ -1,10 +1,8 @@
 import type { CdnEdgeStatus } from '@/shared/cdnEdge/cdnEdgeSchema';
+import type { EdgeLinkKind } from '@/shared/map/createMapPathStyles';
 import type { LatLng } from '@/shared/map/latLng';
 
 import type { VehicleMarker } from './toVehicleMarkers';
-
-/** assigned: 매니페스트가 배정한 Edge(실선), reassigned: 배정과 다른, 실제로 파일을 받은 Edge(점선) */
-export type EdgeLinkKind = 'assigned' | 'reassigned';
 
 export type EdgeLink = {
   /** 목록 key. 차량·종류마다 하나다 */

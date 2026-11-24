@@ -1,9 +1,8 @@
 import type { LatLng } from '@/shared/map/latLng';
+import { vehicleMarkerTone, type VehicleMarkerTone } from '@/shared/map/vehicleMarkerTone';
 import type { UpdateResult } from '@/shared/vehicle/updateResult';
 
 import type { VehicleStatus } from '../api/vehicleStatusSchema';
-
-import { vehicleMarkerTone, type VehicleMarkerTone } from './vehicleMarkerTone';
 
 export type VehicleMarker = {
   vehicleId: string;

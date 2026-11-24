@@ -14,13 +14,13 @@ import {
 import { config } from '@/config';
 import type { CdnEdgeStatus } from '@/shared/cdnEdge/cdnEdgeSchema';
 import { computeMapBounds } from '@/shared/map/computeMapBounds';
+import { createMapPathStyles, readDocumentTokenColor } from '@/shared/map/createMapPathStyles';
 import { FitBoundsOnce } from '@/shared/map/FitBoundsOnce';
 import { InvalidateSizeOnResize } from '@/shared/map/InvalidateSizeOnResize';
 import type { LatLng } from '@/shared/map/latLng';
 import { Alert } from '@/shared/ui/Alert';
 
 import { buildEdgeLinks } from '../lib/buildEdgeLinks';
-import { createMapPathStyles, readDocumentTokenColor } from '../lib/createMapPathStyles';
 import type { VehicleMarker } from '../lib/toVehicleMarkers';
 
 import { VehicleMapLegend } from './VehicleMapLegend';
