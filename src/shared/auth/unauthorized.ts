@@ -15,8 +15,14 @@ export function onUnauthorized(listener: UnauthorizedListener): () => void {
   };
 }
 
-/** 저장된 토큰을 지우고 등록된 함수에 알린다. httpClient 와 sseClient 가 401 을 받으면 부른다 */
+/**
+ * 저장된 토큰을 지우고 등록된 함수에 알린다. httpClient 와 sseClient 가 401 을 받으면 부른다.
+ * 동시에 보낸 요청이 모두 401 을 받아도 한 번만 알리도록, 토큰이 이미 없으면 알리지 않는다.
+ */
 export function reportUnauthorized(): void {
+  if (tokenStorage.get() === null) {
+    return;
+  }
   tokenStorage.clear();
   listeners.forEach((listener) => {
     listener();
