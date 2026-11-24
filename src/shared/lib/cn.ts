@@ -50,11 +50,14 @@ export const THEME_TEXT_SIZES = [
 
 export const THEME_RADII = ['xs', 'sm', 'md', 'lg', 'xl', '2xl', 'full'] as const;
 
-// 기본 설정은 `text-md`(크기)와 `text-fg`(색)를 구분하지 못해 하나를 지운다. 토큰 이름을 알려 준다
+// @theme 과 상관없이 Tailwind 가 늘 제공하는 색 키워드
+const BUILTIN_COLORS = ['transparent', 'current', 'inherit'] as const;
+
+// 기본 설정은 글자 크기·색 이름을 모양으로 추측한다. 토큰 이름을 직접 알려 `text-md` 와 `text-fg` 를 따로 다룬다
 const twMerge = extendTailwindMerge({
   override: {
     theme: {
-      color: [...THEME_COLORS],
+      color: [...THEME_COLORS, ...BUILTIN_COLORS],
       text: [...THEME_TEXT_SIZES],
       radius: [...THEME_RADII],
     },

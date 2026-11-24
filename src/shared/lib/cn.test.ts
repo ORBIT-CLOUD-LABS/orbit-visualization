@@ -35,6 +35,11 @@ describe('cn', () => {
     expect(cn('rounded-md', 'rounded-full')).toBe('rounded-full');
   });
 
+  it('transparent·current 같은 기본 색 키워드도 색 토큰과 같은 종류로 본다', () => {
+    expect(cn('bg-surface', 'bg-transparent')).toBe('bg-transparent');
+    expect(cn('text-fg', 'text-current')).toBe('text-current');
+  });
+
   it('index.css 의 토큰 이름과 같은 목록을 쓴다', () => {
     expect(themeTokens('color')).toEqual([...THEME_COLORS]);
     expect(themeTokens('text')).toEqual([...THEME_TEXT_SIZES]);
