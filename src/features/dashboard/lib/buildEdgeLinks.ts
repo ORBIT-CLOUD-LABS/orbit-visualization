@@ -1,4 +1,4 @@
-import type { CdnEdgeStatus } from '../api/cdnEdgeSchema';
+import type { CdnEdgeStatus } from '@/shared/cdnEdge/cdnEdgeSchema';
 
 import type { LatLng, VehicleMarker } from './toVehicleMarkers';
 

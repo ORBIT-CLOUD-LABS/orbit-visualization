@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { cdnEdgeStatusFixture } from '@/mocks/dashboardHandlers';
+import { cdnEdgeStatusFixture } from '@/mocks/cdnEdgeHandlers';
 
 import { buildEdgeLinks } from './buildEdgeLinks';
 import type { VehicleMarker } from './toVehicleMarkers';

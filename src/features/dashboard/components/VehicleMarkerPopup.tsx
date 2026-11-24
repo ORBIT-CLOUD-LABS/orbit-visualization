@@ -1,9 +1,9 @@
 import { Link } from 'react-router';
 
 import { routePaths } from '@/shared/config/routes';
+import { formatClockTime } from '@/shared/lib/formatClockTime';
 import { VehicleResultBadge } from '@/shared/vehicle/VehicleResultBadge';
 
-import { formatClockTime } from '../lib/formatClockTime';
 import type { VehicleMarker } from '../lib/toVehicleMarkers';
 
 type VehicleMarkerPopupProps = {

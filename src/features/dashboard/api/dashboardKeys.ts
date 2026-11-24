@@ -2,5 +2,4 @@
 export const dashboardKeys = {
   all: ['dashboard'] as const,
   vehicles: () => [...dashboardKeys.all, 'vehicles'] as const,
-  cdnEdges: () => [...dashboardKeys.all, 'cdn-edges'] as const,
 };

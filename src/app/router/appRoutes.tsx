@@ -4,7 +4,6 @@ import { AuthenticatedLayout } from '@/features/auth/components/AuthenticatedLay
 import { LoginPage } from '@/features/auth/components/LoginPage';
 import { ROUTES } from '@/shared/config/routes';
 
-import { PlaceholderPage } from './PlaceholderPage';
 import { RequireAuth } from './RequireAuth';
 import { RouteLoadingFallback } from './RouteLoadingFallback';
 
@@ -35,7 +34,13 @@ export const appRoutes: RouteObject[] = [
           return { Component: VehicleDetailPage };
         },
       },
-      { path: ROUTES.edges, element: <PlaceholderPage title="Edge" /> },
+      {
+        path: ROUTES.edges,
+        lazy: async () => {
+          const { EdgeStatusPage } = await import('@/features/edge/components/EdgeStatusPage');
+          return { Component: EdgeStatusPage };
+        },
+      },
       {
         path: ROUTES.campaigns,
         lazy: async () => {

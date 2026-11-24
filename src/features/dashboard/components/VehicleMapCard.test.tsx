@@ -3,13 +3,14 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { cdnEdgeStatusFixture, vehicleStatusFixture } from '@/mocks/dashboardHandlers';
+import { cdnEdgeStatusFixture } from '@/mocks/cdnEdgeHandlers';
+import { vehicleStatusFixture } from '@/mocks/dashboardHandlers';
+import type { CdnEdgeStatus } from '@/shared/cdnEdge/cdnEdgeSchema';
 import { routePaths } from '@/shared/config/routes';
+import { formatClockTime } from '@/shared/lib/formatClockTime';
 import { mockLeafletMap, mockTileLayer } from '@/test/reactLeafletMock';
 
-import type { CdnEdgeStatus } from '../api/cdnEdgeSchema';
 import type { VehicleStatus } from '../api/vehicleStatusSchema';
-import { formatClockTime } from '../lib/formatClockTime';
 import type { QueryState } from '../lib/toQueryState';
 
 import { VehicleMapCard } from './VehicleMapCard';
