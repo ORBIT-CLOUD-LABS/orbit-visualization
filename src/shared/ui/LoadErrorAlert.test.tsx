@@ -23,7 +23,7 @@ describe('LoadErrorAlert', () => {
     render(
       <LoadErrorAlert
         message="차량 정보를 불러오지 못했습니다"
-        code="INTERNAL_ERROR"
+        errorCode="INTERNAL_ERROR"
         onRetry={vi.fn()}
       />,
     );

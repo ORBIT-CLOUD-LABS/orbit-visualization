@@ -42,7 +42,7 @@ export function VehicleMapCard({ vehicleState, edgeState }: VehicleMapCardProps)
       return (
         <LoadErrorAlert
           message="차량 위치를 불러오지 못했습니다"
-          code={vehicleState.errorCode}
+          errorCode={vehicleState.errorCode}
           onRetry={vehicleState.onRetry}
         />
       );

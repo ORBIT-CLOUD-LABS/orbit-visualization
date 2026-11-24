@@ -52,7 +52,7 @@ export function VehicleListCard({ state }: VehicleListCardProps) {
       return (
         <LoadErrorAlert
           message="차량 목록을 불러오지 못했습니다"
-          code={state.errorCode}
+          errorCode={state.errorCode}
           onRetry={state.onRetry}
         />
       );

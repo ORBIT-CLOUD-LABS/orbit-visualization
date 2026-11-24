@@ -22,7 +22,7 @@ export function EdgeMapCard({ edgeState, className }: EdgeMapCardProps) {
       return (
         <LoadErrorAlert
           message="Edge 위치를 불러오지 못했습니다"
-          code={edgeState.errorCode}
+          errorCode={edgeState.errorCode}
           onRetry={edgeState.onRetry}
         />
       );

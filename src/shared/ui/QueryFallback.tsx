@@ -25,6 +25,6 @@ export function QueryFallback({
   return isPending ? (
     <LoadingRows label={loadingLabel} variant={loadingVariant} />
   ) : (
-    <LoadErrorAlert message={errorMessage} code={errorCode} onRetry={onRetry} />
+    <LoadErrorAlert message={errorMessage} errorCode={errorCode} onRetry={onRetry} />
   );
 }

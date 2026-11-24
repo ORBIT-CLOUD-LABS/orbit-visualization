@@ -33,7 +33,7 @@ export function CdnEdgeStatusCard({ state }: CdnEdgeStatusCardProps) {
       return (
         <LoadErrorAlert
           message="CDN Edge 상태를 불러오지 못했습니다"
-          code={state.errorCode}
+          errorCode={state.errorCode}
           onRetry={state.onRetry}
         />
       );

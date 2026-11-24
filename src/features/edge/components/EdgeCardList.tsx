@@ -39,7 +39,7 @@ export function EdgeCardList({
         <div className={FALLBACK_CLASS}>
           <LoadErrorAlert
             message="Edge 상태를 불러오지 못했습니다"
-            code={errorCode}
+            errorCode={errorCode}
             onRetry={onRetry}
             isRetrying={isFetching}
           />
