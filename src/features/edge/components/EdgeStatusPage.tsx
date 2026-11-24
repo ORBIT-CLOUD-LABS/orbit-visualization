@@ -68,8 +68,8 @@ export function EdgeStatusPage() {
         <div className="flex flex-col gap-6 xl:flex-row">
           <EdgeMapCard edgeState={edgeState} className="xl:flex-1" />
           <EdgeHealthChangeCard
-            edgeState={edgeState}
             tracker={healthTracker}
+            isPending={query.isPending}
             className="xl:w-80 xl:shrink-0"
           />
         </div>

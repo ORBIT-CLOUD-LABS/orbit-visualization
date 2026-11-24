@@ -1,12 +1,11 @@
 import { render, screen, within } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import { cdnEdgeStatusFixture } from '@/mocks/cdnEdgeHandlers';
 import type { CdnEdgeStatus } from '@/shared/cdnEdge/cdnEdgeSchema';
 import { formatClockTime } from '@/shared/lib/formatClockTime';
 
-import { trackEdgeHealth } from '../lib/trackEdgeHealth';
+import { trackEdgeHealth, type EdgeHealthTracker } from '../lib/trackEdgeHealth';
 
 import { EdgeHealthChangeCard } from './EdgeHealthChangeCard';
 
@@ -17,9 +16,8 @@ function edge(edgeId: string, healthy: boolean): CdnEdgeStatus {
   return cdnEdgeStatusFixture({ edgeId, healthy });
 }
 
-function renderCard(tracker: ReturnType<typeof trackEdgeHealth> | null) {
-  const data = [edge('edge-busan', true)];
-  render(<EdgeHealthChangeCard edgeState={{ status: 'success', data }} tracker={tracker} />);
+function renderCard(tracker: EdgeHealthTracker) {
+  render(<EdgeHealthChangeCard tracker={tracker} isPending={false} />);
 }
 
 describe('EdgeHealthChangeCard', () => {
@@ -67,25 +65,14 @@ describe('EdgeHealthChangeCard', () => {
   });
 
   it('불러오는 중이면 로딩 행을 보여 준다', () => {
-    render(<EdgeHealthChangeCard edgeState={{ status: 'pending' }} tracker={null} />);
+    render(<EdgeHealthChangeCard tracker={null} isPending />);
 
     expect(screen.getByText('상태 변화를 불러오는 중입니다')).toBeInTheDocument();
   });
 
-  it('불러오지 못하면 오류 코드와 다시 시도 버튼을 보여 준다', async () => {
-    const onRetry = vi.fn();
-    const user = userEvent.setup();
-    render(
-      <EdgeHealthChangeCard
-        edgeState={{ status: 'error', errorCode: 'INTERNAL_SERVER_ERROR', onRetry }}
-        tracker={null}
-      />,
-    );
+  it('Edge 상태를 받지 못했으면 받은 뒤부터 기록한다고 안내한다', () => {
+    render(<EdgeHealthChangeCard tracker={null} isPending={false} />);
 
-    const alert = screen.getByRole('alert');
-    expect(alert).toHaveTextContent('INTERNAL_SERVER_ERROR');
-    await user.click(within(alert).getByRole('button', { name: '다시 시도' }));
-
-    expect(onRetry).toHaveBeenCalledOnce();
+    expect(screen.getByText('Edge 상태를 받은 뒤부터 변화를 기록합니다')).toBeInTheDocument();
   });
 });

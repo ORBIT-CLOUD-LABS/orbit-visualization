@@ -5,8 +5,6 @@ export const MAX_EDGE_HEALTH_CHANGES = 20;
 
 /** 같은 값이 두 번 연속 조회되어 확정된 정상 여부 변화 */
 export type EdgeHealthChange = {
-  /** 목록 key. 같은 Edge 가 같은 조회에서 두 번 바뀔 수 없으므로 Edge 와 조회 시각으로 만든다 */
-  id: string;
   edgeId: string;
   /** 바뀐 뒤의 정상 여부 */
   healthy: boolean;
@@ -25,7 +23,7 @@ export type EdgeHealthCandidate = {
 export type EdgeHealthTracker = {
   /** Edge 마다 마지막으로 확정한 정상 여부 */
   confirmed: ReadonlyMap<string, boolean>;
-  /** 확정 값과 다르게 한 번 조회된 값. 다음 조회에서도 같으면 확정한다 */
+  /** 확정 값과 다르게 한 번 조회된 값 (Edge 목록 순서). 다음 조회에서도 같으면 확정한다 */
   candidates: ReadonlyMap<string, EdgeHealthCandidate>;
   /** 최신순, 최대 MAX_EDGE_HEALTH_CHANGES 개 */
   changes: readonly EdgeHealthChange[];
@@ -55,9 +53,8 @@ export function trackEdgeHealth(
     // 확정 값과 다른 값은 하나뿐이라, 후보가 있으면 이번 값과 같다
     const candidate = previous?.candidates.get(edgeId);
     if (candidate !== undefined) {
-      const detectedAt = candidate.firstSeenAt;
       confirmed.set(edgeId, healthy);
-      detected.push({ id: `${edgeId}@${detectedAt}`, edgeId, healthy, detectedAt });
+      detected.push({ edgeId, healthy, detectedAt: candidate.firstSeenAt });
       continue;
     }
     confirmed.set(edgeId, known);
@@ -69,9 +66,4 @@ export function trackEdgeHealth(
     candidates,
     changes: [...detected, ...(previous?.changes ?? [])].slice(0, MAX_EDGE_HEALTH_CHANGES),
   };
-}
-
-/** 확인 중인 변화 목록 (Edge 목록 순서) */
-export function listEdgeHealthCandidates(tracker: EdgeHealthTracker): EdgeHealthCandidate[] {
-  return [...tracker.candidates.values()];
 }

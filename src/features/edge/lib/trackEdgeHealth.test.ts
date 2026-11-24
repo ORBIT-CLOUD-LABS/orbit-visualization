@@ -4,11 +4,14 @@ import { cdnEdgeStatusFixture } from '@/mocks/cdnEdgeHandlers';
 import type { CdnEdgeStatus } from '@/shared/cdnEdge/cdnEdgeSchema';
 
 import {
-  listEdgeHealthCandidates,
   MAX_EDGE_HEALTH_CHANGES,
   trackEdgeHealth,
   type EdgeHealthTracker,
 } from './trackEdgeHealth';
+
+function candidatesOf(tracker: EdgeHealthTracker) {
+  return [...tracker.candidates.values()];
+}
 
 function seoul(healthy: boolean) {
   return cdnEdgeStatusFixture({ healthy });
@@ -31,14 +34,14 @@ describe('trackEdgeHealth', () => {
     const tracker = observe([seoul(true), busan(false)]);
 
     expect(tracker.changes).toEqual([]);
-    expect(listEdgeHealthCandidates(tracker)).toEqual([]);
+    expect(candidatesOf(tracker)).toEqual([]);
   });
 
   it('바뀐 값이 한 번만 조회되면 확인 중으로 두고 기록하지 않는다', () => {
     const tracker = observe([busan(true)], [busan(false)]);
 
     expect(tracker.changes).toEqual([]);
-    expect(listEdgeHealthCandidates(tracker)).toEqual([
+    expect(candidatesOf(tracker)).toEqual([
       { edgeId: 'edge-busan', healthy: false, firstSeenAt: 1000 },
     ]);
   });
@@ -46,17 +49,15 @@ describe('trackEdgeHealth', () => {
   it('바뀐 값이 두 번 연속 조회되면 처음 본 조회 시각으로 기록한다', () => {
     const tracker = observe([busan(true)], [busan(false)], [busan(false)]);
 
-    expect(tracker.changes).toEqual([
-      { id: 'edge-busan@1000', edgeId: 'edge-busan', healthy: false, detectedAt: 1000 },
-    ]);
-    expect(listEdgeHealthCandidates(tracker)).toEqual([]);
+    expect(tracker.changes).toEqual([{ edgeId: 'edge-busan', healthy: false, detectedAt: 1000 }]);
+    expect(candidatesOf(tracker)).toEqual([]);
   });
 
   it('한 번만 다르게 보이고 원래 값으로 돌아오면 기록하지 않는다', () => {
     const tracker = observe([busan(true)], [busan(false)], [busan(true)], [busan(true)]);
 
     expect(tracker.changes).toEqual([]);
-    expect(listEdgeHealthCandidates(tracker)).toEqual([]);
+    expect(candidatesOf(tracker)).toEqual([]);
   });
 
   it('장애와 복구를 최신순으로 쌓는다', () => {

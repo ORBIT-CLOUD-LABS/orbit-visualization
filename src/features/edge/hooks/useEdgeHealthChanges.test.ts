@@ -37,7 +37,7 @@ describe('useEdgeHealthChanges', () => {
 
     rerender({ edges: down, dataUpdatedAt: 3000 });
     expect(result.current?.changes).toEqual([
-      { id: 'edge-seoul@2000', edgeId: 'edge-seoul', healthy: false, detectedAt: 2000 },
+      { edgeId: 'edge-seoul', healthy: false, detectedAt: 2000 },
     ]);
   });
 });
