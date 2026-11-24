@@ -30,7 +30,7 @@ describe('CdnEdgeLayer', () => {
       <CdnEdgeLayer
         edges={[cdnEdgeStatusFixture({ assignedVehicles: 64 })]}
         pathStyles={PATH_STYLES}
-        renderPopup={(edge) => `배정 차량 ${edge.assignedVehicles}대`}
+        renderPopup={(edge) => <p>배정 차량 {edge.assignedVehicles}대</p>}
       />,
     );
 

@@ -1,5 +1,5 @@
 import type { PathOptions } from 'leaflet';
-import { useMemo, type ReactNode } from 'react';
+import { useMemo, type ReactElement } from 'react';
 import { CircleMarker, Popup, Tooltip } from 'react-leaflet';
 
 import type { CdnEdgeStatus } from '@/shared/cdnEdge/cdnEdgeSchema';
@@ -16,7 +16,7 @@ type CdnEdgeMarkerProps = {
   edge: CdnEdgeStatus;
   pathStyles: Record<'healthy' | 'unhealthy', PathOptions>;
   /** 마커를 누르면 열 팝업 내용. 없으면 팝업을 달지 않는다 */
-  popup?: ReactNode;
+  popup?: ReactElement;
 };
 
 /** Edge 대표 좌표의 원 마커와 이름 라벨. 장애면 라벨에 알린다 */
