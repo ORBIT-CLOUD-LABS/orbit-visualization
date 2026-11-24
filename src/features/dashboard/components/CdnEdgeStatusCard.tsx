@@ -1,9 +1,9 @@
 import { Link } from 'react-router';
 
 import type { CdnEdgeStatus } from '@/shared/cdnEdge/cdnEdgeSchema';
+import { EdgeHealthBadge } from '@/shared/cdnEdge/EdgeHealthBadge';
 import { ROUTES } from '@/shared/config/routes';
 import type { QueryState } from '@/shared/lib/toQueryState';
-import { Badge } from '@/shared/ui/Badge';
 import { buttonClassName } from '@/shared/ui/buttonClassName';
 import { Card } from '@/shared/ui/Card';
 import { EmptyState } from '@/shared/ui/EmptyState';
@@ -58,9 +58,7 @@ export function CdnEdgeStatusCard({ state }: CdnEdgeStatusCardProps) {
               <p className="truncate font-mono text-2xs text-fg-muted">{edge.edgeId}</p>
             </div>
             <div className="flex shrink-0 flex-col items-end gap-1">
-              <Badge tone={edge.healthy ? 'healthy' : 'unhealthy'}>
-                {edge.healthy ? '정상' : '장애'}
-              </Badge>
+              <EdgeHealthBadge healthy={edge.healthy} />
               <p className="text-xs text-fg-muted">배정 {edge.assignedVehicles}대</p>
             </div>
           </li>

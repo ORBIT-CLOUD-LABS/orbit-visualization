@@ -1,7 +1,7 @@
 import { useId } from 'react';
 
 import type { CdnEdgeStatus } from '@/shared/cdnEdge/cdnEdgeSchema';
-import { Badge } from '@/shared/ui/Badge';
+import { EdgeHealthBadge } from '@/shared/cdnEdge/EdgeHealthBadge';
 
 import { formatCoordinate } from '../lib/formatCoordinate';
 
@@ -27,9 +27,7 @@ export function EdgeCard({ edge }: EdgeCardProps) {
           </h2>
           <p className="truncate font-mono text-2xs text-fg-muted">{edge.edgeId}</p>
         </div>
-        <Badge tone={edge.healthy ? 'healthy' : 'unhealthy'} className="shrink-0">
-          {edge.healthy ? '정상' : '장애'}
-        </Badge>
+        <EdgeHealthBadge healthy={edge.healthy} className="shrink-0" />
       </div>
       <dl className="grid grid-cols-2 gap-4">
         <div className="flex min-w-0 flex-col gap-1">
