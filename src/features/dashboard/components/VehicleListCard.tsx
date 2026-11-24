@@ -1,5 +1,6 @@
 import { useId, useMemo, useState } from 'react';
 
+import { formatPageSummary } from '@/shared/lib/formatPageSummary';
 import type { QueryState } from '@/shared/lib/toQueryState';
 import { usePagination } from '@/shared/lib/usePagination';
 import { Button } from '@/shared/ui/Button';
@@ -84,7 +85,7 @@ export function VehicleListCard({ state }: VehicleListCardProps) {
           page={pagination.page}
           pageCount={pagination.pageCount}
           onPageChange={pagination.setPage}
-          summary={`${pagination.totalCount}대 중 ${pagination.rangeStart}–${pagination.rangeEnd} · ${pagination.page} / ${pagination.pageCount} 페이지`}
+          summary={formatPageSummary(pagination, '대')}
         />
       </>
     );

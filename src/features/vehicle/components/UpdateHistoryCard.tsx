@@ -1,3 +1,4 @@
+import { formatPageSummary } from '@/shared/lib/formatPageSummary';
 import { usePagination } from '@/shared/lib/usePagination';
 import { Card } from '@/shared/ui/Card';
 import { EmptyState } from '@/shared/ui/EmptyState';
@@ -55,7 +56,7 @@ export function UpdateHistoryCard({
           page={pagination.page}
           pageCount={pagination.pageCount}
           onPageChange={pagination.setPage}
-          summary={`${pagination.totalCount}건 중 ${pagination.rangeStart}–${pagination.rangeEnd} · ${pagination.page} / ${pagination.pageCount} 페이지`}
+          summary={formatPageSummary(pagination, '건')}
         />
       </>
     );
