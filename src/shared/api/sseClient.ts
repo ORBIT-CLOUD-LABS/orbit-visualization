@@ -37,10 +37,29 @@ const DEFAULT_RETRY_DELAY_MS = 1000;
 // fetch-event-source 가 재시도 때 넣는 헤더 키와 같아야 값이 두 번 들어가지 않는다
 const LAST_EVENT_ID_HEADER = 'last-event-id';
 const UNAUTHORIZED = 401;
+// 응답 헤더가 이 시간 안에 오지 않으면 그 시도를 끊고 재연결한다. 연결된 뒤 조용한 스트림은 끊지 않는다
+const CONNECT_TIMEOUT_MS = 10_000;
 
 // onerror 에서 다시 던지면 fetch-event-source 가 재시도를 멈춘다
 class StopRetryingError extends Error {
   override readonly name = 'StopRetryingError';
+}
+
+// 응답 헤더를 받을 때까지만 시간을 잰다. fetch-event-source 의 signal 과 따로 끊어야 onerror 로 재시도한다
+async function fetchWithConnectTimeout(
+  input: RequestInfo | URL,
+  init: RequestInit,
+): Promise<Response> {
+  const attempt = new AbortController();
+  const timer = window.setTimeout(() => {
+    attempt.abort(new Error(`SSE 연결 응답이 ${CONNECT_TIMEOUT_MS}ms 안에 오지 않았습니다`));
+  }, CONNECT_TIMEOUT_MS);
+  const signal = init.signal ? AbortSignal.any([init.signal, attempt.signal]) : attempt.signal;
+  try {
+    return await window.fetch(input, { ...init, signal });
+  } finally {
+    window.clearTimeout(timer);
+  }
 }
 
 function connect(options: SseConnectOptions): SseConnection {
@@ -76,7 +95,7 @@ function connect(options: SseConnectOptions): SseConnection {
         }
         const headers = new Headers(init?.headers);
         headers.set('Authorization', authorization);
-        return window.fetch(input, { ...init, headers });
+        return fetchWithConnectTimeout(input, { ...init, headers });
       },
       // 숨은 탭에서도 연결을 유지해 상태 표시와 실제 연결이 어긋나지 않게 한다
       openWhenHidden: true,

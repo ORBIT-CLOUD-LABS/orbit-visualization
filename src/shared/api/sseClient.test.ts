@@ -190,6 +190,86 @@ describe('sseClient', () => {
     expect(authorizations).toEqual(['Bearer admin-token', 'Bearer new-token']);
   });
 
+  describe('연결 응답 시간 제한', () => {
+    const CONNECT_TIMEOUT_MS = 10_000;
+
+    beforeEach(() => {
+      vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    // 응답 헤더를 보내지 않고 멈춘 서버처럼, 요청이 끊길 때까지 응답하지 않는다
+    function stubHangingFetch() {
+      return vi.spyOn(window, 'fetch').mockImplementation(
+        (_input, init) =>
+          new Promise<Response>((_resolve, reject) => {
+            init?.signal?.addEventListener('abort', () => {
+              reject(init.signal?.reason);
+            });
+          }),
+      );
+    }
+
+    // 끊긴 요청이 onerror 를 거쳐 재시도 타이머를 걸기까지 마이크로태스크를 여러 번 거친다.
+    // 그래서 시간을 넘긴 뒤 재시도 타이머가 걸릴 때까지 0ms 씩 더 넘기며 기다린다
+    async function waitForRetry(fetchSpy: ReturnType<typeof stubHangingFetch>, calls: number) {
+      await vi.waitFor(async () => {
+        await vi.advanceTimersByTimeAsync(0);
+        expect(fetchSpy).toHaveBeenCalledTimes(calls);
+      });
+    }
+
+    it('응답이 오지 않으면 제한 시간 뒤 요청을 끊고 재연결한다', async () => {
+      const fetchSpy = stubHangingFetch();
+      const { statuses } = connect();
+
+      await vi.advanceTimersByTimeAsync(CONNECT_TIMEOUT_MS - 1);
+      expect(statuses).toEqual(['connecting']);
+
+      await vi.advanceTimersByTimeAsync(1);
+      await waitForRetry(fetchSpy, 2);
+      expect(statuses).toEqual(['connecting', 'reconnecting']);
+    });
+
+    it('재연결도 응답이 없으면 3회 뒤 끊김으로 바꾼다', async () => {
+      const fetchSpy = stubHangingFetch();
+      const { statuses } = connect();
+
+      for (const calls of [2, 3, 4]) {
+        await vi.advanceTimersByTimeAsync(CONNECT_TIMEOUT_MS);
+        await waitForRetry(fetchSpy, calls);
+      }
+      await vi.advanceTimersByTimeAsync(CONNECT_TIMEOUT_MS);
+
+      await vi.waitFor(() => {
+        expect(statuses).toEqual(['connecting', 'reconnecting', 'disconnected']);
+      });
+      expect(fetchSpy).toHaveBeenCalledTimes(4);
+    });
+
+    it('연결된 뒤에는 이벤트가 없어도 끊지 않는다', async () => {
+      let requestCount = 0;
+      server.use(
+        http.get(STREAM_URL, () => {
+          requestCount += 1;
+          return sseResponse([], { keepOpen: true });
+        }),
+      );
+      const { statuses } = connect();
+      await vi.waitFor(() => {
+        expect(statuses).toEqual(['connecting', 'connected']);
+      });
+
+      await vi.advanceTimersByTimeAsync(CONNECT_TIMEOUT_MS * 2);
+
+      expect(statuses).toEqual(['connecting', 'connected']);
+      expect(requestCount).toBe(1);
+    });
+  });
+
   it('받는 쪽이 이벤트 처리 중 오류를 내도 연결을 유지한다', async () => {
     const reportedErrors: unknown[] = [];
     const handleError = (event: ErrorEvent) => {
