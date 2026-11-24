@@ -3,7 +3,7 @@ import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { MemoryRouter } from 'react-router';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { failure } from '@/mocks/apiEnvelope';
 import {
@@ -18,6 +18,8 @@ import { server } from '@/mocks/server';
 import { fakeSseClient, type FakeSseClient } from '@/test/fakeSseClient';
 
 import { DashboardPage } from './DashboardPage';
+
+vi.mock('react-leaflet', () => import('@/test/reactLeafletMock'));
 
 const EARLIER = '2026-11-24T01:00:00.000Z';
 const LATER = '2026-11-24T01:00:05.000Z';
@@ -136,12 +138,17 @@ describe('DashboardPage', () => {
     renderPage();
     sse.setStatus('connected');
 
-    expect(await screen.findByRole('alert')).toHaveTextContent('차량 목록을 불러오지 못했습니다');
+    const list = screen.getByRole('region', { name: '차량 목록' });
+    expect(await within(list).findByRole('alert')).toHaveTextContent(
+      '차량 목록을 불러오지 못했습니다',
+    );
+    const map = screen.getByRole('region', { name: '차량 위치 · 배정 Edge' });
+    expect(within(map).getByRole('alert')).toHaveTextContent('차량 위치를 불러오지 못했습니다');
 
     isServerUp = true;
-    await user.click(screen.getByRole('button', { name: '다시 시도' }));
+    await user.click(within(list).getByRole('button', { name: '다시 시도' }));
 
-    expect(await screen.findByRole('link', { name: 'VH-0001' })).toBeInTheDocument();
+    expect(await within(list).findByRole('link', { name: 'VH-0001' })).toBeInTheDocument();
   });
 
   it('CDN Edge 상태를 조회해 Edge 카드에 그린다', async () => {
