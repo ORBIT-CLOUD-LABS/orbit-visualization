@@ -22,10 +22,8 @@ import { VehicleTable } from './VehicleTable';
 const SKELETON_ROWS = [1, 2, 3, 4, 5] as const;
 const NO_VEHICLES: readonly VehicleStatus[] = [];
 
-export type VehicleListState = QueryState<readonly VehicleStatus[]>;
-
 type VehicleListCardProps = {
-  state: VehicleListState;
+  state: QueryState<readonly VehicleStatus[]>;
 };
 
 export function VehicleListCard({ state }: VehicleListCardProps) {

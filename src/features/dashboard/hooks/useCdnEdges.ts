@@ -5,7 +5,7 @@ import { dashboardKeys } from '../api/dashboardKeys';
 import { getCdnEdges } from '../api/getCdnEdges';
 
 /** Edge 상태는 SSE 로 오지 않으므로 주기적으로 다시 조회한다 */
-export const CDN_EDGES_REFETCH_INTERVAL_MS = 30_000;
+const CDN_EDGES_REFETCH_INTERVAL_MS = 30_000;
 
 function selectEdges(data: CdnEdges): CdnEdgeStatus[] {
   return data.edges;

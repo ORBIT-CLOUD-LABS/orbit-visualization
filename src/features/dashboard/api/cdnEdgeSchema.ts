@@ -1,14 +1,14 @@
 import { z } from 'zod';
 
 /** 한 Edge 에서 파일을 받은 차량의 캠페인별 업데이트 성공·실패 수 (CdnEdgeDownloadResponse) */
-export const cdnEdgeDownloadSchema = z.object({
+const cdnEdgeDownloadSchema = z.object({
   campaignId: z.number(),
   succeeded: z.number(),
   failed: z.number(),
 });
 
 /** CDN Edge 하나의 대표 좌표·정상 여부·사용 현황 (CdnEdgeStatusResponse) */
-export const cdnEdgeStatusSchema = z.object({
+const cdnEdgeStatusSchema = z.object({
   edgeId: z.string(),
   name: z.string(),
   latitude: z.number().min(-90).max(90),
@@ -26,6 +26,5 @@ export const cdnEdgesSchema = z.object({
   edges: z.array(cdnEdgeStatusSchema),
 });
 
-export type CdnEdgeDownload = z.infer<typeof cdnEdgeDownloadSchema>;
 export type CdnEdgeStatus = z.infer<typeof cdnEdgeStatusSchema>;
 export type CdnEdges = z.infer<typeof cdnEdgesSchema>;
