@@ -16,6 +16,24 @@ export default defineConfig(({ mode }) => {
       // `@/` alias 는 tsconfig.app.json 의 paths 한 곳에서 정한다
       tsconfigPaths: true,
     },
+    build: {
+      rolldownOptions: {
+        output: {
+          // 첫 화면에 꼭 필요한 라이브러리는 앱 코드와 나눠, 앱만 바뀐 배포에서 브라우저 캐시를 다시 쓰게 한다.
+          // 한 화면에서만 쓰는 라이브러리(지도 등)는 여기 넣지 않는다. 묶음에 들어가면 첫 화면에서 함께 받게 된다
+          codeSplitting: {
+            groups: [
+              { name: 'react', test: /node_modules[\\/].*[\\/](react|react-dom|scheduler)[\\/]/ },
+              { name: 'router', test: /node_modules[\\/].*[\\/]react-router[\\/]/ },
+              {
+                name: 'vendor',
+                test: /node_modules[\\/].*[\\/](@tanstack|axios|zod|clsx|tailwind-merge|@microsoft)[\\/]/,
+              },
+            ],
+          },
+        },
+      },
+    },
     server: {
       // 운영은 서버와 같은 origin 으로 제공한다. 개발 중에도 같은 origin 처럼 보이도록 /api 를 서버로 넘긴다
       proxy: {
