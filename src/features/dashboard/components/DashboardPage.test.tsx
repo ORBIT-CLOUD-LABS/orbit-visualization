@@ -5,6 +5,7 @@ import { http, HttpResponse } from 'msw';
 import { MemoryRouter } from 'react-router';
 import { beforeEach, describe, expect, it } from 'vitest';
 
+import { failure } from '@/mocks/apiEnvelope';
 import {
   DASHBOARD_VEHICLES_URL,
   vehicleSnapshotResponse,
@@ -126,16 +127,7 @@ describe('DashboardPage', () => {
       http.get(DASHBOARD_VEHICLES_URL, () =>
         isServerUp
           ? vehicleSnapshotResponse([vehicleStatusFixture()])
-          : HttpResponse.json(
-              {
-                isSuccess: false,
-                code: 'INTERNAL_SERVER_ERROR',
-                message: '서버 오류',
-                data: null,
-                error: null,
-              },
-              { status: 500 },
-            ),
+          : HttpResponse.json(failure('INTERNAL_SERVER_ERROR', '서버 오류'), { status: 500 }),
       ),
     );
     renderPage();

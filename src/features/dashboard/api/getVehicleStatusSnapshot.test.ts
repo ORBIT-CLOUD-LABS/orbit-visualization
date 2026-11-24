@@ -1,6 +1,7 @@
 import { http, HttpResponse } from 'msw';
 import { describe, expect, it } from 'vitest';
 
+import { success } from '@/mocks/apiEnvelope';
 import {
   DASHBOARD_VEHICLES_URL,
   vehicleSnapshotResponse,
@@ -28,16 +29,12 @@ describe('getVehicleStatusSnapshot', () => {
   it('알 수 없는 결과 값이 오면 형식 오류로 실패한다', async () => {
     server.use(
       http.get(DASHBOARD_VEHICLES_URL, () =>
-        HttpResponse.json({
-          isSuccess: true,
-          code: 'OK',
-          message: '',
-          data: {
+        HttpResponse.json(
+          success({
             asOf: '2026-11-24T01:00:31.000Z',
             vehicles: [{ ...vehicleStatusFixture(), lastResult: 'IN_PROGRESS' }],
-          },
-          error: null,
-        }),
+          }),
+        ),
       ),
     );
 
