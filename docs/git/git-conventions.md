@@ -99,10 +99,8 @@ push 후 `develop` 대상 PR을 만든다. 이슈 하나에 PR 하나를 만든�
 
 - PR은 최소 한 명의 Approve를 받고, 리뷰 중 생긴 Conversation을 모두 해결해야 머지한다.
   Approve 뒤에 커밋이 추가되면 다시 리뷰받는다.
-- 머지는 사람이 한다. 에이전트는 Approve·Conversation 해결·머지를 대신하지 않는다.
 - merge 커밋을 만드는 방식으로 머지한다. squash·rebase 머지는 쓰지 않는다.
   브랜치의 커밋 이력을 그대로 남기고, 기능 단위로 되돌릴 때 `git revert -m 1 <merge 커밋>`을 쓰기 위해서다.
-  PR을 열면 `.github/workflows/enable-auto-merge.yml`이 auto-merge(merge 커밋 방식)를 켠다.
 - 머지 후 브랜치는 삭제한다.
 - `develop`이 앞서 나가면 브랜치에 `develop`을 merge해서 충돌을 미리 해결한다. push한 이력은 rebase하지 않는다.
 
@@ -129,8 +127,8 @@ git merge develop
 로컬 훅은 각자 PC에서만 돌기 때문에, PR 규칙은 CI에서 한 번 더 검사한다.
 `check-pr`는 브랜치 이름과 PR 제목의 형식, 둘의 Issue Type·이슈 번호가 같은지를 본다.
 
-- 검사가 머지를 막으려면 레포 ruleset의 required status check에 `check-pr` 작업을 넣어야 한다.
-  넣지 않으면 실패해도 auto-merge로 머지될 수 있다.
+- `check-pr` 작업은 레포 ruleset(`protect-default`)의 required status check라서, 실패하면 머지할 수 없다.
+  워크플로의 작업 이름을 바꾸면 ruleset의 check 이름도 같이 바꾼다.
 - 로컬에서는 `BRANCH=<브랜치> TITLE="<PR 제목>" .githooks/check-pr`로 돌린다. 실패하면 종료 코드 1, 값이 없으면 2.
 - 제목은 PR 작성자가 쓴 값이다. 워크플로 스크립트에 직접 끼워 넣지 말고 환경변수로 넘긴다.
 
