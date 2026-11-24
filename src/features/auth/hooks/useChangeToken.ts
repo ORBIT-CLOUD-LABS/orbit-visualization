@@ -9,9 +9,14 @@ export function useChangeToken(): () => void {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  return () => {
+  // 화면을 먼저 내린 뒤 캐시를 비운다. 반대로 하면 떠 있는 쿼리가 토큰 없이 다시 요청한다
+  async function changeToken(): Promise<void> {
     tokenStorage.clear();
+    await navigate(ROUTES.login, { replace: true });
     queryClient.clear();
-    void navigate(ROUTES.login, { replace: true });
+  }
+
+  return () => {
+    void changeToken();
   };
 }
