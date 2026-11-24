@@ -6,6 +6,7 @@ import { ArtifactRegisterPage } from '@/features/artifact/components/ArtifactReg
 import { AuthenticatedLayout } from '@/features/auth/components/AuthenticatedLayout';
 import { LoginPage } from '@/features/auth/components/LoginPage';
 import { DashboardPage } from '@/features/dashboard/components/DashboardPage';
+import { VehicleDetailPage } from '@/features/vehicle/components/VehicleDetailPage';
 import { ROUTES } from '@/shared/config/routes';
 
 import { PlaceholderPage } from './PlaceholderPage';
@@ -21,7 +22,7 @@ export const appRoutes: RouteObject[] = [
     ),
     children: [
       { path: ROUTES.dashboard, element: <DashboardPage /> },
-      { path: ROUTES.vehicleDetail, element: <PlaceholderPage title="차량 상세" /> },
+      { path: ROUTES.vehicleDetail, element: <VehicleDetailPage /> },
       { path: ROUTES.edges, element: <PlaceholderPage title="Edge" /> },
       { path: ROUTES.campaigns, element: <PlaceholderPage title="캠페인" /> },
       { path: ROUTES.campaignNew, element: <PlaceholderPage title="캠페인 만들기" /> },

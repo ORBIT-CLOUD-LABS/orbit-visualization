@@ -1,6 +1,6 @@
 import { Badge } from '@/shared/ui/Badge';
 
-import type { UpdateResult } from '../api/vehicleStatusSchema';
+import type { UpdateResult } from './updateResult';
 
 type VehicleResultBadgeProps = {
   result: UpdateResult | null;
