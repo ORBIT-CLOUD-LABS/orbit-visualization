@@ -125,9 +125,11 @@ describe('EdgeStatusPage', () => {
     isServerUp = false;
     await user.click(screen.getByRole('button', { name: '새로고침' }));
 
-    expect(await screen.findByRole('alert')).toHaveTextContent(
+    const alert = await screen.findByRole('alert');
+    expect(alert).toHaveTextContent(
       '최신 Edge 상태를 불러오지 못했습니다. 이전에 받은 정보를 보여 줍니다.',
     );
+    expect(alert).toHaveTextContent('INTERNAL_SERVER_ERROR');
     expect(screen.getByRole('region', { name: '부산' })).toBeInTheDocument();
   });
 });

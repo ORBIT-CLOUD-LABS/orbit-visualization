@@ -23,6 +23,7 @@ export function EdgeStatusPage() {
   const lastUpdated = formatClockTime(query.dataUpdatedAt === 0 ? null : query.dataUpdatedAt);
   // 이미 받은 값이 있으면 그대로 두고, 새로고침이 실패했다는 것만 알린다
   const isRefreshFailed = query.isError && edges !== undefined;
+  const errorCode = query.error instanceof ApiError ? query.error.code : undefined;
 
   function handleRefresh() {
     void query.refetch(KEEP_IN_FLIGHT);
@@ -49,8 +50,9 @@ export function EdgeStatusPage() {
           <Alert
             type="error"
             title="최신 Edge 상태를 불러오지 못했습니다. 이전에 받은 정보를 보여 줍니다."
+            code={errorCode}
             action={
-              <Button variant="secondary" onClick={handleRefresh}>
+              <Button variant="secondary" disabled={query.isFetching} onClick={handleRefresh}>
                 다시 시도
               </Button>
             }
@@ -60,7 +62,8 @@ export function EdgeStatusPage() {
         <EdgeCardList
           edges={edges}
           isPending={query.isPending}
-          errorCode={query.error instanceof ApiError ? query.error.code : undefined}
+          isFetching={query.isFetching}
+          errorCode={errorCode}
           onRetry={handleRefresh}
         />
       </div>

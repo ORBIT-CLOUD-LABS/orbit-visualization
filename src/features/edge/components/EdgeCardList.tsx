@@ -13,13 +13,21 @@ type EdgeCardListProps = {
   /** 아직 받지 못했으면 undefined */
   edges: readonly CdnEdgeStatus[] | undefined;
   isPending: boolean;
+  /** 다시 불러오는 중이면 다시 시도 버튼을 막는다 */
+  isFetching: boolean;
   /** 서버 응답 code. 없으면 생략 */
   errorCode?: string;
   onRetry: () => void;
 };
 
 /** Edge 마다 카드 하나. 처음 불러오는 중·실패·Edge 없음은 카드 자리에 안내를 둔다 */
-export function EdgeCardList({ edges, isPending, errorCode, onRetry }: EdgeCardListProps) {
+export function EdgeCardList({
+  edges,
+  isPending,
+  isFetching,
+  errorCode,
+  onRetry,
+}: EdgeCardListProps) {
   function renderBody() {
     if (edges === undefined && isPending) {
       return (
@@ -41,7 +49,7 @@ export function EdgeCardList({ edges, isPending, errorCode, onRetry }: EdgeCardL
             title="Edge 상태를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요."
             code={errorCode}
             action={
-              <Button variant="secondary" onClick={onRetry}>
+              <Button variant="secondary" disabled={isFetching} onClick={onRetry}>
                 다시 시도
               </Button>
             }
