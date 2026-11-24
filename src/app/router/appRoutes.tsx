@@ -1,4 +1,4 @@
-import type { RouteObject } from 'react-router';
+import { Navigate, type RouteObject } from 'react-router';
 
 import { ROUTES } from '@/shared/config/routes';
 
@@ -21,4 +21,6 @@ export const appRoutes: RouteObject[] = [
       { path: ROUTES.artifactDetail, element: <PlaceholderPage title="아티팩트 상세" /> },
     ],
   },
+  // 없는 경로는 라우터 기본 오류 화면 대신 대시보드로 보낸다
+  { path: '*', element: <Navigate to={ROUTES.dashboard} replace /> },
 ];

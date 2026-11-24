@@ -28,6 +28,15 @@ describe('RequireAuth', () => {
     expect(await screen.findByRole('heading', { name: '캠페인 상세' })).toBeInTheDocument();
   });
 
+  it('없는 경로는 대시보드로 보낸다', async () => {
+    tokenStorage.set('admin-token');
+
+    const router = renderAt('/campaign/3');
+
+    expect(await screen.findByRole('heading', { name: '대시보드' })).toBeInTheDocument();
+    expect(router.state.location.pathname).toBe('/');
+  });
+
   it('로그인 화면은 토큰 없이 열린다', async () => {
     renderAt('/login');
 
