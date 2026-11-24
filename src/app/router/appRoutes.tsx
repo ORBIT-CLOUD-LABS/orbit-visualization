@@ -8,6 +8,8 @@ import { CampaignDetailPage } from '@/features/campaign/components/CampaignDetai
 import { CampaignListPage } from '@/features/campaign/components/CampaignListPage';
 import { CampaignRegisterPage } from '@/features/campaign/components/CampaignRegisterPage';
 import { LoginPage } from '@/features/auth/components/LoginPage';
+import { DashboardPage } from '@/features/dashboard/components/DashboardPage';
+import { VehicleDetailPage } from '@/features/vehicle/components/VehicleDetailPage';
 import { ROUTES } from '@/shared/config/routes';
 
 import { PlaceholderPage } from './PlaceholderPage';
@@ -22,8 +24,8 @@ export const appRoutes: RouteObject[] = [
       </RequireAuth>
     ),
     children: [
-      { path: ROUTES.dashboard, element: <PlaceholderPage title="대시보드" /> },
-      { path: ROUTES.vehicleDetail, element: <PlaceholderPage title="차량 상세" /> },
+      { path: ROUTES.dashboard, element: <DashboardPage /> },
+      { path: ROUTES.vehicleDetail, element: <VehicleDetailPage /> },
       { path: ROUTES.edges, element: <PlaceholderPage title="Edge" /> },
       { path: ROUTES.campaigns, element: <CampaignListPage /> },
       { path: ROUTES.campaignNew, element: <CampaignRegisterPage /> },

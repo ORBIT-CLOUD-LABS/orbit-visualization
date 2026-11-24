@@ -1,6 +1,7 @@
+import { QueryClient } from '@tanstack/react-query';
 import { screen } from '@testing-library/react';
 import { act } from 'react';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { tokenStorage } from '@/shared/auth/tokenStorage';
 import { reportUnauthorized } from '@/shared/auth/unauthorized';
@@ -29,5 +30,26 @@ describe('redirectOnUnauthorized', () => {
 
     expect(await screen.findByRole('heading', { name: '관리자 토큰 입력' })).toBeInTheDocument();
     expect(queryClient.getQueryData(['campaigns'])).toBeUndefined();
+  });
+
+  it('화면을 로그인으로 옮긴 뒤에 캐시를 비운다', async () => {
+    const calls: string[] = [];
+    const router = {
+      navigate: vi.fn(async () => {
+        calls.push('navigate');
+      }),
+    };
+    const queryClient = new QueryClient();
+    vi.spyOn(queryClient, 'clear').mockImplementation(() => {
+      calls.push('clear');
+    });
+    tokenStorage.set('admin-token');
+    unsubscribe = redirectOnUnauthorized(router, queryClient);
+
+    reportUnauthorized();
+
+    await vi.waitFor(() => {
+      expect(calls).toEqual(['navigate', 'clear']);
+    });
   });
 });
