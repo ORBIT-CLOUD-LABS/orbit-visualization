@@ -1,3 +1,4 @@
+import { QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import { act } from 'react';
 import { createMemoryRouter, RouterProvider } from 'react-router';
@@ -23,14 +24,18 @@ describe('redirectOnUnauthorized', () => {
     queryClient.setQueryData(['campaigns'], []);
     const router = createMemoryRouter(appRoutes, { initialEntries: ['/campaigns'] });
     unsubscribe = redirectOnUnauthorized(router, queryClient);
-    render(<RouterProvider router={router} />);
+    render(
+      <QueryClientProvider client={queryClient}>
+        <RouterProvider router={router} />
+      </QueryClientProvider>,
+    );
     await screen.findByRole('heading', { name: '캠페인' });
 
     act(() => {
       reportUnauthorized();
     });
 
-    expect(await screen.findByRole('heading', { name: '로그인' })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: '관리자 토큰 입력' })).toBeInTheDocument();
     expect(queryClient.getQueryData(['campaigns'])).toBeUndefined();
   });
 });

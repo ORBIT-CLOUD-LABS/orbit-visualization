@@ -1,12 +1,13 @@
 import { Navigate, type RouteObject } from 'react-router';
 
+import { LoginPage } from '@/features/auth/components/LoginPage';
 import { ROUTES } from '@/shared/config/routes';
 
 import { PlaceholderPage } from './PlaceholderPage';
 import { RequireAuth } from './RequireAuth';
 
 export const appRoutes: RouteObject[] = [
-  { path: ROUTES.login, element: <PlaceholderPage title="로그인" /> },
+  { path: ROUTES.login, element: <LoginPage /> },
   {
     element: <RequireAuth />,
     children: [
