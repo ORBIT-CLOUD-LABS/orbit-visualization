@@ -13,6 +13,7 @@ import { summarizeEdges } from '../lib/summarizeEdges';
 
 import { EdgeCardList } from './EdgeCardList';
 import { EdgeHealthChangeCard } from './EdgeHealthChangeCard';
+import { EdgeMapCard } from './EdgeMapCard';
 import { EdgeStatCards } from './EdgeStatCards';
 
 // 버튼을 여러 번 눌러도 진행 중인 요청을 취소하고 다시 보내지 않는다
@@ -65,6 +66,7 @@ export function EdgeStatusPage() {
         )}
         <EdgeStatCards summary={summary} />
         <div className="flex flex-col gap-6 xl:flex-row">
+          <EdgeMapCard edgeState={edgeState} className="xl:flex-1" />
           <EdgeHealthChangeCard
             edgeState={edgeState}
             tracker={healthTracker}

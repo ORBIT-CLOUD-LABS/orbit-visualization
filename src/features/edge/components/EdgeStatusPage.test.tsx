@@ -2,7 +2,7 @@ import { QueryClient } from '@tanstack/react-query';
 import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { failure } from '@/mocks/apiEnvelope';
 import { CDN_EDGES_URL, cdnEdgeStatusFixture, cdnEdgesResponse } from '@/mocks/cdnEdgeHandlers';
@@ -11,6 +11,8 @@ import { ROUTES } from '@/shared/config/routes';
 import { renderRoutes } from '@/test/renderRoutes';
 
 import { EdgeStatusPage } from './EdgeStatusPage';
+
+vi.mock('react-leaflet', () => import('@/test/reactLeafletMock'));
 
 const routes = [{ path: ROUTES.edges, element: <EdgeStatusPage /> }];
 
@@ -73,7 +75,8 @@ describe('EdgeStatusPage', () => {
     server.use(http.get(CDN_EDGES_URL, () => cdnEdgesResponse([])));
     renderPage();
 
-    expect(await screen.findByText('등록된 CDN Edge가 없습니다')).toBeInTheDocument();
+    const list = screen.getByRole('region', { name: 'Edge 목록' });
+    expect(await within(list).findByText('등록된 CDN Edge가 없습니다')).toBeInTheDocument();
     expect(screen.getByRole('region', { name: 'Edge 통계' })).toHaveTextContent('Edge 수0');
   });
 
