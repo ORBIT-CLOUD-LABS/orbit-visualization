@@ -1,6 +1,7 @@
 import type { CdnEdgeStatus } from '@/shared/cdnEdge/cdnEdgeSchema';
 import { cn } from '@/shared/lib/cn';
 import type { QueryState } from '@/shared/lib/toQueryState';
+import { MapSkeleton } from '@/shared/map/MapSkeleton';
 import { Card } from '@/shared/ui/Card';
 import { LoadErrorAlert } from '@/shared/ui/LoadErrorAlert';
 
@@ -15,11 +16,7 @@ type EdgeMapCardProps = {
 export function EdgeMapCard({ edgeState, className }: EdgeMapCardProps) {
   function renderBody() {
     if (edgeState.status === 'pending') {
-      return (
-        <div aria-busy="true" className="min-h-52.5 flex-1 animate-pulse rounded-lg bg-map">
-          <p className="sr-only">Edge 위치를 불러오는 중입니다</p>
-        </div>
-      );
+      return <MapSkeleton label="Edge 위치를 불러오는 중입니다" className="min-h-52.5 flex-1" />;
     }
     if (edgeState.status === 'error') {
       return (

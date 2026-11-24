@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 
 import type { CdnEdgeStatus } from '@/shared/cdnEdge/cdnEdgeSchema';
 import type { QueryState } from '@/shared/lib/toQueryState';
+import { MapSkeleton } from '@/shared/map/MapSkeleton';
 import { Card } from '@/shared/ui/Card';
 import { LoadErrorAlert } from '@/shared/ui/LoadErrorAlert';
 
@@ -35,11 +36,7 @@ export function VehicleMapCard({ vehicleState, edgeState }: VehicleMapCardProps)
 
   function renderBody() {
     if (vehicleState.status === 'pending') {
-      return (
-        <div aria-busy="true" className="min-h-52.5 flex-1 animate-pulse rounded-lg bg-map">
-          <p className="sr-only">차량 위치를 불러오는 중입니다</p>
-        </div>
-      );
+      return <MapSkeleton label="차량 위치를 불러오는 중입니다" className="min-h-52.5 flex-1" />;
     }
     if (vehicleState.status === 'error') {
       return (
