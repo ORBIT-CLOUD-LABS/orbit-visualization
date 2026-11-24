@@ -50,6 +50,8 @@ export const campaignKeys = {
 - 재연결 때 마지막으로 받은 이벤트 id 를 `Last-Event-ID` 헤더로 보낸다. 서버는 그 뒤의 변경분을 먼저 보낸다.
 - 연결 상태는 `connecting` → `connected` → (끊김) `reconnecting` 이다. 재연결이 3회 연속 실패하거나 204·4xx(408·429 제외)면 `disconnected` 로 멈춘다.
   `disconnected` 화면에는 다시 시도 버튼을 두고 `connection.reconnect()` 를 부른다.
+- 연결 응답(헤더)이 `CONNECT_TIMEOUT_MS`(10초) 안에 오지 않으면 그 시도를 끊고 재연결 흐름을 탄다. 연결된 뒤 이벤트가 없는 것은 정상이라 재지 않는다.
+  그래서 배포할 때 앞단 프록시는 SSE 경로(`/api/v1/dashboard/vehicles/stream`)의 응답 버퍼링을 꺼야 한다. 버퍼링하면 첫 keep-alive 전까지 헤더가 오지 않아 연결이 끊긴다.
 - 401 이면 httpClient 와 같이 토큰을 지우고 01 로 보낸다.
 - `sseClient` 는 이벤트 종류와 data 형식을 모른다. 받는 쪽이 `event` 로 거르고 `data` 를 `JSON.parse` 한 뒤 zod 로 검증한다.
   `onMessage` 에서 던진 오류는 연결을 끊지 않고 `reportError` 로 전역에 알린다.
