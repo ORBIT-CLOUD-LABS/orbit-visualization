@@ -1,7 +1,9 @@
 import { Link, useParams } from 'react-router';
 
 import { ApiError } from '@/shared/api/ApiError';
+import { useCdnEdges } from '@/shared/cdnEdge/useCdnEdges';
 import { ROUTES } from '@/shared/config/routes';
+import { toQueryState } from '@/shared/lib/toQueryState';
 import { Alert } from '@/shared/ui/Alert';
 import { Button } from '@/shared/ui/Button';
 import { buttonClassName } from '@/shared/ui/buttonClassName';
@@ -34,6 +36,7 @@ export function VehicleDetailPage() {
   const vehicleId = parseVehicleId(params.vehicleId);
   const detail = useVehicleDetail(vehicleId);
   const history = useVehicleUpdateHistory(vehicleId);
+  const edges = useCdnEdges();
   const isNotFound =
     vehicleId === null || (detail.error instanceof ApiError && detail.error.status === NOT_FOUND);
 
@@ -95,6 +98,8 @@ export function VehicleDetailPage() {
               <VehicleLocationCard
                 location={vehicle.location}
                 assignedEdgeId={vehicle.assignedEdgeId}
+                lastResult={vehicle.lastUpdate?.result ?? null}
+                edgeState={toQueryState(edges)}
                 className="lg:col-span-2"
               />
             </div>
