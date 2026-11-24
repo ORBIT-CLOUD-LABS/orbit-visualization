@@ -3,12 +3,11 @@ import { Link } from 'react-router';
 import type { CdnEdgeStatus } from '@/shared/cdnEdge/cdnEdgeSchema';
 import { ROUTES } from '@/shared/config/routes';
 import type { QueryState } from '@/shared/lib/toQueryState';
-import { Alert } from '@/shared/ui/Alert';
 import { Badge } from '@/shared/ui/Badge';
-import { Button } from '@/shared/ui/Button';
 import { buttonClassName } from '@/shared/ui/buttonClassName';
 import { Card } from '@/shared/ui/Card';
 import { EmptyState } from '@/shared/ui/EmptyState';
+import { LoadErrorAlert } from '@/shared/ui/LoadErrorAlert';
 import { SkeletonRow } from '@/shared/ui/SkeletonRow';
 
 const SKELETON_ROWS = [1, 2, 3] as const;
@@ -32,15 +31,10 @@ export function CdnEdgeStatusCard({ state }: CdnEdgeStatusCardProps) {
     }
     if (state.status === 'error') {
       return (
-        <Alert
-          type="error"
-          title="CDN Edge 상태를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요."
+        <LoadErrorAlert
+          message="CDN Edge 상태를 불러오지 못했습니다"
           code={state.errorCode}
-          action={
-            <Button variant="secondary" onClick={state.onRetry}>
-              다시 시도
-            </Button>
-          }
+          onRetry={state.onRetry}
         />
       );
     }

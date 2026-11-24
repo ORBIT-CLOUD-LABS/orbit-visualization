@@ -1,13 +1,13 @@
 import { cn } from '@/shared/lib/cn';
 import { formatClockTime } from '@/shared/lib/formatClockTime';
 import { Card } from '@/shared/ui/Card';
-import { SkeletonRow } from '@/shared/ui/SkeletonRow';
+import { LoadingRows } from '@/shared/ui/LoadingRows';
 
 import type { EdgeHealthTracker } from '../lib/trackEdgeHealth';
 
 import { EdgeHealthEntry } from './EdgeHealthEntry';
 
-const SKELETON_ROWS = [1, 2] as const;
+const SKELETON_ROW_COUNT = 2;
 const EMPTY_CLASS = 'rounded-md bg-subtle px-3.5 py-6 text-center text-xs text-fg-muted';
 
 function healthLabel(healthy: boolean): string {
@@ -30,12 +30,11 @@ export function EdgeHealthChangeCard({ tracker, isPending, className }: EdgeHeal
   function renderBody() {
     if (isPending) {
       return (
-        <div aria-busy="true" className="flex flex-col divide-y divide-line">
-          <p className="sr-only">상태 변화를 불러오는 중입니다</p>
-          {SKELETON_ROWS.map((row) => (
-            <SkeletonRow key={row} />
-          ))}
-        </div>
+        <LoadingRows
+          label="상태 변화를 불러오는 중입니다"
+          rows={SKELETON_ROW_COUNT}
+          variant="divided"
+        />
       );
     }
     if (tracker === null) {

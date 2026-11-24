@@ -1,9 +1,8 @@
 import type { CdnEdgeStatus } from '@/shared/cdnEdge/cdnEdgeSchema';
 import { cn } from '@/shared/lib/cn';
 import type { QueryState } from '@/shared/lib/toQueryState';
-import { Alert } from '@/shared/ui/Alert';
-import { Button } from '@/shared/ui/Button';
 import { Card } from '@/shared/ui/Card';
+import { LoadErrorAlert } from '@/shared/ui/LoadErrorAlert';
 
 import { EdgeMap } from './EdgeMap';
 
@@ -24,15 +23,10 @@ export function EdgeMapCard({ edgeState, className }: EdgeMapCardProps) {
     }
     if (edgeState.status === 'error') {
       return (
-        <Alert
-          type="error"
-          title="Edge 위치를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요."
+        <LoadErrorAlert
+          message="Edge 위치를 불러오지 못했습니다"
           code={edgeState.errorCode}
-          action={
-            <Button variant="secondary" onClick={edgeState.onRetry}>
-              다시 시도
-            </Button>
-          }
+          onRetry={edgeState.onRetry}
         />
       );
     }

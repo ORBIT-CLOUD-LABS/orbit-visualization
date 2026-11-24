@@ -2,9 +2,8 @@ import { useMemo, useState } from 'react';
 
 import type { CdnEdgeStatus } from '@/shared/cdnEdge/cdnEdgeSchema';
 import type { QueryState } from '@/shared/lib/toQueryState';
-import { Alert } from '@/shared/ui/Alert';
-import { Button } from '@/shared/ui/Button';
 import { Card } from '@/shared/ui/Card';
+import { LoadErrorAlert } from '@/shared/ui/LoadErrorAlert';
 
 import type { VehicleStatus } from '../api/vehicleStatusSchema';
 import {
@@ -44,15 +43,10 @@ export function VehicleMapCard({ vehicleState, edgeState }: VehicleMapCardProps)
     }
     if (vehicleState.status === 'error') {
       return (
-        <Alert
-          type="error"
-          title="차량 위치를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요."
+        <LoadErrorAlert
+          message="차량 위치를 불러오지 못했습니다"
           code={vehicleState.errorCode}
-          action={
-            <Button variant="secondary" onClick={vehicleState.onRetry}>
-              다시 시도
-            </Button>
-          }
+          onRetry={vehicleState.onRetry}
         />
       );
     }
