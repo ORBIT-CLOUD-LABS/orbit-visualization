@@ -3,9 +3,12 @@ import { useMemo } from 'react';
 import { ApiError } from '@/shared/api/ApiError';
 import { Topbar } from '@/shared/ui/Topbar';
 
+import { useCdnEdges } from '../hooks/useCdnEdges';
 import { useDashboardVehicles } from '../hooks/useDashboardVehicles';
 import { countVehicleResults } from '../lib/countVehicleResults';
+import { toQueryState } from '../lib/toQueryState';
 
+import { CdnEdgeStatusCard } from './CdnEdgeStatusCard';
 import { DisconnectedAlert } from './DisconnectedAlert';
 import { LiveConnectionStatus } from './LiveConnectionStatus';
 import { VehicleListCard, type VehicleListState } from './VehicleListCard';
@@ -14,6 +17,7 @@ import { VehicleStatCards } from './VehicleStatCards';
 /** 02 대시보드. 차량 상태를 실시간으로 보여 준다 */
 export function DashboardPage() {
   const { query, connection } = useDashboardVehicles();
+  const cdnEdgesQuery = useCdnEdges();
   const vehicles = query.data?.vehicles;
   // SSE 변경분도 setQueryData 로 들어오므로 dataUpdatedAt 이 마지막 갱신 시각이다
   const lastUpdatedAt = query.dataUpdatedAt === 0 ? null : query.dataUpdatedAt;
@@ -37,6 +41,7 @@ export function DashboardPage() {
   } else {
     listState = { status: 'pending' };
   }
+  const edgeState = toQueryState(cdnEdgesQuery);
 
   return (
     <>
@@ -49,8 +54,12 @@ export function DashboardPage() {
           <DisconnectedAlert lastUpdatedAt={lastUpdatedAt} onReconnect={connection.reconnect} />
         )}
         <VehicleStatCards counts={counts} />
-        {/* #20: 차량 위치 지도 카드와 CDN Edge 상태 카드 행이 이 자리(통계 카드와 차량 목록 사이)에 들어간다.
-            차량 상태는 SSE 연결을 하나로 유지하도록 위의 query.data 를 props 로 넘긴다 */}
+        <div className="flex flex-col gap-6 xl:flex-row">
+          {/* #20: 차량 위치 지도 카드가 이 자리에 들어간다 */}
+          <div className="xl:w-75 xl:shrink-0">
+            <CdnEdgeStatusCard state={edgeState} />
+          </div>
+        </div>
         <VehicleListCard state={listState} />
       </div>
     </>
