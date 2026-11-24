@@ -1,11 +1,11 @@
 import { Card } from '@/shared/ui/Card';
 import { EmptyState } from '@/shared/ui/EmptyState';
+import { QueryFallback } from '@/shared/ui/QueryFallback';
 import { Topbar } from '@/shared/ui/Topbar';
 
 import { useArtifacts } from '../hooks/useArtifacts';
 import { ArtifactListCard } from './ArtifactListCard';
 import { ArtifactStats } from './ArtifactStats';
-import { QueryFallback } from './QueryFallback';
 import { RegisterArtifactLink } from './RegisterArtifactLink';
 
 const LIST_TITLE = '파일 목록';

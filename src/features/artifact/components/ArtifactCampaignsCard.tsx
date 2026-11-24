@@ -5,11 +5,11 @@ import { Badge, type BadgeTone } from '@/shared/ui/Badge';
 import { buttonClassName } from '@/shared/ui/buttonClassName';
 import { Card } from '@/shared/ui/Card';
 import { EmptyState } from '@/shared/ui/EmptyState';
+import { QueryFallback } from '@/shared/ui/QueryFallback';
 
 import type { ArtifactCampaign } from '../api/getModelCampaigns';
 import { useArtifactCampaigns } from '../hooks/useArtifactCampaigns';
 import { formatDate } from '../lib/formatDateTime';
-import { QueryFallback } from './QueryFallback';
 import {
   TABLE_CELL as CELL,
   TABLE_HEAD_CELL as HEAD_CELL,
