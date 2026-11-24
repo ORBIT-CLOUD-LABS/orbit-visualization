@@ -1,6 +1,7 @@
 import { Link } from 'react-router';
 
 import { routePaths } from '@/shared/config/routes';
+import { formatDate } from '@/shared/lib/formatDateTime';
 import { Badge, type BadgeTone } from '@/shared/ui/Badge';
 import { buttonClassName } from '@/shared/ui/buttonClassName';
 import { Card } from '@/shared/ui/Card';
@@ -14,7 +15,6 @@ import {
 
 import type { ArtifactCampaign } from '../api/getModelCampaigns';
 import { useArtifactCampaigns } from '../hooks/useArtifactCampaigns';
-import { formatDate } from '../lib/formatDateTime';
 
 const STATUS_TONE: Record<ArtifactCampaign['status'], BadgeTone> = {
   ACTIVE: 'info',

@@ -1,6 +1,7 @@
 import { Link } from 'react-router';
 
 import { routePaths } from '@/shared/config/routes';
+import { formatDate } from '@/shared/lib/formatDateTime';
 import { buttonClassName } from '@/shared/ui/buttonClassName';
 import {
   TABLE_CELL as CELL,
@@ -9,7 +10,6 @@ import {
 } from '@/shared/ui/tableClassNames';
 
 import type { Artifact } from '../api/artifactSchemas';
-import { formatDate } from '../lib/formatDateTime';
 import { formatFileSize } from '../lib/formatFileSize';
 import { shortenSha256 } from '../lib/shortenSha256';
 

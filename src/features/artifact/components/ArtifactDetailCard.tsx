@@ -1,5 +1,6 @@
 import { Link } from 'react-router';
 
+import { formatDateTime } from '@/shared/lib/formatDateTime';
 import { Alert } from '@/shared/ui/Alert';
 import { Badge } from '@/shared/ui/Badge';
 import { buttonClassName } from '@/shared/ui/buttonClassName';
@@ -7,7 +8,6 @@ import { KeyValue } from '@/shared/ui/KeyValue';
 
 import type { Artifact } from '../api/artifactSchemas';
 import { campaignNewPath } from '../lib/campaignNewPath';
-import { formatDateTime } from '../lib/formatDateTime';
 import { formatByteCount, formatFileSize } from '../lib/formatFileSize';
 import { CopySha256Button } from './CopySha256Button';
 
