@@ -9,6 +9,8 @@ const VEHICLES_EVENT = 'vehicles';
 
 export type VehicleStatusStream = {
   status: SseConnectionStatus;
+  /** 첫 연결 시도가 끝났는지(연결됐거나 실패했는지). 다시 연결하는 중에도 true 로 남는다 */
+  hasOpened: boolean;
   /** 끊긴(disconnected) 뒤 사용자가 다시 연결할 때 부른다 */
   reconnect: () => void;
 };
@@ -21,6 +23,7 @@ export function useVehicleStatusStream(
   onChanges: (changes: VehicleStatus[]) => void,
 ): VehicleStatusStream {
   const [status, setStatus] = useState<SseConnectionStatus>('connecting');
+  const [hasOpened, setHasOpened] = useState(false);
   const connectionRef = useRef<SseConnection | null>(null);
 
   useEffect(() => {
@@ -33,7 +36,12 @@ export function useVehicleStatusStream(
         }
         onChanges(vehicleStatusChangesSchema.parse(JSON.parse(message.data)));
       },
-      onStatusChange: setStatus,
+      onStatusChange: (next) => {
+        setStatus(next);
+        if (next !== 'connecting') {
+          setHasOpened(true);
+        }
+      },
     });
     connectionRef.current = connection;
     return () => {
@@ -46,5 +54,5 @@ export function useVehicleStatusStream(
     connectionRef.current?.reconnect();
   }, []);
 
-  return { status, reconnect };
+  return { status, hasOpened, reconnect };
 }

@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient, type UseQueryResult } from '@tanstack/react-query';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
 import { dashboardKeys } from '../api/dashboardKeys';
 import { getVehicleStatusSnapshot } from '../api/getVehicleStatusSnapshot';
@@ -28,11 +28,12 @@ export function useDashboardVehicles(): DashboardVehicles {
       const queryKey = dashboardKeys.vehicles();
       const current = queryClient.getQueryData<VehicleStatusSnapshot>(queryKey);
       // 조회 결과가 캐시를 덮어쓰기 전까지는 받은 변경분을 남겨 둔다. 같은 차량은 하나만 남긴다
-      if (current === undefined || queryClient.isFetching({ queryKey }) > 0) {
-        pendingChangesRef.current = mergeVehicleStatuses(pendingChangesRef.current, changes);
-      }
       if (current === undefined) {
+        pendingChangesRef.current = mergeVehicleStatuses(pendingChangesRef.current, changes);
         return;
+      }
+      if (queryClient.isFetching({ queryKey }) > 0) {
+        pendingChangesRef.current = mergeVehicleStatuses(pendingChangesRef.current, changes);
       }
       queryClient.setQueryData<VehicleStatusSnapshot>(queryKey, {
         ...current,
@@ -44,19 +45,13 @@ export function useDashboardVehicles(): DashboardVehicles {
 
   const connection = useVehicleStatusStream(handleChanges);
 
-  // 서버가 구독자를 먼저 등록해야 스냅샷과 SSE 사이의 변경을 놓치지 않는다.
-  // 첫 조회만 기다리고, 다시 연결하는 동안에는 조회를 막지 않는다
-  const [hasStreamOpened, setHasStreamOpened] = useState(false);
-  const isStreamOpened = hasStreamOpened || connection.status !== 'connecting';
-  if (isStreamOpened && !hasStreamOpened) {
-    setHasStreamOpened(true);
-  }
-
   const query = useQuery({
     queryKey: dashboardKeys.vehicles(),
     // 스냅샷이 기준이다. 서버에서 빠진 차량이 캐시에 남지 않도록 이전 캐시와 합치지 않는다
     queryFn: ({ signal }) => getVehicleStatusSnapshot(signal),
-    enabled: isStreamOpened,
+    // 서버가 구독자를 먼저 등록해야 스냅샷과 SSE 사이의 변경을 놓치지 않는다.
+    // 첫 연결만 기다리고, 다시 연결하는 동안에는 조회를 막지 않는다
+    enabled: connection.hasOpened,
   });
 
   const { data, fetchStatus } = query;
