@@ -25,10 +25,7 @@ export function EdgeStatusPage() {
   const edges = query.data;
   const summary = useMemo(() => (edges === undefined ? null : summarizeEdges(edges)), [edges]);
   const healthTracker = useEdgeHealthChanges(edges, query.dataUpdatedAt);
-  const queryState = toQueryState(query);
-  // 카드의 다시 시도도 진행 중인 요청을 취소하지 않도록 새로고침 버튼과 같은 동작을 쓴다
-  const edgeState =
-    queryState.status === 'error' ? { ...queryState, onRetry: handleRefresh } : queryState;
+  const edgeState = toQueryState(query);
   const lastUpdated = formatClockTime(query.dataUpdatedAt === 0 ? null : query.dataUpdatedAt);
   // 이미 받은 값이 있으면 그대로 두고, 새로고침이 실패했다는 것만 알린다
   const isRefreshFailed = query.isError && edges !== undefined;

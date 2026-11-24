@@ -18,7 +18,8 @@ export function toQueryState<T>(query: UseQueryResult<T>): QueryState<T> {
       status: 'error',
       errorCode: query.error instanceof ApiError ? query.error.code : undefined,
       onRetry: () => {
-        void query.refetch();
+        // 여러 번 눌러도 진행 중인 요청을 취소하고 다시 보내지 않는다
+        void query.refetch({ cancelRefetch: false });
       },
     };
   }
