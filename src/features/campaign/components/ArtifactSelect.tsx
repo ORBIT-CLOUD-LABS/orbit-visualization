@@ -17,7 +17,8 @@ function optionLabel({ artifactId, model, version, keyId }: ArtifactOption): str
 type ArtifactSelectProps = {
   /** 불러오기 전이거나 실패했으면 undefined */
   options: readonly ArtifactOption[] | undefined;
-  isPending: boolean;
+  /** 파일 목록을 불러오지 못했다 */
+  isLoadFailed: boolean;
   onRetry: () => void;
   value: ArtifactOption | null;
   onChange: (artifactId: number | null) => void;
@@ -28,7 +29,7 @@ type ArtifactSelectProps = {
 /** 배포할 파일 선택. 파일 목록을 불러오는 중·실패·없음 상태를 칸 안에서 보여 준다 */
 export function ArtifactSelect({
   options,
-  isPending,
+  isLoadFailed,
   onRetry,
   value,
   onChange,
@@ -56,22 +57,11 @@ export function ArtifactSelect({
     return HELP;
   }
 
-  if (options === undefined && !isPending) {
-    return (
-      <div className="flex flex-col gap-1.5">
-        <span className="text-sm font-medium text-fg">배포할 파일</span>
-        <Alert
-          type="error"
-          title="파일 목록을 불러오지 못했습니다"
-          action={
-            <Button variant="secondary" onClick={onRetry}>
-              다시 시도
-            </Button>
-          }
-        />
-        {error !== undefined && <p className="text-xs text-danger">{error}</p>}
-      </div>
-    );
+  function placeholder() {
+    if (isLoadFailed) {
+      return '불러오지 못했습니다';
+    }
+    return options === undefined ? '불러오는 중…' : '파일을 선택하세요';
   }
 
   return (
@@ -99,13 +89,24 @@ export function ArtifactSelect({
           error !== undefined && 'border-line-danger',
         )}
       >
-        <option value="">{options === undefined ? '불러오는 중…' : '파일을 선택하세요'}</option>
+        <option value="">{placeholder()}</option>
         {options?.map((option) => (
           <option key={option.artifactId} value={option.artifactId}>
             {optionLabel(option)}
           </option>
         ))}
       </select>
+      {isLoadFailed && (
+        <Alert
+          type="error"
+          title="파일 목록을 불러오지 못했습니다"
+          action={
+            <Button variant="secondary" onClick={onRetry}>
+              다시 시도
+            </Button>
+          }
+        />
+      )}
       <p id={messageId} className="text-xs text-fg-muted">
         {renderMessage()}
       </p>

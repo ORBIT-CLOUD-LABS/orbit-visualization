@@ -32,7 +32,7 @@ export function CampaignRegisterPage() {
         <div className="flex flex-col gap-6 xl:flex-row xl:items-start">
           <CampaignRegisterForm
             artifactOptions={artifacts.data}
-            isArtifactsPending={artifacts.isPending}
+            isArtifactsLoadFailed={artifacts.isError}
             onRetryArtifacts={() => void artifacts.refetch()}
             initialArtifactId={parseId(searchParams.get('artifactId'))}
             isSubmitting={registration.isPending}

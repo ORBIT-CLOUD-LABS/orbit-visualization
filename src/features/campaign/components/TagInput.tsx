@@ -36,17 +36,12 @@ export function TagInput({
   }
 
   function handleKeyDown(event: KeyboardEvent<HTMLInputElement>) {
-    // 한글 조합 중 Enter 는 조합을 끝내는 키다. 여기서 더하면 마지막 글자가 칸에 남아 값이 하나 더 생긴다
-    if (event.nativeEvent.isComposing) {
-      if (event.key === 'Enter') {
-        event.preventDefault();
-      }
-      return;
-    }
     if (event.key === 'Enter') {
-      // 폼이 제출되지 않게 막고 값만 더한다
+      // 폼이 제출되지 않게 막는다. 한글 조합 중 Enter 는 조합을 끝내는 키라 더하면 마지막 글자가 칸에 남는다
       event.preventDefault();
-      commit();
+      if (!event.nativeEvent.isComposing) {
+        commit();
+      }
     } else if (event.key === 'Backspace' && draft === '' && values.length > 0) {
       onChange(values.slice(0, -1));
     }

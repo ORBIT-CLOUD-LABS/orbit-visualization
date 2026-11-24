@@ -8,7 +8,7 @@ import {
 } from './campaignFormSchema';
 import { compareVersions } from './compareVersions';
 
-export type CampaignFormResult =
+type CampaignFormResult =
   { success: true; input: RegisterCampaignInput } | { success: false; errors: CampaignFormErrors };
 
 type ParsedForm = z.output<typeof campaignFormSchema>;
@@ -17,10 +17,9 @@ type ParsedForm = z.output<typeof campaignFormSchema>;
 function crossFieldErrors(form: Partial<ParsedForm>): CampaignFormErrors {
   const errors: CampaignFormErrors = {};
   const { currentVersionMin: min, currentVersionMax: max, startAt, endAt } = form;
-  if (min !== undefined && max !== undefined && min !== '' && max !== '') {
-    if (compareVersions(min, max) > 0) {
-      errors.currentVersionMax = '최대 버전은 최소 버전보다 작을 수 없습니다';
-    }
+  // 빈 값은 제한 없음이라 비교하지 않는다
+  if (min && max && compareVersions(min, max) > 0) {
+    errors.currentVersionMax = '최대 버전은 최소 버전보다 작을 수 없습니다';
   }
   if (startAt !== undefined && endAt !== undefined && Date.parse(endAt) <= Date.parse(startAt)) {
     errors.endAt = '종료 일시는 시작 일시보다 늦어야 합니다';

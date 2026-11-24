@@ -10,7 +10,7 @@ const VERSION_PATTERN = /^\d{1,9}(\.\d{1,9})*$/;
 const DATE_TIME_PATTERN = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/;
 
 /** datetime-local 값을 UTC 시각으로 읽는다. 화면은 UTC 로 입력받는다 */
-export function utcDateTimeToIso(value: string): string {
+function utcDateTimeToIso(value: string): string {
   return new Date(`${value}:00Z`).toISOString();
 }
 
@@ -62,5 +62,4 @@ export const campaignFormSchema = z.object({
 export type CampaignFormValues = Omit<z.input<typeof campaignFormSchema>, 'artifact'> & {
   artifact: ArtifactOption | null;
 };
-export type CampaignFormField = keyof CampaignFormValues;
-export type CampaignFormErrors = Partial<Record<CampaignFormField, string>>;
+export type CampaignFormErrors = Partial<Record<keyof CampaignFormValues, string>>;

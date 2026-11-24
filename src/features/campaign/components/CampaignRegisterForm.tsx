@@ -23,7 +23,7 @@ const UTC_HELP = 'UTC 기준';
 
 type CampaignRegisterFormProps = {
   artifactOptions: readonly ArtifactOption[] | undefined;
-  isArtifactsPending: boolean;
+  isArtifactsLoadFailed: boolean;
   onRetryArtifacts: () => void;
   /** 처음 골라 둘 파일. 목록에 없으면 고르지 않는다 */
   initialArtifactId: number | null;
@@ -37,7 +37,7 @@ type CampaignRegisterFormProps = {
 
 export function CampaignRegisterForm({
   artifactOptions,
-  isArtifactsPending,
+  isArtifactsLoadFailed,
   onRetryArtifacts,
   initialArtifactId,
   isSubmitting,
@@ -70,8 +70,8 @@ export function CampaignRegisterForm({
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const { artifactId: _artifactId, ...rest } = values;
-    const result = validateCampaignForm({ ...rest, artifact: artifact ?? null });
+    // 검증 스키마는 모르는 키(artifactId)를 버린다
+    const result = validateCampaignForm({ ...values, artifact: artifact ?? null });
     if (!result.success) {
       setErrors(result.errors);
       return;
@@ -99,7 +99,7 @@ export function CampaignRegisterForm({
       <div className="grid gap-4 md:grid-cols-2">
         <ArtifactSelect
           options={artifactOptions}
-          isPending={isArtifactsPending}
+          isLoadFailed={isArtifactsLoadFailed}
           onRetry={onRetryArtifacts}
           value={artifact ?? null}
           onChange={(artifactId) => change('artifactId', artifactId)}
