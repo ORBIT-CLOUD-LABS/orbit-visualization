@@ -18,5 +18,7 @@ export function useCdnEdges(): UseQueryResult<CdnEdgeStatus[]> {
     queryFn: ({ signal }) => getCdnEdges(signal),
     select: selectEdges,
     refetchInterval: CDN_EDGES_REFETCH_INTERVAL_MS,
+    // 대시보드와 Edge 현황을 오갈 때 주기 안에서 받은 값이면 다시 요청하지 않는다
+    staleTime: CDN_EDGES_REFETCH_INTERVAL_MS,
   });
 }

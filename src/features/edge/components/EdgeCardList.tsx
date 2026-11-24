@@ -29,7 +29,7 @@ export function EdgeCardList({
   onRetry,
 }: EdgeCardListProps) {
   function renderBody() {
-    if (edges === undefined && isPending) {
+    if (isPending) {
       return (
         <div aria-busy="true" className={FALLBACK_CLASS}>
           <p className="sr-only">CDN Edge 상태를 불러오는 중입니다</p>
