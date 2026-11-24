@@ -38,4 +38,14 @@ describe('getCdnEdges', () => {
 
     await expect(getCdnEdges()).rejects.toThrow('서버 응답 data 형식이 다릅니다');
   });
+
+  it('위도·경도 범위를 벗어나면 형식 오류로 실패한다', async () => {
+    server.use(
+      http.get(DASHBOARD_CDN_EDGES_URL, () =>
+        cdnEdgesResponse([cdnEdgeStatusFixture({ latitude: 1265 })]),
+      ),
+    );
+
+    await expect(getCdnEdges()).rejects.toThrow('서버 응답 data 형식이 다릅니다');
+  });
 });

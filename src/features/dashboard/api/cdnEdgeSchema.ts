@@ -11,8 +11,8 @@ export const cdnEdgeDownloadSchema = z.object({
 export const cdnEdgeStatusSchema = z.object({
   edgeId: z.string(),
   name: z.string(),
-  latitude: z.number(),
-  longitude: z.number(),
+  latitude: z.number().min(-90).max(90),
+  longitude: z.number().min(-180).max(180),
   /** 요청을 받은 서버 Pod 의 헬스체크 결과라 Pod 마다 잠깐 다를 수 있다 */
   healthy: z.boolean(),
   /** 매니페스트가 이 Edge 를 마지막으로 배정한 차량 수 */
