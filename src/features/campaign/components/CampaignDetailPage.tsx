@@ -3,7 +3,7 @@ import { Link, useParams } from 'react-router';
 import { ApiError } from '@/shared/api/ApiError';
 import { ROUTES } from '@/shared/config/routes';
 import { parseId } from '@/shared/lib/parseId';
-import { Breadcrumb, type BreadcrumbParent } from '@/shared/ui/Breadcrumb';
+import { Breadcrumb } from '@/shared/ui/Breadcrumb';
 import { buttonClassName } from '@/shared/ui/buttonClassName';
 import { Card } from '@/shared/ui/Card';
 import { EmptyState } from '@/shared/ui/EmptyState';
@@ -17,7 +17,7 @@ import { CampaignStatsSection } from './CampaignStatsSection';
 import { DeactivateCampaignButton } from './DeactivateCampaignButton';
 
 const NOT_FOUND = 404;
-const BREADCRUMB_PARENT: BreadcrumbParent = { label: '캠페인', to: ROUTES.campaigns };
+const BREADCRUMB_PARENT = { label: '캠페인', to: ROUTES.campaigns };
 
 /** 07 캠페인 상세 */
 export function CampaignDetailPage() {

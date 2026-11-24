@@ -2,7 +2,7 @@ import { Link } from 'react-router';
 
 import { cn } from '@/shared/lib/cn';
 
-export type BreadcrumbParent = {
+type BreadcrumbParent = {
   label: string;
   /** 돌아갈 화면 경로 */
   to: string;
