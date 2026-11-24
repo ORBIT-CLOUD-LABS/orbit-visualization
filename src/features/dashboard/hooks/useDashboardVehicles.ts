@@ -65,19 +65,19 @@ export function useDashboardVehicles(): DashboardVehicles {
 
   const isSnapshotEnabled = connection.hasOpened || isFirstConnectWaitOver;
 
-  // 연결되기 전에 조회한 스냅샷은 구독 전 변경을 놓쳤을 수 있다. 처음 연결됐을 때 한 번만 다시 조회한다
+  // 연결되기 전에 조회를 켰으면 구독 전 변경을 놓쳤을 수 있다. 처음 연결됐을 때 한 번만 다시 조회한다
   const hasConnectedRef = useRef(false);
-  const fetchedBeforeConnectRef = useRef(false);
+  const enabledBeforeConnectRef = useRef(false);
   useEffect(() => {
     if (hasConnectedRef.current) {
       return;
     }
     if (connection.status !== 'connected') {
-      fetchedBeforeConnectRef.current = isSnapshotEnabled;
+      enabledBeforeConnectRef.current = isSnapshotEnabled;
       return;
     }
     hasConnectedRef.current = true;
-    if (fetchedBeforeConnectRef.current) {
+    if (enabledBeforeConnectRef.current) {
       void queryClient.invalidateQueries({ queryKey: dashboardKeys.vehicles() });
     }
   }, [connection.status, isSnapshotEnabled, queryClient]);
@@ -87,7 +87,7 @@ export function useDashboardVehicles(): DashboardVehicles {
     // 스냅샷이 기준이다. 서버에서 빠진 차량이 캐시에 남지 않도록 이전 캐시와 합치지 않는다
     queryFn: ({ signal }) => getVehicleStatusSnapshot(signal),
     // 서버가 구독자를 먼저 등록해야 스냅샷과 SSE 사이의 변경을 놓치지 않는다.
-    // 첫 연결만 기다리고, 다시 연결하는 동안에는 조회를 막지 않는다
+    // 첫 연결을 FIRST_CONNECT_WAIT_MS 까지만 기다리고, 그 전에 조회했으면 연결된 뒤 다시 조회한다
     enabled: isSnapshotEnabled,
   });
 
