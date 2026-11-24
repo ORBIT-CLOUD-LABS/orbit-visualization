@@ -99,8 +99,6 @@ push 후 `develop` 대상 PR을 만든다. 이슈 하나에 PR 하나를 만든�
 
 - PR은 최소 한 명의 Approve를 받고, 리뷰 중 생긴 Conversation을 모두 해결해야 머지한다.
   Approve 뒤에 커밋이 추가되면 다시 리뷰받는다.
-- 머지는 사람이 직접 한다. 에이전트는 Approve·Conversation 해결·머지를 대신하지 않는다.
-  워크플로(`GITHUB_TOKEN`)가 머지하면 `Closes #<이슈번호>`로 연결한 이슈가 닫히지 않으므로 auto-merge 워크플로를 두지 않는다.
 - merge 커밋을 만드는 방식으로 머지한다. squash·rebase 머지는 쓰지 않는다.
   브랜치의 커밋 이력을 그대로 남기고, 기능 단위로 되돌릴 때 `git revert -m 1 <merge 커밋>`을 쓰기 위해서다.
 - 머지 후 브랜치는 삭제한다.
