@@ -1,4 +1,4 @@
-import { http, HttpResponse } from 'msw';
+import { delay, http, HttpResponse } from 'msw';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { server } from '@/mocks/server';
@@ -202,52 +202,52 @@ describe('sseClient', () => {
     });
 
     // 응답 헤더를 보내지 않고 멈춘 서버처럼, 요청이 끊길 때까지 응답하지 않는다
-    function stubHangingFetch() {
-      return vi.spyOn(window, 'fetch').mockImplementation(
-        (_input, init) =>
-          new Promise<Response>((_resolve, reject) => {
-            init?.signal?.addEventListener('abort', () => {
-              reject(init.signal?.reason);
-            });
-          }),
+    function useHangingServer() {
+      const requests = { count: 0 };
+      server.use(
+        http.get(STREAM_URL, async () => {
+          requests.count += 1;
+          await delay('infinite');
+        }),
       );
+      return requests;
     }
 
-    // 끊긴 요청이 onerror 를 거쳐 재시도 타이머를 걸기까지 마이크로태스크를 여러 번 거친다.
-    // 그래서 시간을 넘긴 뒤 재시도 타이머가 걸릴 때까지 0ms 씩 더 넘기며 기다린다
-    async function waitForRetry(fetchSpy: ReturnType<typeof stubHangingFetch>, calls: number) {
-      await vi.waitFor(async () => {
-        await vi.advanceTimersByTimeAsync(0);
-        expect(fetchSpy).toHaveBeenCalledTimes(calls);
+    // 끊긴 요청이 onerror 를 거쳐 재시도 타이머(retryDelayMs 0)를 걸기까지 마이크로태스크를 여러 번 거친다.
+    // 가짜 타이머에서는 vi.waitFor 가 확인할 때마다 시간을 넘기므로 그 사이 걸린 재시도 타이머도 돈다
+    async function waitForRequests(requests: { count: number }, count: number) {
+      await vi.waitFor(() => {
+        expect(requests.count).toBe(count);
       });
     }
 
     it('응답이 오지 않으면 제한 시간 뒤 요청을 끊고 재연결한다', async () => {
-      const fetchSpy = stubHangingFetch();
+      const requests = useHangingServer();
       const { statuses } = connect();
 
       await vi.advanceTimersByTimeAsync(CONNECT_TIMEOUT_MS - 1);
+      expect(requests.count).toBe(1);
       expect(statuses).toEqual(['connecting']);
 
       await vi.advanceTimersByTimeAsync(1);
-      await waitForRetry(fetchSpy, 2);
+      await waitForRequests(requests, 2);
       expect(statuses).toEqual(['connecting', 'reconnecting']);
     });
 
     it('재연결도 응답이 없으면 3회 뒤 끊김으로 바꾼다', async () => {
-      const fetchSpy = stubHangingFetch();
+      const requests = useHangingServer();
       const { statuses } = connect();
 
-      for (const calls of [2, 3, 4]) {
+      for (const count of [2, 3, 4]) {
         await vi.advanceTimersByTimeAsync(CONNECT_TIMEOUT_MS);
-        await waitForRetry(fetchSpy, calls);
+        await waitForRequests(requests, count);
       }
       await vi.advanceTimersByTimeAsync(CONNECT_TIMEOUT_MS);
 
       await vi.waitFor(() => {
         expect(statuses).toEqual(['connecting', 'reconnecting', 'disconnected']);
       });
-      expect(fetchSpy).toHaveBeenCalledTimes(4);
+      expect(requests.count).toBe(4);
     });
 
     it('연결된 뒤에는 이벤트가 없어도 끊지 않는다', async () => {
