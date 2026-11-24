@@ -8,7 +8,8 @@ export function formatFileSize(bytes: number): string {
   }
   let value = bytes;
   let unitIndex = 0;
-  while (value >= STEP && unitIndex < UNITS.length - 1) {
+  // 반올림한 값으로 판단해야 1,048,575 바이트가 "1024.0 KB" 가 아니라 "1.0 MB" 가 된다
+  while (Number(value.toFixed(1)) >= STEP && unitIndex < UNITS.length - 1) {
     value /= STEP;
     unitIndex += 1;
   }
