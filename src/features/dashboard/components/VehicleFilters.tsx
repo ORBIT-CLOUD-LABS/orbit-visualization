@@ -1,4 +1,4 @@
-import { useId } from 'react';
+import { Input } from '@/shared/ui/Input';
 
 import { RESULT_FILTERS, type ResultFilter, type VehicleFilter } from '../lib/filterVehicles';
 
@@ -32,8 +32,6 @@ type VehicleFiltersProps = {
 };
 
 export function VehicleFilters({ filter, models, edgeIds, onChange }: VehicleFiltersProps) {
-  const searchId = useId();
-
   function handleResultChange(value: string): void {
     const result = RESULT_FILTERS.find((candidate) => candidate === value);
     if (result !== undefined) {
@@ -61,16 +59,14 @@ export function VehicleFilters({ filter, models, edgeIds, onChange }: VehicleFil
         options={toOptions(edgeIds, filter.edgeId)}
         onChange={(edgeId) => onChange({ ...filter, edgeId })}
       />
-      <label htmlFor={searchId} className="sr-only">
-        vehicleId 검색
-      </label>
-      <input
-        id={searchId}
+      <Input
+        label="vehicleId 검색"
+        hideLabel
         type="search"
         value={filter.query}
         onChange={(event) => onChange({ ...filter, query: event.target.value })}
         placeholder="vehicleId 검색"
-        className="h-10 w-60 rounded-md border border-line bg-surface px-3 text-sm text-fg placeholder:text-fg-muted focus-visible:outline-2 focus-visible:-outline-offset-1 focus-visible:outline-primary"
+        className="w-60"
       />
     </div>
   );
