@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router';
+import { Link, matchPath, useLocation } from 'react-router';
 
 import { cn } from '@/shared/lib/cn';
 
@@ -7,7 +7,16 @@ export type SidebarItem = {
   label: string;
   /** true 면 하위 경로에서는 선택되지 않는다. 예: "/" */
   end?: boolean;
+  /** to 밖에서도 이 메뉴를 선택 상태로 둘 경로 패턴. 예: ["/vehicles/:vehicleId"] */
+  activeFor?: readonly string[];
 };
+
+function isItemActive(item: SidebarItem, pathname: string): boolean {
+  if (matchPath({ path: item.to, end: item.end ?? false }, pathname) !== null) {
+    return true;
+  }
+  return item.activeFor?.some((pattern) => matchPath(pattern, pathname) !== null) ?? false;
+}
 
 type SidebarProps = {
   items: readonly SidebarItem[];
@@ -17,6 +26,9 @@ type SidebarProps = {
 };
 
 export function Sidebar({ items, maskedToken, onChangeToken }: SidebarProps) {
+  // NavLink 는 to 아래 경로만 선택하므로 activeFor 까지 보려고 직접 맞춘다
+  const { pathname } = useLocation();
+
   return (
     <aside className="sticky top-0 flex h-screen w-60 shrink-0 flex-col gap-8 bg-sidebar px-4 py-6">
       <div className="flex items-center gap-2.5 px-2">
@@ -29,36 +41,33 @@ export function Sidebar({ items, maskedToken, onChangeToken }: SidebarProps) {
 
       <nav aria-label="주 메뉴">
         <ul className="flex flex-col gap-1">
-          {items.map((item) => (
-            <li key={item.to}>
-              <NavLink
-                to={item.to}
-                end={item.end}
-                className={({ isActive }) =>
-                  cn(
+          {items.map((item) => {
+            const isActive = isItemActive(item, pathname);
+            return (
+              <li key={item.to}>
+                <Link
+                  to={item.to}
+                  aria-current={isActive ? 'page' : undefined}
+                  className={cn(
                     'flex items-center gap-2.5 rounded-md px-3 py-2.5 text-sm',
                     'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent',
                     isActive
                       ? 'bg-nav-active font-medium text-fg-inverse'
                       : 'text-nav hover:bg-nav-active/50',
-                  )
-                }
-              >
-                {({ isActive }) => (
-                  <>
-                    <span
-                      aria-hidden="true"
-                      className={cn(
-                        'size-4 shrink-0 rounded-xs',
-                        isActive ? 'bg-fg-inverse' : 'bg-nav-muted',
-                      )}
-                    />
-                    {item.label}
-                  </>
-                )}
-              </NavLink>
-            </li>
-          ))}
+                  )}
+                >
+                  <span
+                    aria-hidden="true"
+                    className={cn(
+                      'size-4 shrink-0 rounded-xs',
+                      isActive ? 'bg-fg-inverse' : 'bg-nav-muted',
+                    )}
+                  />
+                  {item.label}
+                </Link>
+              </li>
+            );
+          })}
         </ul>
       </nav>
 
