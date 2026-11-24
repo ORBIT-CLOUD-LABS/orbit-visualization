@@ -15,7 +15,7 @@ function validateToken(token: string): string | undefined {
     return '관리자 토큰을 입력해 주세요.';
   }
   if (!tokenStorage.isValid(token)) {
-    return '토큰 형식이 올바르지 않습니다. 공백 없이 입력해 주세요.';
+    return '토큰 형식이 올바르지 않습니다. 공백 없는 영문·숫자·기호로 입력해 주세요.';
   }
   return undefined;
 }
@@ -33,6 +33,8 @@ export function LoginPage() {
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    // 지난 확인 결과가 새 입력의 안내와 함께 남지 않게 지운다
+    login.reset();
     const trimmed = token.trim();
     const error = validateToken(trimmed);
     setFieldError(error);

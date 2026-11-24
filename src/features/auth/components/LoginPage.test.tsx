@@ -118,8 +118,22 @@ describe('LoginPage', () => {
     await submitToken('has space');
 
     expect(
-      screen.getByText('토큰 형식이 올바르지 않습니다. 공백 없이 입력해 주세요.'),
+      screen.getByText('토큰 형식이 올바르지 않습니다. 공백 없는 영문·숫자·기호로 입력해 주세요.'),
     ).toBeInTheDocument();
+  });
+
+  it('다시 제출하면 지난 확인 오류를 지운다', async () => {
+    server.use(http.get(VEHICLES_URL, () => HttpResponse.error()));
+    const user = userEvent.setup();
+    renderLogin();
+    await submitToken('orbit-admin-token');
+    await screen.findByRole('alert');
+
+    await user.clear(screen.getByLabelText(/관리자 토큰/));
+    await user.click(screen.getByRole('button', { name: '연결하기' }));
+
+    expect(screen.getByText('관리자 토큰을 입력해 주세요.')).toBeInTheDocument();
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
   });
 
   it('확인하는 동안 연결하기 버튼을 막는다', async () => {
