@@ -1,5 +1,5 @@
-import { LoadErrorAlert } from './LoadErrorAlert';
-import { LoadingRows } from './LoadingRows';
+import { LoadErrorAlert } from '@/shared/ui/LoadErrorAlert';
+import { LoadingRows } from '@/shared/ui/LoadingRows';
 
 type QueryFallbackProps = {
   isPending: boolean;
