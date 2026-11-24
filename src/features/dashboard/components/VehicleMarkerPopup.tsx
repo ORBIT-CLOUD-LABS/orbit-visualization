@@ -2,6 +2,7 @@ import { Link } from 'react-router';
 
 import { routePaths } from '@/shared/config/routes';
 import { formatClockTime } from '@/shared/lib/formatClockTime';
+import { EMPTY_VALUE } from '@/shared/ui/emptyValue';
 import { VehicleResultBadge } from '@/shared/vehicle/VehicleResultBadge';
 
 import type { VehicleMarker } from '../lib/toVehicleMarkers';
@@ -27,7 +28,7 @@ export function VehicleMarkerPopup({ marker }: VehicleMarkerPopupProps) {
           <VehicleResultBadge result={marker.result} />
         </dd>
         <dt className="text-fg-muted">마지막 위치</dt>
-        <dd className="font-mono">{formatClockTime(marker.locatedAt) ?? '—'}</dd>
+        <dd className="font-mono">{formatClockTime(marker.locatedAt) ?? EMPTY_VALUE}</dd>
       </dl>
     </div>
   );

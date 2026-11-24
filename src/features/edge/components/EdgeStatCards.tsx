@@ -1,3 +1,4 @@
+import { EMPTY_VALUE } from '@/shared/ui/emptyValue';
 import { StatCard } from '@/shared/ui/StatCard';
 
 import type { EdgeSummary } from '../lib/summarizeEdges';
@@ -7,15 +8,13 @@ type EdgeStatCardsProps = {
   summary: EdgeSummary | null;
 };
 
-const PLACEHOLDER = '—';
-
 export function EdgeStatCards({ summary }: EdgeStatCardsProps) {
   return (
     <section aria-label="Edge 통계" className="grid grid-cols-2 gap-4 xl:grid-cols-4">
-      <StatCard label="Edge 수" value={summary?.total ?? PLACEHOLDER} />
-      <StatCard label="정상 Edge" value={summary?.healthy ?? PLACEHOLDER} />
-      <StatCard label="장애 Edge" value={summary?.unhealthy ?? PLACEHOLDER} />
-      <StatCard label="배정 차량 합계" value={summary?.assignedVehicles ?? PLACEHOLDER} />
+      <StatCard label="Edge 수" value={summary?.total ?? EMPTY_VALUE} />
+      <StatCard label="정상 Edge" value={summary?.healthy ?? EMPTY_VALUE} />
+      <StatCard label="장애 Edge" value={summary?.unhealthy ?? EMPTY_VALUE} />
+      <StatCard label="배정 차량 합계" value={summary?.assignedVehicles ?? EMPTY_VALUE} />
     </section>
   );
 }

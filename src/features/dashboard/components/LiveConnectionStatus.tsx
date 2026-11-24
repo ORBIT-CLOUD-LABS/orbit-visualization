@@ -1,6 +1,7 @@
 import type { SseConnectionStatus } from '@/shared/api/sseClient';
 import { formatClockTime } from '@/shared/lib/formatClockTime';
 import { Badge, type BadgeTone } from '@/shared/ui/Badge';
+import { EMPTY_VALUE } from '@/shared/ui/emptyValue';
 
 const STATUS_BADGE: Record<SseConnectionStatus, { tone: BadgeTone; label: string }> = {
   connecting: { tone: 'pending', label: '연결 중' },
@@ -27,7 +28,7 @@ export function LiveConnectionStatus({ status, lastUpdatedAt }: LiveConnectionSt
         <Badge tone={badge.tone}>{badge.label}</Badge>
       </output>
       <p className="text-xs text-fg-muted">
-        마지막 갱신 <span className="font-mono">{lastUpdated ?? '—'}</span>
+        마지막 갱신 <span className="font-mono">{lastUpdated ?? EMPTY_VALUE}</span>
       </p>
     </>
   );

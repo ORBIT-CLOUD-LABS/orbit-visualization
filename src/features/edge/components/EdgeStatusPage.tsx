@@ -6,6 +6,7 @@ import { formatClockTime } from '@/shared/lib/formatClockTime';
 import { toQueryState } from '@/shared/lib/toQueryState';
 import { Alert } from '@/shared/ui/Alert';
 import { Button } from '@/shared/ui/Button';
+import { EMPTY_VALUE } from '@/shared/ui/emptyValue';
 import { Topbar } from '@/shared/ui/Topbar';
 
 import { useEdgeHealthChanges } from '../hooks/useEdgeHealthChanges';
@@ -43,7 +44,7 @@ export function EdgeStatusPage() {
         right={
           <>
             <p className="text-xs text-fg-muted">
-              마지막 갱신 <span className="font-mono">{lastUpdated ?? '—'}</span>
+              마지막 갱신 <span className="font-mono">{lastUpdated ?? EMPTY_VALUE}</span>
             </p>
             <Button variant="secondary" disabled={query.isFetching} onClick={handleRefresh}>
               새로고침
