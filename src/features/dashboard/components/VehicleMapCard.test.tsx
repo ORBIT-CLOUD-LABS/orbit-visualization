@@ -8,10 +8,10 @@ import { vehicleStatusFixture } from '@/mocks/dashboardHandlers';
 import type { CdnEdgeStatus } from '@/shared/cdnEdge/cdnEdgeSchema';
 import { routePaths } from '@/shared/config/routes';
 import { formatClockTime } from '@/shared/lib/formatClockTime';
+import type { QueryState } from '@/shared/lib/toQueryState';
 import { mockLeafletMap, mockTileLayer } from '@/test/reactLeafletMock';
 
 import type { VehicleStatus } from '../api/vehicleStatusSchema';
-import type { QueryState } from '../lib/toQueryState';
 
 import { VehicleMapCard } from './VehicleMapCard';
 

@@ -6,8 +6,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { cdnEdgeStatusFixture } from '@/mocks/cdnEdgeHandlers';
 import type { CdnEdgeStatus } from '@/shared/cdnEdge/cdnEdgeSchema';
 import { ROUTES } from '@/shared/config/routes';
-
-import type { QueryState } from '../lib/toQueryState';
+import type { QueryState } from '@/shared/lib/toQueryState';
 
 import { CdnEdgeStatusCard } from './CdnEdgeStatusCard';
 

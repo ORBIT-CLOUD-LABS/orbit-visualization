@@ -5,10 +5,9 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { vehicleStatusFixture } from '@/mocks/dashboardHandlers';
 import { formatClockTime } from '@/shared/lib/formatClockTime';
+import type { QueryState } from '@/shared/lib/toQueryState';
 
 import type { VehicleStatus } from '../api/vehicleStatusSchema';
-
-import type { QueryState } from '../lib/toQueryState';
 
 import { VehicleListCard } from './VehicleListCard';
 

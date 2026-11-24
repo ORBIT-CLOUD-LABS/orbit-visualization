@@ -1,7 +1,9 @@
 import type { PathOptions } from 'leaflet';
 
-import type { EdgeLinkKind } from './buildEdgeLinks';
 import type { VehicleMarkerTone } from './vehicleMarkerTone';
+
+/** assigned: 매니페스트가 배정한 Edge(실선), reassigned: 배정과 다른, 실제로 파일을 받은 Edge(점선) */
+export type EdgeLinkKind = 'assigned' | 'reassigned';
 
 export type MapPathStyles = {
   vehicle: Record<VehicleMarkerTone, PathOptions>;

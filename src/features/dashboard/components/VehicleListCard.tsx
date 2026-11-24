@@ -1,5 +1,6 @@
 import { useId, useMemo, useState } from 'react';
 
+import type { QueryState } from '@/shared/lib/toQueryState';
 import { usePagination } from '@/shared/lib/usePagination';
 import { Alert } from '@/shared/ui/Alert';
 import { Button } from '@/shared/ui/Button';
@@ -14,7 +15,6 @@ import {
   filterVehicles,
   type VehicleFilter,
 } from '../lib/filterVehicles';
-import type { QueryState } from '../lib/toQueryState';
 
 import { VehicleFilters } from './VehicleFilters';
 import { VehicleTable } from './VehicleTable';

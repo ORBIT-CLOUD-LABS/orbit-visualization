@@ -1,12 +1,12 @@
 import { useMemo } from 'react';
 
 import { useCdnEdges } from '@/shared/cdnEdge/useCdnEdges';
+import { toQueryState, type QueryState } from '@/shared/lib/toQueryState';
 import { Topbar } from '@/shared/ui/Topbar';
 
 import type { VehicleStatus } from '../api/vehicleStatusSchema';
 import { useDashboardVehicles } from '../hooks/useDashboardVehicles';
 import { countVehicleResults } from '../lib/countVehicleResults';
-import { toQueryState, type QueryState } from '../lib/toQueryState';
 
 import { CdnEdgeStatusCard } from './CdnEdgeStatusCard';
 import { DisconnectedAlert } from './DisconnectedAlert';

@@ -2,9 +2,10 @@ import { QueryClient } from '@tanstack/react-query';
 import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { failure, success } from '@/mocks/apiEnvelope';
+import { CDN_EDGES_URL, cdnEdgeStatusFixture, cdnEdgesResponse } from '@/mocks/cdnEdgeHandlers';
 import { server } from '@/mocks/server';
 import {
   VEHICLE_DETAIL_URL,
@@ -15,6 +16,8 @@ import { ROUTES, routePaths } from '@/shared/config/routes';
 import { renderRoutes } from '@/test/renderRoutes';
 
 import { VehicleDetailPage } from './VehicleDetailPage';
+
+vi.mock('react-leaflet', () => import('@/test/reactLeafletMock'));
 
 const routes = [
   { path: ROUTES.vehicleDetail, element: <VehicleDetailPage /> },
@@ -55,6 +58,7 @@ describe('VehicleDetailPage', () => {
     const location = screen.getByRole('region', { name: '위치 · 배정 Edge' });
     expect(location).toHaveTextContent('37.5200');
     expect(location).toHaveTextContent('126.9000');
+    expect(await within(location).findByText('edge-seoul · 8.6 km')).toBeInTheDocument();
 
     const history = screen.getByRole('table', { name: '업데이트 이력' });
     expect(await within(history).findAllByRole('row')).toHaveLength(2);
@@ -97,6 +101,29 @@ describe('VehicleDetailPage', () => {
     await user.click(within(info).getByRole('button', { name: '다시 시도' }));
 
     expect(await screen.findByRole('region', { name: /VH-0001/ })).toBeInTheDocument();
+  });
+
+  it('Edge 를 불러오지 못하면 가까운 Edge 칸에 알리고 다시 시도할 수 있다', async () => {
+    let calls = 0;
+    server.use(
+      http.get(CDN_EDGES_URL, () => {
+        calls += 1;
+        return calls === 1
+          ? HttpResponse.json(failure('INTERNAL_SERVER_ERROR'), { status: 500 })
+          : cdnEdgesResponse([cdnEdgeStatusFixture()]);
+      }),
+    );
+    const user = userEvent.setup();
+    renderPage();
+
+    const location = await screen.findByRole('region', { name: '위치 · 배정 Edge' });
+    expect(
+      await within(location).findByText('Edge 정보를 불러오지 못했습니다'),
+    ).toBeInTheDocument();
+    expect(location).toHaveTextContent('37.5200');
+    await user.click(within(location).getByRole('button', { name: '다시 시도' }));
+
+    expect(await within(location).findByText('edge-seoul · 8.6 km')).toBeInTheDocument();
   });
 
   it('없는 차량이면 본문 전체를 빈 상태로 바꾸고 대시보드로 보낸다', async () => {
@@ -150,10 +177,15 @@ describe('VehicleDetailPage', () => {
     expect(screen.getByRole('region', { name: /VH-0001/ })).toHaveTextContent('MODEL-A');
   });
 
-  it('새로고침하면 상세와 이력을 다시 불러온다', async () => {
+  it('새로고침하면 상세·이력·Edge 를 다시 불러온다', async () => {
     let detailCalls = 0;
     let historyCalls = 0;
+    let edgeCalls = 0;
     server.use(
+      http.get(CDN_EDGES_URL, () => {
+        edgeCalls += 1;
+        return cdnEdgesResponse([cdnEdgeStatusFixture()]);
+      }),
       http.get(VEHICLE_DETAIL_URL, () => {
         detailCalls += 1;
         return HttpResponse.json(success(vehicleDetailFixture()));
@@ -170,6 +202,6 @@ describe('VehicleDetailPage', () => {
     const refresh = await screen.findByRole('button', { name: '새로고침' });
     await user.click(refresh);
 
-    await expect.poll(() => [detailCalls, historyCalls]).toEqual([2, 2]);
+    await expect.poll(() => [detailCalls, historyCalls, edgeCalls]).toEqual([2, 2, 2]);
   });
 });
