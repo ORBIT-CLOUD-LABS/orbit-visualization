@@ -20,6 +20,41 @@ export const campaignListSchema = z.object({
   campaigns: z.array(campaignSummarySchema),
 });
 
+// 서버 CampaignDetailResponse. 비활성 캠페인도 같은 모양이다
+export const campaignDetailSchema = z.object({
+  campaignId: z.number().int(),
+  name: z.string(),
+  artifactId: z.number().int(),
+  targetVersion: z.string(),
+  target: z.object({
+    model: z.string(),
+    /** 비어 있으면 전체 */
+    hwVersions: z.array(z.string()),
+    /** 비어 있으면 전체 */
+    regions: z.array(z.string()),
+    /** null 이면 제한 없음 */
+    currentVersionMin: z.string().nullable(),
+    currentVersionMax: z.string().nullable(),
+  }),
+  status: campaignStatusSchema,
+  startAt: z.iso.datetime(),
+  endAt: z.iso.datetime(),
+  createdAt: z.iso.datetime(),
+});
+
+const countSchema = z.number().int().nonnegative();
+
+// 서버 CampaignStatsResponse. inProgress = targetVehicles - succeeded - failed (대상인데 결과를 보고하지 않은 차량)
+export const campaignStatsSchema = z.object({
+  campaignId: z.number().int(),
+  targetVehicles: countSchema,
+  succeeded: countSchema,
+  failed: countSchema,
+  // 사유 목록이 서버에서 늘어나도 화면이 깨지지 않도록 키는 문자열로 받는다
+  failureReasons: z.record(z.string(), countSchema),
+  inProgress: countSchema,
+});
+
 // 서버 CampaignRegistrationResponse
 export const campaignRegistrationSchema = z.object({
   campaignId: z.number().int(),
@@ -39,5 +74,7 @@ export const artifactOptionListSchema = z.object({
 
 export type CampaignStatus = z.output<typeof campaignStatusSchema>;
 export type CampaignSummary = z.output<typeof campaignSummarySchema>;
+export type CampaignDetail = z.output<typeof campaignDetailSchema>;
+export type CampaignStats = z.output<typeof campaignStatsSchema>;
 export type CampaignRegistration = z.output<typeof campaignRegistrationSchema>;
 export type ArtifactOption = z.output<typeof artifactOptionSchema>;
