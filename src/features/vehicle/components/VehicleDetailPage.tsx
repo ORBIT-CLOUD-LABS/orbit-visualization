@@ -21,6 +21,8 @@ import { VehicleLocationCard } from './VehicleLocationCard';
 import { VehicleSummaryCard } from './VehicleSummaryCard';
 
 const NOT_FOUND = 404;
+// 버튼을 여러 번 눌러도 진행 중인 요청을 취소하고 다시 보내지 않는다
+const KEEP_IN_FLIGHT = { cancelRefetch: false } as const;
 
 function errorCodeOf(error: unknown): string | undefined {
   return error instanceof ApiError ? error.code : undefined;
@@ -36,8 +38,8 @@ export function VehicleDetailPage() {
     vehicleId === null || (detail.error instanceof ApiError && detail.error.status === NOT_FOUND);
 
   function handleRefresh() {
-    void detail.refetch();
-    void history.refetch();
+    void detail.refetch(KEEP_IN_FLIGHT);
+    void history.refetch(KEEP_IN_FLIGHT);
   }
 
   function renderContent() {
@@ -78,7 +80,7 @@ export function VehicleDetailPage() {
               isPending={detail.isPending}
               errorTitle="차량 정보를 불러오지 못했습니다"
               errorCode={errorCodeOf(detail.error)}
-              onRetry={() => void detail.refetch()}
+              onRetry={() => void detail.refetch(KEEP_IN_FLIGHT)}
             />
           </Card>
         ) : (
@@ -104,7 +106,7 @@ export function VehicleDetailPage() {
           events={history.data}
           isPending={history.isPending}
           errorCode={errorCodeOf(history.error)}
-          onRetry={() => void history.refetch()}
+          onRetry={() => void history.refetch(KEEP_IN_FLIGHT)}
         />
       </>
     );

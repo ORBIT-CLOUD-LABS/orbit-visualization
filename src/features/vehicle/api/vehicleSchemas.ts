@@ -34,15 +34,9 @@ export const vehicleDetailSchema = z.object({
   lastUpdate: vehicleLastUpdateSchema.nullable(),
 });
 
-/** 업데이트 시도 한 번 (VehicleUpdateEventResponse) */
-export const vehicleUpdateEventSchema = z.object({
-  campaignId: z.number(),
+/** 업데이트 시도 한 번 (VehicleUpdateEventResponse). 최근 결과에 배포 버전을 더한 형식이다 */
+export const vehicleUpdateEventSchema = vehicleLastUpdateSchema.extend({
   version: z.string(),
-  result: z.enum(UPDATE_RESULTS),
-  failureReason: z.string().nullable(),
-  failureDetail: z.string().nullable(),
-  edgeId: z.string().nullable(),
-  finishedAt: instantSchema,
 });
 
 /** 업데이트 이력 (VehicleUpdateHistoryResponse). 최근 50건, 완료 시각이 늦은 순 */
@@ -53,4 +47,3 @@ export const vehicleUpdateHistorySchema = z.object({
 export type VehicleLastUpdate = z.infer<typeof vehicleLastUpdateSchema>;
 export type VehicleDetail = z.infer<typeof vehicleDetailSchema>;
 export type VehicleUpdateEvent = z.infer<typeof vehicleUpdateEventSchema>;
-export type VehicleUpdateHistory = z.infer<typeof vehicleUpdateHistorySchema>;

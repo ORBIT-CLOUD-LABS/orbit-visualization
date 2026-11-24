@@ -11,8 +11,5 @@ const DEFAULT_LABEL = '업데이트 실패';
 
 /** 실패 사유 코드를 사람이 읽는 문장으로. 모르는 코드면 일반 문구 */
 export function failureReasonLabel(reason: string | null): string {
-  if (reason === null) {
-    return DEFAULT_LABEL;
-  }
-  return FAILURE_REASON_LABEL.get(reason) ?? DEFAULT_LABEL;
+  return (reason === null ? undefined : FAILURE_REASON_LABEL.get(reason)) ?? DEFAULT_LABEL;
 }

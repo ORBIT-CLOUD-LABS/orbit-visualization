@@ -5,7 +5,6 @@ import { formatTimestamp } from '../lib/formatTimestamp';
 import { Card } from './Card';
 import { KeyValue } from './KeyValue';
 
-const EMPTY_VALUE = '—';
 const COORDINATE_DIGITS = 4;
 
 type VehicleLocationCardProps = {
@@ -25,16 +24,12 @@ export function VehicleLocationCard({
     <Card title="위치 · 배정 Edge" className={className}>
       {location === null && <p className="text-xs text-fg-muted">아직 위치를 받지 않았습니다</p>}
       <dl className="grid grid-cols-2 gap-x-6 gap-y-4">
-        <KeyValue label="위도">
-          {location?.latitude.toFixed(COORDINATE_DIGITS) ?? EMPTY_VALUE}
-        </KeyValue>
-        <KeyValue label="경도">
-          {location?.longitude.toFixed(COORDINATE_DIGITS) ?? EMPTY_VALUE}
-        </KeyValue>
+        <KeyValue label="위도">{location?.latitude.toFixed(COORDINATE_DIGITS)}</KeyValue>
+        <KeyValue label="경도">{location?.longitude.toFixed(COORDINATE_DIGITS)}</KeyValue>
         <KeyValue label="위치 수신">
-          {location === null ? EMPTY_VALUE : formatTimestamp(location.updatedAt)}
+          {location === null ? null : formatTimestamp(location.updatedAt)}
         </KeyValue>
-        <KeyValue label="배정 Edge">{assignedEdgeId ?? EMPTY_VALUE}</KeyValue>
+        <KeyValue label="배정 Edge">{assignedEdgeId}</KeyValue>
       </dl>
     </Card>
   );

@@ -2,8 +2,11 @@ import type { ReactNode } from 'react';
 
 import { cn } from '@/shared/lib/cn';
 
+import { EMPTY_VALUE } from './emptyValue';
+
 type KeyValueProps = {
   label: string;
+  /** null·undefined 면 빈 값 기호를 보여 준다 */
   children: ReactNode;
   className?: string;
 };
@@ -13,7 +16,7 @@ export function KeyValue({ label, children, className }: KeyValueProps) {
   return (
     <div className={cn('flex min-w-0 flex-col gap-1', className)}>
       <dt className="text-xs text-fg-muted">{label}</dt>
-      <dd className="font-mono text-xs break-all text-fg">{children}</dd>
+      <dd className="font-mono text-xs break-all text-fg">{children ?? EMPTY_VALUE}</dd>
     </div>
   );
 }

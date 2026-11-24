@@ -8,8 +8,6 @@ import { formatTimestamp } from '../lib/formatTimestamp';
 import { Card } from './Card';
 import { KeyValue } from './KeyValue';
 
-const EMPTY_VALUE = '—';
-
 type LastUpdateCardProps = {
   /** 결과가 없으면 null */
   lastUpdate: VehicleLastUpdate | null;
@@ -42,9 +40,9 @@ export function LastUpdateCard({ lastUpdate, className }: LastUpdateCardProps) {
           <dl className="grid grid-cols-2 gap-x-6 gap-y-4">
             <KeyValue label="캠페인">#{lastUpdate.campaignId}</KeyValue>
             <KeyValue label="결과">{lastUpdate.result}</KeyValue>
-            <KeyValue label="실패 사유">{lastUpdate.failureReason ?? EMPTY_VALUE}</KeyValue>
-            <KeyValue label="실패 상세">{lastUpdate.failureDetail ?? EMPTY_VALUE}</KeyValue>
-            <KeyValue label="다운로드 Edge">{lastUpdate.edgeId ?? EMPTY_VALUE}</KeyValue>
+            <KeyValue label="실패 사유">{lastUpdate.failureReason}</KeyValue>
+            <KeyValue label="실패 상세">{lastUpdate.failureDetail}</KeyValue>
+            <KeyValue label="다운로드 Edge">{lastUpdate.edgeId}</KeyValue>
             <KeyValue label="완료 시각">{formatTimestamp(lastUpdate.finishedAt)}</KeyValue>
           </dl>
         </>

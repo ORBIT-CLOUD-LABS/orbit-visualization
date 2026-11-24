@@ -11,8 +11,6 @@ import { formatTimestamp } from '../lib/formatTimestamp';
 import { Card } from './Card';
 import { KeyValue } from './KeyValue';
 
-const EMPTY_VALUE = '—';
-
 type VehicleSummaryCardProps = {
   vehicle: VehicleDetail;
   isRefreshing: boolean;
@@ -54,11 +52,11 @@ export function VehicleSummaryCard({ vehicle, isRefreshing, onRefresh }: Vehicle
         <KeyValue label="지역">{vehicle.region}</KeyValue>
         <KeyValue label="현재 버전">{vehicle.currentVersion}</KeyValue>
         <KeyValue label="마지막 체크인">
-          {vehicle.lastSeenAt === null ? EMPTY_VALUE : formatTimestamp(vehicle.lastSeenAt)}
+          {vehicle.lastSeenAt === null ? null : formatTimestamp(vehicle.lastSeenAt)}
         </KeyValue>
         <KeyValue label="상태 갱신">{formatTimestamp(vehicle.updatedAt)}</KeyValue>
-        <KeyValue label="배정 Edge">{vehicle.assignedEdgeId ?? EMPTY_VALUE}</KeyValue>
-        <KeyValue label="다운로드 Edge">{lastUpdate?.edgeId ?? EMPTY_VALUE}</KeyValue>
+        <KeyValue label="배정 Edge">{vehicle.assignedEdgeId}</KeyValue>
+        <KeyValue label="다운로드 Edge">{lastUpdate?.edgeId}</KeyValue>
       </dl>
     </Card>
   );
