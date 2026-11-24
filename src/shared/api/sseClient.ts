@@ -34,11 +34,25 @@ const MAX_RECONNECT_ATTEMPTS = 3;
 const DEFAULT_RETRY_DELAY_MS = 1000;
 // fetch-event-source 가 재시도 때 넣는 헤더 키와 같아야 값이 두 번 들어가지 않는다
 const LAST_EVENT_ID_HEADER = 'last-event-id';
+const NO_CONTENT = 204;
 const UNAUTHORIZED = 401;
+const REQUEST_TIMEOUT = 408;
+const TOO_MANY_REQUESTS = 429;
 
 // onerror 에서 다시 던지면 fetch-event-source 가 재시도를 멈춘다
 class StopRetryingError extends Error {
   override readonly name = 'StopRetryingError';
+}
+
+// 204 는 SSE 명세상 재연결 중단이다. 4xx 는 다시 보내도 같지만 408·429 는 잠시 뒤 성공할 수 있다
+function isRetriableStatus(status: number): boolean {
+  if (status === NO_CONTENT) {
+    return false;
+  }
+  if (status >= 400 && status < 500) {
+    return status === REQUEST_TIMEOUT || status === TOO_MANY_REQUESTS;
+  }
+  return true;
 }
 
 function connect(options: SseConnectOptions): SseConnection {
@@ -54,18 +68,6 @@ function connect(options: SseConnectOptions): SseConnection {
     }
   }
 
-  function buildHeaders(): Record<string, string> {
-    const headers: Record<string, string> = {};
-    const token = tokenStorage.get();
-    if (token !== null) {
-      headers.Authorization = `Bearer ${token}`;
-    }
-    if (lastEventId !== null) {
-      headers[LAST_EVENT_ID_HEADER] = lastEventId;
-    }
-    return headers;
-  }
-
   function open(): void {
     controller?.abort();
     const current = new AbortController();
@@ -75,7 +77,19 @@ function connect(options: SseConnectOptions): SseConnection {
 
     fetchEventSource(new URL(`${config.apiBaseUrl}${options.path}`, window.location.href).href, {
       signal: current.signal,
-      headers: buildHeaders(),
+      headers: lastEventId === null ? {} : { [LAST_EVENT_ID_HEADER]: lastEventId },
+      // 재시도마다 토큰을 새로 읽는다. 401 로 지워졌거나 바뀐 토큰을 그대로 보내지 않는다
+      fetch: (input, init) => {
+        const token = tokenStorage.get();
+        if (token === null) {
+          return Promise.reject(
+            new StopRetryingError('관리자 토큰이 없어 SSE 를 연결하지 않습니다'),
+          );
+        }
+        const headers = new Headers(init?.headers);
+        headers.set('Authorization', `Bearer ${token}`);
+        return window.fetch(input, { ...init, headers });
+      },
       // 숨은 탭에서도 연결을 유지해 상태 표시와 실제 연결이 어긋나지 않게 한다
       openWhenHidden: true,
       onopen: async (response) => {
@@ -89,8 +103,7 @@ function connect(options: SseConnectOptions): SseConnection {
         if (response.status === UNAUTHORIZED) {
           reportUnauthorized();
         }
-        // 4xx 는 다시 시도해도 결과가 같다
-        if (response.status >= 400 && response.status < 500) {
+        if (!isRetriableStatus(response.status)) {
           throw new StopRetryingError(`SSE 연결이 ${response.status} 로 거절되었습니다`);
         }
         throw new Error(`SSE 연결에 실패했습니다 (${response.status})`);
@@ -103,7 +116,12 @@ function connect(options: SseConnectOptions): SseConnection {
         if (message.data === '') {
           return;
         }
-        options.onMessage({ event: message.event, id: message.id, data: message.data });
+        // 받는 쪽의 파싱 오류가 연결 오류로 번져 재연결되지 않도록 여기서 끊고 전역 오류로 알린다
+        try {
+          options.onMessage({ event: message.event, id: message.id, data: message.data });
+        } catch (error) {
+          reportError(error);
+        }
       },
       // 서버가 스트림을 닫아도 다시 연결한다
       onclose: () => {

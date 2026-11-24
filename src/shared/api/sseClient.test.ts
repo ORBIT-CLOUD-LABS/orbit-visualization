@@ -1,5 +1,5 @@
 import { http, HttpResponse } from 'msw';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { server } from '@/mocks/server';
 import { tokenStorage } from '@/shared/auth/tokenStorage';
@@ -35,25 +35,28 @@ describe('sseClient', () => {
   let connection: SseConnection | undefined;
   let unsubscribe: (() => void) | undefined;
 
+  beforeEach(() => {
+    tokenStorage.set('admin-token');
+  });
+
   afterEach(() => {
     connection?.close();
     unsubscribe?.();
   });
 
-  function connect() {
+  function connect(onMessage?: (message: SseMessage) => void) {
     const statuses: SseConnectionStatus[] = [];
     const messages: SseMessage[] = [];
     connection = sseClient.connect({
       path: '/test/stream',
       retryDelayMs: 0,
-      onMessage: (message) => messages.push(message),
+      onMessage: onMessage ?? ((message) => messages.push(message)),
       onStatusChange: (status) => statuses.push(status),
     });
     return { statuses, messages };
   }
 
   it('토큰을 Authorization 헤더로 보내고 받은 이벤트를 넘긴다', async () => {
-    tokenStorage.set('admin-token');
     let authorization: string | null = null;
     server.use(
       http.get(STREAM_URL, ({ request }) => {
@@ -164,5 +167,50 @@ describe('sseClient', () => {
     expect(listener).toHaveBeenCalledOnce();
     expect(tokenStorage.get()).toBeNull();
     expect(requestCount).toBe(1);
+  });
+
+  it('재연결할 때 그 사이 바뀐 토큰을 보낸다', async () => {
+    const authorizations: (string | null)[] = [];
+    server.use(
+      http.get(STREAM_URL, ({ request }) => {
+        authorizations.push(request.headers.get('Authorization'));
+        if (authorizations.length === 1) {
+          tokenStorage.set('new-token');
+          return new HttpResponse(null, { status: 503 });
+        }
+        return sseResponse([], { keepOpen: true });
+      }),
+    );
+
+    const { statuses } = connect();
+
+    await vi.waitFor(() => {
+      expect(statuses.at(-1)).toBe('connected');
+    });
+    expect(authorizations).toEqual(['Bearer admin-token', 'Bearer new-token']);
+  });
+
+  it('받는 쪽이 이벤트 처리 중 오류를 내도 연결을 유지한다', async () => {
+    const reportedErrors: unknown[] = [];
+    const handleError = (event: ErrorEvent) => {
+      event.preventDefault();
+      reportedErrors.push(event.error);
+    };
+    window.addEventListener('error', handleError);
+    server.use(
+      http.get(STREAM_URL, () =>
+        sseResponse(['event: vehicles\ndata: {broken\n\n'], { keepOpen: true }),
+      ),
+    );
+
+    const { statuses } = connect(() => {
+      throw new Error('파싱 실패');
+    });
+
+    await vi.waitFor(() => {
+      expect(reportedErrors).toHaveLength(1);
+    });
+    window.removeEventListener('error', handleError);
+    expect(statuses).toEqual(['connecting', 'connected']);
   });
 });
