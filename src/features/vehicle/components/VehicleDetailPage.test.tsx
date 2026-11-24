@@ -131,6 +131,25 @@ describe('VehicleDetailPage', () => {
     expect(await screen.findByRole('region', { name: /VH\/00 01\?/ })).toBeInTheDocument();
   });
 
+  it('새로고침이 실패하면 받은 정보를 두고 실패를 알린다', async () => {
+    let calls = 0;
+    server.use(
+      http.get(VEHICLE_DETAIL_URL, () => {
+        calls += 1;
+        return calls === 1
+          ? HttpResponse.json(success(vehicleDetailFixture()))
+          : HttpResponse.json(failure('INTERNAL_SERVER_ERROR'), { status: 500 });
+      }),
+    );
+    const user = userEvent.setup();
+    renderPage();
+
+    await user.click(await screen.findByRole('button', { name: '새로고침' }));
+
+    expect(await screen.findByText(/최신 정보를 불러오지 못했습니다/)).toBeInTheDocument();
+    expect(screen.getByRole('region', { name: /VH-0001/ })).toHaveTextContent('MODEL-A');
+  });
+
   it('새로고침하면 상세와 이력을 다시 불러온다', async () => {
     let detailCalls = 0;
     let historyCalls = 0;

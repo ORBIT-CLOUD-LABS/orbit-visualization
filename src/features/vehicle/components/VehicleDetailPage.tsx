@@ -2,6 +2,8 @@ import { Link, useParams } from 'react-router';
 
 import { ApiError } from '@/shared/api/ApiError';
 import { ROUTES } from '@/shared/config/routes';
+import { Alert } from '@/shared/ui/Alert';
+import { Button } from '@/shared/ui/Button';
 import { buttonClassName } from '@/shared/ui/buttonClassName';
 import { EmptyState } from '@/shared/ui/EmptyState';
 import { Topbar } from '@/shared/ui/Topbar';
@@ -53,9 +55,23 @@ export function VehicleDetailPage() {
       );
     }
     const vehicle = detail.data;
+    // 이미 받은 값이 있으면 그대로 두고, 새로고침이 실패했다는 것만 알린다
+    const isRefreshFailed =
+      (detail.isError && vehicle !== undefined) || (history.isError && history.data !== undefined);
     return (
       <>
         <VehicleBreadcrumb current={vehicleId} />
+        {isRefreshFailed && (
+          <Alert
+            type="error"
+            title="최신 정보를 불러오지 못했습니다. 이전에 받은 정보를 보여 줍니다."
+            action={
+              <Button variant="secondary" onClick={handleRefresh}>
+                다시 시도
+              </Button>
+            }
+          />
+        )}
         {vehicle === undefined ? (
           <Card title="차량 정보">
             <QueryFallback
@@ -82,7 +98,9 @@ export function VehicleDetailPage() {
             </div>
           </>
         )}
+        {/* 같은 라우트에서 다른 차량으로 가면 이력 페이지를 1페이지로 되돌린다 */}
         <UpdateHistoryCard
+          key={vehicleId}
           events={history.data}
           isPending={history.isPending}
           errorCode={errorCodeOf(history.error)}
