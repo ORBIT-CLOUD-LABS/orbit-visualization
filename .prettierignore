@@ -1,0 +1,4 @@
+pnpm-lock.yaml
+# 문서는 프리셋 원본 형식을 유지한다
+docs
+*.md

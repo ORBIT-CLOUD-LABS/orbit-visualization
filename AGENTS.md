@@ -60,7 +60,7 @@ npx @agentsmd/cli@0.9.0 verify   # .agentsmd/verify.json 의 단계(pnpm lint·f
 npx @agentsmd/cli@0.9.0 check    # 문서 지도(이 파일)가 docs/ 와 맞는지 검사한다
 ```
 
-- `package.json` 과 스크립트가 아직 없어 `verify` 는 실패한다. 프로젝트를 셋업할 때 [docs/typescript/lint-and-ci.md](docs/typescript/lint-and-ci.md) 의 스크립트를 맞춘다.
+- Node 24 이상(`.nvmrc`)에서 실행한다. 낮은 버전이면 `engine-strict` 때문에 pnpm 명령이 바로 실패한다.
 - 문서를 더하거나 옮겼으면 `check` 도 실행한다.
 
 ## 지침 관리

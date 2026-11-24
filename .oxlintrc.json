@@ -1,0 +1,30 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "oxc", "react", "jsx-a11y", "import"],
+  "options": {
+    "typeAware": true
+  },
+  "categories": {
+    "correctness": "error"
+  },
+  "rules": {
+    "typescript/no-explicit-any": "error",
+    "typescript/no-non-null-assertion": "error",
+    "typescript/no-floating-promises": "error",
+    "typescript/no-misused-promises": "error",
+    "typescript/only-throw-error": "error",
+    "react/rules-of-hooks": "error",
+    "react/exhaustive-deps": "error",
+    "react/no-danger": "error",
+    "import/no-cycle": "error",
+    "import/no-default-export": "error"
+  },
+  "overrides": [
+    {
+      "files": ["*.config.ts"],
+      "rules": {
+        "import/no-default-export": "off"
+      }
+    }
+  ]
+}
