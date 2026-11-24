@@ -68,6 +68,21 @@ describe('httpClient', () => {
     expect(hasAuthorization).toBe(false);
   });
 
+  it('요청에 넘긴 Authorization 헤더는 저장된 토큰으로 덮어쓰지 않는다', async () => {
+    tokenStorage.set('stored-token');
+    let authorization: string | null = null;
+    server.use(
+      http.get('/api/v1/items/1', ({ request }) => {
+        authorization = request.headers.get('Authorization');
+        return HttpResponse.json({ isSuccess: true, code: 'OK', message: '', data: null });
+      }),
+    );
+
+    await httpClient.get('/items/1', { headers: { Authorization: 'Bearer new-token' } });
+
+    expect(authorization).toBe('Bearer new-token');
+  });
+
   it('data 형식이 다르면 오류를 던진다', async () => {
     server.use(
       http.get('/api/v1/items/1', () =>

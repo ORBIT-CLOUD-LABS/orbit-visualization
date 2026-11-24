@@ -15,7 +15,11 @@ export const httpClient = axios.create({
   timeout: 10_000,
 });
 
+// 요청에 Authorization 을 직접 넘기면(저장 전 토큰 확인 등) 저장된 토큰으로 덮어쓰지 않는다
 httpClient.interceptors.request.use((request) => {
+  if (request.headers.has('Authorization')) {
+    return request;
+  }
   const authorization = authorizationHeader();
   if (authorization !== null) {
     request.headers.set('Authorization', authorization);
