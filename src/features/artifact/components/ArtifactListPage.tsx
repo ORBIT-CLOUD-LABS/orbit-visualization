@@ -1,10 +1,10 @@
+import { Card } from '@/shared/ui/Card';
 import { EmptyState } from '@/shared/ui/EmptyState';
 import { Topbar } from '@/shared/ui/Topbar';
 
 import { useArtifacts } from '../hooks/useArtifacts';
 import { ArtifactListCard } from './ArtifactListCard';
 import { ArtifactStats } from './ArtifactStats';
-import { Card } from './Card';
 import { QueryFallback } from './QueryFallback';
 import { RegisterArtifactLink } from './RegisterArtifactLink';
 

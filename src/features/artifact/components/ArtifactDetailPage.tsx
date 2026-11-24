@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router';
 import { ApiError } from '@/shared/api/ApiError';
 import { ROUTES } from '@/shared/config/routes';
 import { buttonClassName } from '@/shared/ui/buttonClassName';
+import { Card } from '@/shared/ui/Card';
 import { EmptyState } from '@/shared/ui/EmptyState';
 import { Topbar } from '@/shared/ui/Topbar';
 
@@ -11,7 +12,6 @@ import { parseArtifactId } from '../lib/parseArtifactId';
 import { ArtifactCampaignsCard } from './ArtifactCampaignsCard';
 import { ArtifactDetailCard } from './ArtifactDetailCard';
 import { Breadcrumb } from './Breadcrumb';
-import { Card } from './Card';
 import { QueryFallback } from './QueryFallback';
 
 const NOT_FOUND = 404;

@@ -3,12 +3,12 @@ import { Link } from 'react-router';
 import { routePaths } from '@/shared/config/routes';
 import { Badge, type BadgeTone } from '@/shared/ui/Badge';
 import { buttonClassName } from '@/shared/ui/buttonClassName';
+import { Card } from '@/shared/ui/Card';
 import { EmptyState } from '@/shared/ui/EmptyState';
 
 import type { ArtifactCampaign } from '../api/getModelCampaigns';
 import { useArtifactCampaigns } from '../hooks/useArtifactCampaigns';
 import { formatDate } from '../lib/formatDateTime';
-import { Card } from './Card';
 import { QueryFallback } from './QueryFallback';
 import {
   TABLE_CELL as CELL,

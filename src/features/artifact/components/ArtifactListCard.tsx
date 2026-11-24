@@ -1,11 +1,11 @@
 import { useState } from 'react';
 
 import { usePagination } from '@/shared/lib/usePagination';
+import { Card } from '@/shared/ui/Card';
 import { Pagination } from '@/shared/ui/Pagination';
 
 import type { Artifact } from '../api/artifactSchemas';
 import { ArtifactTable } from './ArtifactTable';
-import { Card } from './Card';
 import { RegisterArtifactLink } from './RegisterArtifactLink';
 
 /** 차종 필터에서 전체를 뜻하는 값 */
